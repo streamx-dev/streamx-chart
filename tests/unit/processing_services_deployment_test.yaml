@@ -1,16 +1,19 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 
-suite: test delivery services deployments
-    
+suite: test processing services deployments
+
 tests:
   # @Test
-  - it: for each delivery service there is a deployment created
-    template: templates/delivery/delivery-deployment.yaml
+  - it: for each processing service there is a deployment created
+    template: templates/processing/processing-deployment.yaml
     set:
-      delivery:
-        service1: {}
-        service2: {}
-        service3: {}
+      processing:
+        service1:
+          image: repository/s1
+        service2:
+          image: repository/s2
+        service3:
+          image: repository/s2
     asserts:
       - isKind: 
           of: Deployment
@@ -18,24 +21,26 @@ tests:
           count: 3
       - matchRegex:
           path: .metadata.name
-          pattern: -delivery-service[0-9]+$
+          pattern: -service[0-9]+$
   # @Test
   - it: when service replicas is not set, then default value is 1
-    template: templates/delivery/delivery-deployment.yaml
+    template: templates/processing/processing-deployment.yaml
     set:
-      delivery:
-        service1: {}
+      processing:
+        service1:
+          image: repository/service
     asserts:
       - equal:
           path: .spec.replicas
           value: 1
   # @Test
   - it: when service replicas set to 0 then deployment has 0 replicas
-    template: templates/delivery/delivery-deployment.yaml
+    template: templates/processing/processing-deployment.yaml
     set:
-      delivery:
+      processing:
         service1:
           replicas: 0
+          image: repository/service
     asserts:
       - equal:
           path: .spec.replicas

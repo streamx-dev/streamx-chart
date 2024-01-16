@@ -1,4 +1,4 @@
-{{- range $name, $config := .Values.processing }}
+{{- range $name, $processing := .Values.processing }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "streamx.component.labels" (dict "componentName" $name "context" $) | nindent 4 }}
 spec:
-  replicas: {{ $config.replicas | default 1 }}
+  replicas: {{ if hasKey $processing "replicas" }}{{ $processing.replicas }}{{ else }}1{{ end }}
   selector:
     matchLabels:
       {{- include "streamx.component.selectorLabels" (dict "componentName" $name "context" $) | nindent 6 }}
@@ -20,15 +20,15 @@ spec:
       {{- if $.Values.imagePullSecrets }}
       imagePullSecrets: {{- $.Values.imagePullSecrets | toYaml | nindent 8 }}
       {{- end }}
-      {{- if $config.terminationGracePeriod }}
-      terminationGracePeriodSeconds:  {{ $config.terminationGracePeriod }}
+      {{- if $processing.terminationGracePeriod }}
+      terminationGracePeriodSeconds:  {{ $processing.terminationGracePeriod }}
       {{- end }}
-      {{- if $config.nodeSelector }}
-      nodeSelector: {{- $config.nodeSelector | toYaml | nindent 8 }}
+      {{- if $processing.nodeSelector }}
+      nodeSelector: {{- $processing.nodeSelector | toYaml | nindent 8 }}
       {{- end }}
       containers:
         - name: {{ $name }}
-          image: {{ $config.image }}
+          image: {{ $processing.image }}
           ports:
             - name: metrics
               containerPort: 8080
@@ -39,20 +39,20 @@ spec:
               value: {{ $.Values.pulsar.webServiceUrl }}
             - name: PLUGIN_STORE_TENANT
               value: {{ include "streamx.tenant" $ }}
-            {{- range $index, $value := $config.inputs }}
+            {{- range $index, $value := $processing.inputs }}
             - name: PLUGIN_FUNCTIONS_{{ $index }}__INPUT
               value: {{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" $value "context" $) }}
             {{- end }}
-            {{- range $index, $value := $config.outputs }}
+            {{- range $index, $value := $processing.outputs }}
             - name: PLUGIN_FUNCTIONS_{{ $index }}__OUTPUT
               value: {{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" $value "context" $) }}
             {{- end }}
-            {{- if $config.env }}
-{{ toYaml $config.env | indent 12 }}
+            {{- if $processing.env }}
+{{ toYaml $processing.env | indent 12 }}
             {{- end }}
           resources:
-          {{- if $config.resources }}          
-{{ toYaml $config.resources | indent 12 }}
+          {{- if $processing.resources }}          
+{{ toYaml $processing.resources | indent 12 }}
           {{- else }}
             requests:
               cpu: 400m
