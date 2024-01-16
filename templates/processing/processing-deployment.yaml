@@ -1,0 +1,62 @@
+{{- range $name, $config := .Values.processing }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "streamx.component.fullname" (dict "componentName" $name "context" $) }}
+  labels:
+    {{- include "streamx.component.labels" (dict "componentName" $name "context" $) | nindent 4 }}
+spec:
+  replicas: {{ $config.replicas | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "streamx.component.selectorLabels" (dict "componentName" $name "context" $) | nindent 6 }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "streamx.component.labels" (dict "componentName" $name "context" $) | nindent 8 }}
+    spec:
+      {{- if $.Values.imagePullSecrets }}
+      imagePullSecrets: {{- $.Values.imagePullSecrets | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if $config.terminationGracePeriod }}
+      terminationGracePeriodSeconds:  {{ $config.terminationGracePeriod }}
+      {{- end }}
+      {{- if $config.nodeSelector }}
+      nodeSelector: {{- $config.nodeSelector | toYaml | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ $name }}
+          image: {{ $config.image }}
+          ports:
+            - name: metrics
+              containerPort: 8080
+          env:
+            - name: PULSAR_BROKER_URL
+              value: {{ $.Values.pulsar.serviceUrl }}
+            - name: PULSAR_REST_HTTP_URL
+              value: {{ $.Values.pulsar.webServiceUrl }}
+            - name: PLUGIN_STORE_TENANT
+              value: {{ include "streamx.tenant" $ }}
+            {{- range $index, $value := $config.inputs }}
+            - name: PLUGIN_FUNCTIONS_{{ $index }}__INPUT
+              value: {{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" $value "context" $) }}
+            {{- end }}
+            {{- range $index, $value := $config.outputs }}
+            - name: PLUGIN_FUNCTIONS_{{ $index }}__OUTPUT
+              value: {{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" $value "context" $) }}
+            {{- end }}
+            {{- if $config.env }}
+{{ toYaml $config.env | indent 12 }}
+            {{- end }}
+          resources:
+          {{- if $config.resources }}          
+{{ toYaml $config.resources | indent 12 }}
+          {{- else }}
+            requests:
+              cpu: 400m
+              memory: 256Mi
+          {{- end }}
+---
+{{- end }}

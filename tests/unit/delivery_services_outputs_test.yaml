@@ -1,0 +1,177 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test delivery services output - service
+set:
+  delivery:
+    service1:
+      replicas: 1
+      containers:
+        - name: test
+          image:
+            repository: test/repository
+          ports:
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+
+tests:
+  # @Test
+  - it: when a single output defined a single service with a single port is created
+    template: templates/delivery/delivery-service.yaml
+    set:
+      delivery:
+        service1:
+          outputs:
+            - name: output1
+              service:
+                port: 80
+                targetPort: http
+    asserts:
+      - isKind: 
+          of: Service
+      - hasDocuments:
+          count: 1
+      - matchRegex:
+          path: .metadata.name
+          pattern: -delivery-service1$
+      - lengthEqual:
+          path: spec.ports
+          count: 1
+      - equal:
+          path: spec.ports[0].port
+          value: 80
+      - equal:
+          path: spec.ports[0].targetPort
+          value: http
+  # @Test    
+  - it: when multiple outputs defined a single service with multiple ports is created
+    template: templates/delivery/delivery-service.yaml
+    set: 
+      delivery:
+        service1:
+          outputs:
+            - name: output1
+              service:
+                port: 80
+                targetPort: http
+            - name: output2
+              service:
+                port: 443
+                targetPort: https
+    asserts:
+      - isKind: 
+          of: Service
+      - hasDocuments:
+          count: 1
+      - matchRegex:
+          path: .metadata.name
+          pattern: -delivery-service1$
+      - lengthEqual:
+          path: spec.ports
+          count: 2
+      - equal:
+          path: spec.ports[0].port
+          value: 80
+      - equal:
+          path: spec.ports[0].targetPort
+          value: http
+      - equal:
+          path: spec.ports[1].port
+          value: 443
+      - equal:
+          path: spec.ports[1].targetPort
+          value: https
+  # @Test
+  - it: when a single output defined a single ingress is created
+    template: templates/delivery/delivery-ingress.yaml
+    set:
+      delivery:
+        service1:
+          outputs:
+            - name: output1
+              service:
+                port: 80
+                targetPort: http
+              ingress:
+                enabled: true
+                host: unit.test.host
+                path: /testpath
+    asserts:
+      - isKind: 
+          of: Ingress
+      - hasDocuments:
+          count: 1
+      - matchRegex:
+          path: .metadata.name
+          pattern: -delivery-service1-output1$
+      - equal:
+          path: spec.rules[0].host
+          value: unit.test.host
+      - equal:
+          path: spec.rules[0].http.paths[0].path
+          value: /testpath
+      - matchRegex:
+          path: spec.rules[0].http.paths[0].backend.service.name
+          pattern: -delivery-service1$
+      - equal:
+          path: spec.rules[0].http.paths[0].backend.service.port.number
+          value: 80
+  # @Test
+  - it: when multiple outputs defined multiple ingresses are created
+    template: templates/delivery/delivery-ingress.yaml
+    set:
+      delivery:
+        service1:
+          outputs:
+            - name: output1
+              service:
+                port: 80
+                targetPort: http
+              ingress:
+                enabled: true
+                host: unit.test.host1
+                path: /testpath
+            - name: output2
+              service:
+                port: 443
+                targetPort: https
+              ingress:
+                enabled: true
+                host: unit.test.host2
+                path: /testpath2
+    asserts:
+      - isKind: 
+          of: Ingress
+      - hasDocuments:
+          count: 2
+      - matchRegex:
+          path: .metadata.name
+          pattern: -delivery-service1-output(1|2)$
+      - lengthEqual:
+          path: spec.rules
+          count: 1
+  # @Test
+  - it: when multiple outputs defined ingress is created only when enabled
+    template: templates/delivery/delivery-ingress.yaml
+    set:
+      delivery:
+        service1:
+          outputs:
+            - name: output1
+              service:
+                port: 80
+                targetPort: http
+              ingress:
+                enabled: true
+                host: unit.test.host1
+                path: /testpath
+            - name: output2
+              service:
+                port: 443
+                targetPort: https
+    asserts:
+      - isKind: 
+          of: Ingress
+      - hasDocuments:
+          count: 1

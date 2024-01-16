@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test processing services envs
+set:
+  pulsar:
+    tenant:
+  processing:
+    service1:
+      image:
+        repository: test/repository
+      inputs:
+        - project1/input1
+        - project2/input2
+      
+tests:
+  # @Test
+  - it: when tenant is not set then RELEASE-NAME is used as tenant in topic URL for inputs
+    template: templates/processing/processing-deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PLUGIN_FUNCTIONS_0__INPUT
+            value: persistent://RELEASE-NAME/project1/input1
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PLUGIN_FUNCTIONS_1__INPUT
+            value: persistent://RELEASE-NAME/project2/input2
+  # @Test
+  - it: when tenant is set then tenant is used in topic URL for inputs
+    template: templates/processing/processing-deployment.yaml
+    set:
+      pulsar:
+        tenant: tenant1
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PLUGIN_FUNCTIONS_0__INPUT
+            value: persistent://tenant1/project1/input1
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PLUGIN_FUNCTIONS_1__INPUT
+            value: persistent://tenant1/project2/input2

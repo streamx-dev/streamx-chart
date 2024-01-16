@@ -1,0 +1,30 @@
+{{- range $name, $delivery := .Values.delivery }}
+{{- range $output := $delivery.outputs }}
+{{- if ($output.ingress).enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "streamx.component.fullname" (dict "componentName" (printf "%s-%s-%s" "delivery" $name $output.name ) "context" $) }}
+  annotations:
+    {{- if $output.ingress.annotations }}
+    {{- $output.ingress.annotations | toYaml | nindent 4 }}
+    {{- end }}
+  labels:
+    {{- include "streamx.component.labels" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) | nindent 4 }}
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ $output.ingress.host | quote }}
+    http:
+      paths:
+      - pathType: Prefix
+        path: {{ $output.ingress.path | quote }}
+        backend:
+          service:
+            name: {{ include "streamx.component.fullname" (dict "componentName" (printf "%s-%s" "delivery" $name) "context" $) }}
+            port:
+              number: {{ $output.service.port }}
+---
+{{- end }}
+{{- end }}
+{{- end }}

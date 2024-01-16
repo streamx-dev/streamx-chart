@@ -1,0 +1,18 @@
+{{- range $name, $delivery := .Values.delivery }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "streamx.component.fullname" (dict "componentName" (printf "%s-%s" "delivery" $name) "context" $) }}
+  labels:
+    {{- include "streamx.component.labels" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) | nindent 4 }}
+spec:
+  ports:
+    {{- range $output := $delivery.outputs }}
+    - name: {{ $output.name }}
+      port: {{ $output.service.port }}
+      targetPort: {{ $output.service.targetPort }}
+    {{- end }}
+  selector:
+    {{- include "streamx.component.selectorLabels" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) | nindent 4 }}
+---
+{{- end }}

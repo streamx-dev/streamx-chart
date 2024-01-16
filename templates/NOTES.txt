@@ -1,0 +1,10 @@
+Happy Helming!
+
+Delivery outputs:
+{{- range $delivery := .Values.delivery }}
+  {{- range $delivery.outputs }}
+  {{- if (.ingress).enabled }}
+  - http://{{ .ingress.host }}
+  {{- end }}
+  {{- end }}
+{{- end }}

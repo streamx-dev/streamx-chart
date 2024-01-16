@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test processing services store
+set:
+  pulsar:
+    tenant:
+  processing:
+    service1:
+      image:
+        repository: test/repository
+      
+tests:
+  # @Test
+  - it: when tenant is not set then PLUGIN_STORE_TENANT is set to RELEASE-NAME
+    template: templates/processing/processing-deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PLUGIN_STORE_TENANT
+            value: RELEASE-NAME

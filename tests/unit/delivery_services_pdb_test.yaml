@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test delivery services PDB
+set:
+  delivery:
+    service1: {}
+    
+tests:
+  # @Test
+  - it: when delivery service is configured then PDB guards that there is at least one replica available
+    template: templates/delivery/delivery-pdb.yaml
+    asserts:
+      - isKind: 
+          of: PodDisruptionBudget
+      - hasDocuments:
+          count: 1
+      - matchRegex:
+          path: .metadata.name
+          pattern: -delivery-service1$
+      - equal:
+          path: spec.minAvailable
+          value: 1
+  - it: when delivery service is configured then deployment strategy guards that there replicas are replaced only when new one is ready
+    template: templates/delivery/delivery-deployment.yaml
+    asserts:
+      - equal:
+          path: spec.strategy.type
+          value: RollingUpdate
+  - it: when delivery service has 3 replicas then PDB guarts at least 3 replicas are available by default
+    template: templates/delivery/delivery-pdb.yaml
+    set:
+      delivery:
+        service1:
+          replicas: 3
+    asserts:
+      - equal:
+          path: spec.minAvailable
+          value: 3
+  - it: delivery service can overwrite minAvailable pdb
+    template: templates/delivery/delivery-pdb.yaml
+    set:
+      delivery:
+        service1:
+          replicas: 3
+          pdb:
+            minAvailable: 2
+    asserts:
+      - equal:
+          path: spec.minAvailable
+          value: 2

@@ -1,0 +1,14 @@
+{{- range $name, $delivery := .Values.delivery }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "streamx.component.fullname" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) }}
+  labels:
+    {{- include "streamx.component.labels" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+{{- include "streamx.component.selectorLabels" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) | nindent 6 }}
+  minAvailable: {{ ($delivery.pdb).minAvailable | default $delivery.replicas | default 1 }}
+---
+{{- end }}

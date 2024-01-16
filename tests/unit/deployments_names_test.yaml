@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test deployments names
+set:
+  publications_api:
+    ingress:
+      enabled: true
+      host: unit.test.host
+  processing:
+    service1:
+      image:
+        repository: test/repository
+  delivery:
+    unit_test_service:
+      outputs:
+        - name: http
+          service:
+            containerRef:
+              name: client
+            port: 80
+            targetPort: http
+          ingress:
+            enabled: true
+            host: unit.test.host
+            path: /
+      containers:
+        - name: test
+          image:
+            repository: test
+            tag: test
+          monitoring:
+            enabled: true
+      pdb:
+        enabled: true
+templates:
+  # test all resources created by the chart
+  - templates/[a-z/\-]+/**[a-z/\-]+.yaml
+tests:
+  # @Test
+  - it: deployment name should contain chart name and release name when release name is different than chart name
+    release:
+      name: unit-tests
+    asserts:
+      - matchRegex:
+          path: metadata.name
+          pattern: unit-tests-streamx-.*$
+  # @Test
+  - it: deployment name should contain release name when release name is the same as chart name
+    release:
+      name: streamx
+    asserts:
+      - matchRegex:
+          path: metadata.name
+          pattern: streamx-.*$

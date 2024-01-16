@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test delivery services inputs
+set:
+  delivery:
+    service1: {}
+
+tests:
+  # @Test
+  - it: when input defined then topic url and unique subscription is cofigured for each container
+    template: templates/delivery/delivery-deployment.yaml
+    set:
+      pulsar:
+        tenant: tenant1
+      delivery:
+        service1:
+          inputs:
+            - namespace/topic
+          containers:
+            - name: container
+              image:
+                repository: test/repository
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: 
+            name: PULSAR_OUTBOX_TOPIC
+            value: persistent://tenant1/namespace/topic
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: 
+            name: PULSAR_OUTBOX_SUBSCRIPTION_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name

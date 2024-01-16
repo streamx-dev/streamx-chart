@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test delivery services deployments
+    
+tests:
+  # @Test
+  - it: for each delivery service there is a deployment created
+    template: templates/delivery/delivery-deployment.yaml
+    set:
+      delivery:
+        service1: {}
+        service2: {}
+        service3: {}
+    asserts:
+      - isKind: 
+          of: Deployment
+      - hasDocuments:
+          count: 3
+      - matchRegex:
+          path: .metadata.name
+          pattern: -delivery-service[0-9]+$

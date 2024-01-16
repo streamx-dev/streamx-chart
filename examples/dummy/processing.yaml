@@ -1,0 +1,3 @@
+processing:
+  example-processing-service:
+    image: busybox

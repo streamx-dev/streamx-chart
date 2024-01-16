@@ -1,0 +1,117 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test delivery services metrics
+set:
+  delivery:
+    service1:
+      replicas: 1
+
+tests:
+  # @Test
+  - it: when a delivery service with a single container defined a single PodMonitor is created
+    template: templates/delivery/delivery-podmonitor.yaml
+    set:
+      delivery:
+        service1:
+          containers:
+            - name: container
+              image:
+                repository: test/repository
+              monitoring:
+                path: /test
+    asserts:
+      - isKind: 
+          of: PodMonitor
+      - hasDocuments:
+          count: 1
+      - matchRegex:
+          path: .metadata.name
+          pattern: -delivery-service1$
+      - lengthEqual:
+          path: spec.podMetricsEndpoints
+          count: 1
+      - equal:
+          path: spec.podMetricsEndpoints[0].port
+          value: metrics-contain # port name length is limited to 15 characters
+      - equal:
+          path: spec.podMetricsEndpoints[0].path
+          value: /test
+  # @Test
+  - it: when a delivery service with multiple containers defined a single PodMonitor is created
+    template: templates/delivery/delivery-podmonitor.yaml
+    set:
+      delivery:
+        service1:
+          containers:
+            - name: c1
+              image:
+                repository: test/repository
+              monitoring:
+                path: /q/metrics1
+            - name: c2
+              image:
+                repository: test/repository
+              monitoring:
+                path: /q/metrics2
+    asserts:
+      - isKind: 
+          of: PodMonitor
+      - hasDocuments:
+          count: 1
+      - matchRegex:
+          path: .metadata.name
+          pattern: -delivery-service1$
+      - lengthEqual:
+          path: spec.podMetricsEndpoints
+          count: 2
+      - equal:
+          path: spec.podMetricsEndpoints[0].port
+          value: metrics-c1
+      - equal:
+          path: spec.podMetricsEndpoints[0].path
+          value: /q/metrics1
+      - equal:
+          path: spec.podMetricsEndpoints[1].port
+          value: metrics-c2
+      - equal:
+          path: spec.podMetricsEndpoints[1].path
+          value: /q/metrics2
+  # @Test
+  - it: when a delivery service with a single container defined a monitoring with default port is created
+    template: templates/delivery/delivery-deployment.yaml
+    set:
+      delivery:
+        service1:
+          containers:
+            - name: container
+              image:
+                repository: test/repository
+              monitoring:
+                path: /q/metrics
+    asserts:
+      - equal:
+          path: .spec.template.spec.containers[0].ports[0].containerPort
+          value: 8080
+      - equal:
+          path: .spec.template.spec.containers[0].ports[0].name
+          value: metrics-contain
+  # @Test
+  - it: when a delivery service with a single container and monitoring port defined a monitoring port is created
+    template: templates/delivery/delivery-deployment.yaml
+    set:
+      delivery:
+        service1:
+          containers:
+            - name: container
+              image:
+                repository: test/repository
+              monitoring:
+                path: /q/metrics
+                port: 9999
+    asserts:
+      - equal:
+          path: .spec.template.spec.containers[0].ports[0].containerPort
+          value: 9999
+      - equal:
+          path: .spec.template.spec.containers[0].ports[0].name
+          value: metrics-contain

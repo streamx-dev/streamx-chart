@@ -1,0 +1,43 @@
+{{- range $name, $delivery := .Values.delivery }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "streamx.component.fullname" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) }}
+  labels:
+    {{- include "streamx.component.labels" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) | nindent 4 }}
+    release: {{ $.Release.Name }}
+spec:
+  jobLabel: app.kubernetes.io/component
+  podMetricsEndpoints:
+  {{- range $container := $delivery.containers }}
+  {{- with $container.monitoring }}
+    - port: {{ printf "metrics-%s" $container.name | trunc 15 | trimSuffix "-" }}
+      path: {{ .path }}
+      scheme: http
+      interval: {{ .interval | default "10s" }}
+      scrapeTimeout: {{ .scrapeTimeout | default "10s" }}
+      relabelings:
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_(.+)
+        - sourceLabels: [__meta_kubernetes_namespace]
+          action: replace
+          targetLabel: kubernetes_namespace
+        - sourceLabels: [__meta_kubernetes_pod_label_component]
+          action: replace
+          targetLabel: job
+        - sourceLabels: [__meta_kubernetes_pod_name]
+          action: replace
+          targetLabel: kubernetes_pod_name
+        - sourceLabels: [__meta_kubernetes_pod_name]
+          action: replace
+          targetLabel: instance
+        - sourceLabels: [__meta_kubernetes_pod_container_name]
+          action: replace
+          targetLabel: application
+  {{- end }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "streamx.component.selectorLabels" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) | nindent 6 }}
+---
+{{- end }}

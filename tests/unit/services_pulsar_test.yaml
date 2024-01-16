@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test services pulsar
+set:
+  pulsar:
+    serviceUrl: "pulsar://pulsar-service:6650"
+    webServiceUrl: "http://pulsar-web-service:8080"
+  processing:
+    service1:
+      image:
+        repository: test/processing-service
+  delivery:
+    service2:
+      containers:
+        - name: test
+          image:
+            repository: test/delivery-service
+templates:
+  - templates/processing/processing-deployment.yaml
+  - templates/delivery/delivery-deployment.yaml
+tests:
+  # @Test
+  - it: when pulsar connection is set then services' containers have PULSAR_BROKER_URL and PULSAR_REST_HTTP_URL env variables
+    template: templates/processing/processing-deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PULSAR_BROKER_URL
+            value: "pulsar://pulsar-service:6650"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PULSAR_REST_HTTP_URL
+            value: "http://pulsar-web-service:8080"

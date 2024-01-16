@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test delivery services labels usage
+chart:
+  version: unit.test.version
+release:
+  name: unit-tests
+set:
+  webserver.enabled: true
+tests:
+  # @Test
+  - it: delivery service anti-affinity matches deployment pod labels
+    set:
+      delivery:
+        webserver:
+          replicas: 1
+          affinity:
+            podAntiAffinity:
+              enabled: true
+    templates:
+      - templates/delivery/delivery-deployment.yaml
+    asserts:
+      - isSubset:
+          path: spec.template.metadata
+          content:
+            labels:
+              app.kubernetes.io/component: delivery-webserver
+              app.kubernetes.io/instance: unit-tests
+              app.kubernetes.io/managed-by: Helm
+              app.kubernetes.io/name: streamx
+              helm.sh/chart: streamx-unit.test.version
+      - contains:
+          path: spec.template.spec.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution[0].labelSelector.matchExpressions
+          content:
+            key: app.kubernetes.io/instance
+            operator: In
+            values:
+              - unit-tests
+      - contains:
+          path: spec.template.spec.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution[0].labelSelector.matchExpressions
+          content:
+            key: app.kubernetes.io/component
+            operator: In
+            values:
+              - delivery-webserver
+      - contains:
+          path: spec.template.spec.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution[0].labelSelector.matchExpressions
+          content:
+            key: app.kubernetes.io/name
+            operator: In
+            values:
+              - streamx

@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test delivery services configs
+set:
+  delivery:
+    service1:
+      replicas: 1
+
+tests:
+  # @Test
+  - it: when delivery service container configures a single config then volume and volume mount are created
+    template: templates/delivery/delivery-deployment.yaml
+    set:
+      delivery:
+        service1:
+          containers:
+            - name: container
+              image:
+                repository: test/repository
+              configs:
+                - configMapName: configMap1
+                  mountPath: /config/path
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content: 
+            name: config-container-0
+            configMap:
+              name: configMap1
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: config-container-0
+            mountPath: /config/path

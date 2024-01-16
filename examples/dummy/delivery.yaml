@@ -1,0 +1,14 @@
+delivery:
+  example-delivery-service:
+    outputs:
+      - name: http
+        service:
+          containerRef:
+            name: example
+          port: 80
+          targetPort: http
+    containers:
+      - name: example
+        image: busybox
+        monitoring:
+          path: /q/metrics

@@ -1,0 +1,91 @@
+# Default values for StreamX
+# This is a YAML-formatted file.
+
+# -- imagePullSecrets used to authenticate to registry containing StreamX and custom services
+imagePullSecrets: []
+
+# Common settings related to Apache Pulsar connectivity and setup
+pulsar:
+  # -- Apache Pulsar Broker Service URL
+  serviceUrl: "pulsar://pulsar-service:6650"
+  # -- Apache Pulsar REST API URL
+  webServiceUrl: "http://pulsar-web-service:8080"
+  # -- overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name`
+  tenant:
+
+# -- `Processing Services` map
+processing: {}
+  # example-processing-service: # unique service name
+  #   replicas: 2 # to override default (1) service replicas
+  #   image: <image-repository>:<image-tag>
+  #   inputs: # list of input topics, order matters
+  #     - <namespace>/<topic-name>
+  #   outputs: # list of output topics, order matters
+  #     - <namespace>/<topic-name>
+  #   env:
+  #     - name: NAME
+  #       value: VALUE
+  #   resources: # overrides default resources
+  #     requests:
+  #       memory: 256Mi
+  #       cpu: 400m
+  #   nodeSelector:
+  #     <nodeSelectorKey>: <nodeSelectorValue>
+  #   podMonitor: # overrides default podMonitor settings
+  #     interval: 10s
+  #     scrapeTimeout: 10s
+  #     path: /q/metrics
+
+# -- `Delivery Services` map
+delivery: {}
+  # example-delivery-service: # unique service name
+  #   replicas: 2 # to override default (1) service replicas
+  #   inputs:
+  #     - <namespace>/<topic-name>
+  #   outputs:
+  #     - name: http
+  #       service:
+  #         containerRef:
+  #           name: client # corresponds to container name in `containers` section
+  #         port: 80
+  #         targetPort: http
+  #       ingress:
+  #         enabled: true
+  #         host: my-domain.com
+  #         path: /
+  #         annotations: {}
+  #   containers:
+  #     - name: client
+  #       image: <image-repository>:<image-tag>
+  #       ports:
+  #         - name: http
+  #           containerPort: 8080
+  #       env:
+  #       - name: JAVA_OPTS
+  #         value: "-Xms512m -Xmx1024m"
+  #       data:
+  #         metadataMountPath: /application/store/metadata
+  #         repositoryMountPath: /application/store/resources
+  #       configs: # configMap mounted as volume under mountPath
+  #         - mountPath: /etc/nginx/conf.d
+  #           configMapName: generated-site-nginx-config
+  #       monitoring:
+  #         path: /q/metrics # mandatory to enable monitoring
+  #         port: 8080 # optional, defaults to 8080
+  #         interval: 10s # optional, defaults to 10s
+  #         scrapeTimeout: 10s # optional, defaults to 10s
+  #       resources:
+  #         requests:
+  #           memory: 50Mi
+  #           cpu: 50m
+  #       livenessProbe:
+  #       readinessProbe:
+  #       startupProbe:
+  #   data:  # optional
+  #     repositorySize: 1Gi
+  #     metadataSize: 1Gi
+  #   affinity:
+  #     podAntiAffinity:
+  #       enabled: true
+  #   pdb:
+  #     minAvailable:
