@@ -1,4 +1,4 @@
-{{- range $name, $config := .Values.processing }}
+{{- range $name, $processing := .Values.processing }}
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -10,10 +10,10 @@ spec:
   jobLabel: $name
   podMetricsEndpoints:
     - port: metrics
-      path: {{ ($config.podMonitor).path | default "/q/metrics" }}
+      path: {{ ($processing.podMonitor).path | default "/q/metrics" }}
       scheme: http
-      interval: {{ ($config.podMonitor).interval | default "10s" }}
-      scrapeTimeout: {{ ($config.podMonitor).scrapeTimeout | default "10s" }}
+      interval: {{ ($processing.podMonitor).interval | default "10s" }}
+      scrapeTimeout: {{ ($processing.podMonitor).scrapeTimeout | default "10s" }}
       relabelings:
         - action: labelmap
           regex: __meta_kubernetes_pod_label_(.+)

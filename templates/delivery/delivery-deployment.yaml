@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "streamx.component.labels" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) | nindent 4 }}
 spec:
-  replicas: {{ $delivery.replicas | default 1 }}
+  replicas: {{ if hasKey $delivery "replicas" }}{{ $delivery.replicas }}{{ else }}1{{ end }}
   selector:
     matchLabels:
       {{- if $delivery.labelsOverride }}
