@@ -4,11 +4,36 @@ delivery:
       - name: http
         service:
           containerRef:
-            name: example
+            name: webserver
           port: 80
           targetPort: http
+        ingress:
+          enabled: true
+          host: streamx.127.0.0.1.nip.io
+          path: /
+          annotations: {}
     containers:
-      - name: example
-        image: busybox
+      - name: webserver
+        image: nginx
+        ports:
+          - name: http
+            containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /nginx_status
+            port: 80
+            scheme: HTTP
+      - name: nginx-exporter
+        image: nginx/nginx-prometheus-exporter
+        args:
+          - '-nginx.scrape-uri=http://localhost/nginx_status'
+        resources:
+          requests:
+            memory: 64Mi
+            cpu: 50m
+          limits:
+            memory: 128Mi
+            cpu: 500m
         monitoring:
-          path: /q/metrics
+          path: /metrics
+          port: 9113
