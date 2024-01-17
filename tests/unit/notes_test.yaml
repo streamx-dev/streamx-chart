@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test chart notes
+templates:
+  - templates/NOTES.txt
+tests:
+  # @Test
+  - it: when rest_ingestion service ingress enabled then host printed in notes
+    set:
+      rest_ingestion:
+        ingress:
+          host: rest.ingestion.host
+    asserts:
+      - matchSnapshot: {}
+  # @Test
+  - it: when delivery service ingress enabled then host printed in notes
+    set:
+      delivery:
+        service1:
+          outputs:
+            - name: output1
+              service:
+                port: 80
+                targetPort: http
+              ingress:
+                enabled: true
+                host: service1.host
+                path: /testpath
+    asserts:
+      - matchSnapshot: {}
