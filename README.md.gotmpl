@@ -95,6 +95,16 @@ and check that all deployments are running:
 kubectl get deployment -n streamx -l app.kubernetes.io/instance=streamx
 ```
 
+Additionally, you may check that REST Ingestion Service is exposed by calling:
+
+```bash
+curl -X 'GET' \
+  'http://streamx-api.127.0.0.1.nip.io/publications/v1/schema' \
+  -H 'accept: */*'
+```
+
+It should return an empty array.
+
 ### Testing
 
 #### Helm unit tests
