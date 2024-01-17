@@ -20,7 +20,9 @@ jobs:
 
       - name: Verify chart
         run: |
-          helm template --output-dir generated test . -f examples/dummy/processing.yaml -f examples/dummy/delivery.yaml
+          helm template --output-dir generated test . \
+            --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
+            -f examples/dummy/processing.yaml -f examples/dummy/delivery.yaml
 
       - name: Run chart helm-unittest
         run: |

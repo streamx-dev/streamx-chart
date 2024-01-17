@@ -1,0 +1,27 @@
+{{- if .Values.rest_ingestion.enabled -}}
+{{ with .Values.rest_ingestion.ingress  }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "streamx.component.fullname" (dict "componentName" "rest-ingestion" "context" $) }}
+  annotations:
+    {{- if .annotations }}
+    {{- .annotations | toYaml | nindent 4 }}
+    {{- end }}
+  labels:
+    {{- include "streamx.component.labels" (dict "componentName" "rest-ingestion" "context" $) | nindent 4 }}
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ .host }}
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: {{ include "streamx.component.fullname" (dict "componentName" "rest-ingestion" "context" $) }}
+            port:
+              number: 80
+{{- end }}
+{{- end }}
