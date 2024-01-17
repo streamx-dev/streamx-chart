@@ -5,8 +5,6 @@ chart:
   version: unit.test.version
 release:
   name: unit-tests
-set:
-  webserver.enabled: true
 tests:
   # @Test
   - it: delivery service anti-affinity matches deployment pod labels

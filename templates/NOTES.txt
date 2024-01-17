@@ -1,10 +1,18 @@
-Happy Helming!
+Happy StreamX Helming!
+---------------------
 
-Delivery outputs:
+{{- with (.Values.rest_ingestion).ingress }}
+Ingestion services:
+- http://{{ .host }}
+{{- end }}
+
+{{- if gt (len .Values.delivery) 0 }}
+Delivery services:
+{{- end }}
 {{- range $delivery := .Values.delivery }}
   {{- range $delivery.outputs }}
   {{- if (.ingress).enabled }}
-  - http://{{ .ingress.host }}
+- http://{{ .ingress.host }}
   {{- end }}
   {{- end }}
 {{- end }}

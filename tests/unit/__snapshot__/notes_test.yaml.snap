@@ -1,0 +1,14 @@
+when delivery service ingress enabled then host printed in notes:
+  1: |
+    raw: |-
+      Happy StreamX Helming!
+      ---------------------
+      Delivery services:
+      - http://service1.host
+when rest_ingestion service ingress enabled then host printed in notes:
+  1: |
+    raw: |-
+      Happy StreamX Helming!
+      ---------------------
+      Ingestion services:
+      - http://rest.ingestion.host
