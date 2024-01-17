@@ -16,8 +16,21 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | imagePullSecrets | list | `[]` | imagePullSecrets used to authenticate to registry containing StreamX and custom services |
 | processing | object | `{}` | `Processing Services` map |
 | pulsar.serviceUrl | string | `"pulsar://pulsar-service:6650"` | Apache Pulsar Broker Service URL |
-| pulsar.tenant | string | `nil` | overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name` |
+| pulsar.tenant | string | `"public"` | FixMe: **other tenant than `public` is not supported**; overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name` |
 | pulsar.webServiceUrl | string | `"http://pulsar-web-service:8080"` | Apache Pulsar REST API URL |
+| rest_ingestion.enabled | bool | `true` |  |
+| rest_ingestion.env | list | `[]` |  |
+| rest_ingestion.image | string | `"europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service:1.0-SNAPSHOT"` |  |
+| rest_ingestion.livenessProbe | object | `{}` | liveness probe settings |
+| rest_ingestion.nodeSelector | object | `{}` |  |
+| rest_ingestion.podMonitor.enabled | bool | `true` | enables monitoring coreos podMonitor |
+| rest_ingestion.podMonitor.interval | string | `"10s"` | metrics scrape interval |
+| rest_ingestion.podMonitor.path | string | `"/q/metrics"` | metrics scrape path |
+| rest_ingestion.podMonitor.scrapeTimeout | string | `"10s"` | metrics scrape timeout |
+| rest_ingestion.readinessProbe | object | `{}` | readiness probe settings |
+| rest_ingestion.replicas | int | `1` |  |
+| rest_ingestion.resources | object | `{}` |  |
+| rest_ingestion.startupProbe | object | `{}` | startup probe settings |
 
 ### Services Mesh
 
@@ -80,18 +93,24 @@ Install required dependencies:
 .github/scripts/install-prerequisites.sh
 ```
 
+Clone `streamx-dev/streamx` repository and build it locally for Docker images.
+
 Run the command below to install the chart:
 
 ```bash
 kubectl create namespace streamx
 kubectl create configmap streamx-site-nginx-config -n streamx --from-file=examples/dummy/nginx/streamx.conf
-helm upgrade --install streamx . -n streamx -f examples/dummy/processing.yaml -f examples/dummy/delivery.yaml
+helm upgrade --install streamx . -n streamx \
+  --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
+  --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
+  --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
+  -f examples/dummy/processing.yaml -f examples/dummy/delivery.yaml
 ```
 
-and check that all the dummy processing and delivery services pods are running:
+and check that all deployments are running:
 
 ```bash
-kubectl get pods -n streamx -l app.kubernetes.io/instance=streamx
+kubectl get deployment -n streamx -l app.kubernetes.io/instance=streamx
 ```
 
 ### Testing

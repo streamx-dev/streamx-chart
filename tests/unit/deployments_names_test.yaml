@@ -2,9 +2,8 @@
 
 suite: test deployments names
 set:
-  publications_api:
+  rest_ingestion:
     ingress:
-      enabled: true
       host: unit.test.host
   processing:
     service1:

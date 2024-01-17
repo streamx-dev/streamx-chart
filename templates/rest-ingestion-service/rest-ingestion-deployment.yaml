@@ -1,0 +1,81 @@
+{{- if .Values.rest_ingestion.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "streamx.component.fullname" (dict "componentName" "rest-ingestion" "context" $) }}
+  labels:
+    {{- include "streamx.component.labels" (dict "componentName" "rest-ingestion" "context" $) | nindent 4 }}
+spec:
+  replicas: {{ .Values.rest_ingestion.replicas }}
+  selector:
+    matchLabels:
+      {{- include "streamx.component.selectorLabels" (dict "componentName" "rest-ingestion" "context" $) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "streamx.component.labels" (dict "componentName" "rest-ingestion" "context" $) | nindent 8 }}
+    spec:
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets: {{- .Values.imagePullSecrets | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if .Values.rest_ingestion.nodeSelector }}
+      nodeSelector: {{- .Values.rest_ingestion.nodeSelector | toYaml | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: rest-ingestion
+          image: {{ .Values.rest_ingestion.image }}
+          ports:
+            - name: http
+              containerPort: 8080          
+          env:
+            - name: PULSAR_CLIENT_SERVICEURL
+              value: {{ .Values.pulsar.serviceUrl }}
+            - name: PULSAR_ADMIN_SERVICEURL
+              value: {{ .Values.pulsar.webServiceUrl }}
+            - name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
+              value: {{ .Values.pulsar.serviceUrl }}
+            {{- if .Values.rest_ingestion.env }}
+{{ toYaml .Values.rest_ingestion.env | indent 12 }}
+            {{- end }}
+        {{- if .Values.rest_ingestion.resources }}
+          resources:
+{{ toYaml .Values.rest_ingestion.resources | indent 12 }}
+        {{- end }}
+        {{- if .Values.rest_ingestion.livenessProbe.enabled }}
+          livenessProbe:
+            initialDelaySeconds: {{ .Values.rest_ingestion.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.rest_ingestion.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.rest_ingestion.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.rest_ingestion.livenessProbe.failureThreshold }}
+            successThreshold: {{ .Values.rest_ingestion.livenessProbe.successThreshold }}
+            httpGet:
+              path: /q/health/live
+              port: 8080
+              scheme: HTTP
+          {{- end }}
+        {{- if .Values.rest_ingestion.readinessProbe.enabled }}
+          readinessProbe:
+            initialDelaySeconds: {{ .Values.rest_ingestion.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.rest_ingestion.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.rest_ingestion.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.rest_ingestion.readinessProbe.failureThreshold }}
+            successThreshold: {{ .Values.rest_ingestion.readinessProbe.successThreshold }}
+            httpGet:
+              path: /q/health/ready
+              port: 8080
+              scheme: HTTP
+          {{- end }}
+          {{- if .Values.rest_ingestion.startupProbe.enabled }}
+          startupProbe:
+            initialDelaySeconds: {{ .Values.rest_ingestion.startupProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.rest_ingestion.startupProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.rest_ingestion.startupProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.rest_ingestion.startupProbe.failureThreshold }}
+            successThreshold: {{ .Values.rest_ingestion.startupProbe.successThreshold }}
+            httpGet:
+              path: /q/health/started
+              port: 8080
+              scheme: HTTP
+          {{- end }}
+
+{{- end }}

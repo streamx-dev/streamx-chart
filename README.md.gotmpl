@@ -75,18 +75,24 @@ Install required dependencies:
 .github/scripts/install-prerequisites.sh
 ```
 
+Clone `streamx-dev/streamx` repository and build it locally for Docker images.
+
 Run the command below to install the chart:
 
 ```bash
 kubectl create namespace streamx
 kubectl create configmap streamx-site-nginx-config -n streamx --from-file=examples/dummy/nginx/streamx.conf
-helm upgrade --install streamx . -n streamx -f examples/dummy/processing.yaml -f examples/dummy/delivery.yaml
+helm upgrade --install streamx . -n streamx \
+  --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
+  --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
+  --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
+  -f examples/dummy/processing.yaml -f examples/dummy/delivery.yaml
 ```
 
-and check that all the dummy processing and delivery services pods are running:
+and check that all deployments are running:
 
 ```bash
-kubectl get pods -n streamx -l app.kubernetes.io/instance=streamx
+kubectl get deployment -n streamx -l app.kubernetes.io/instance=streamx
 ```
 
 ### Testing

@@ -10,8 +10,80 @@ pulsar:
   serviceUrl: "pulsar://pulsar-service:6650"
   # -- Apache Pulsar REST API URL
   webServiceUrl: "http://pulsar-web-service:8080"
-  # -- overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name`
-  tenant:
+  # -- FixMe: **other tenant than `public` is not supported**; overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name`
+  tenant: public
+
+## StreamX REST Ingestion Service
+rest_ingestion:
+  ## -- enables REST Ingestion Service
+  enabled: true
+  ## -- number of replicas
+  replicas: 1
+  ## -- image repository and tag
+  image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service:1.0-SNAPSHOT
+  ## -- environment variables
+  env:
+    # @ignored when generating docs
+    - name: MP_MESSAGING_OUTGOING_ALL-INBOXES_TOPICSPATTERN
+      value: "persistent://public/default/.*"
+  podMonitor:
+    # -- enables monitoring coreos podMonitor
+    enabled: true
+    # -- metrics scrape interval
+    interval: 10s
+    # -- metrics scrape timeout
+    scrapeTimeout: 10s
+    # -- metrics scrape path
+    path: /q/metrics
+  # -- liveness probe settings
+  livenessProbe:
+    # @ignored when generating docs
+    enabled: true
+    # @ignored when generating docs
+    initialDelaySeconds: 0
+    # @ignored when generating docs
+    periodSeconds: 5
+    # @ignored when generating docs
+    timeoutSeconds: 1
+    # @ignored when generating docs
+    failureThreshold: 6
+    # @ignored when generating docs
+    successThreshold: 1
+  # -- readiness probe settings
+  readinessProbe:
+    # @ignored when generating docs
+    enabled: true
+    # @ignored when generating docs
+    initialDelaySeconds: 0
+    # @ignored when generating docs
+    periodSeconds: 5
+    # @ignored when generating docs
+    timeoutSeconds: 1
+    # @ignored when generating docs
+    failureThreshold: 6
+    # @ignored when generating docs
+    successThreshold: 1
+  # -- startup probe settings
+  startupProbe:
+    # @ignored when generating docs
+    enabled: true
+    # @ignored when generating docs
+    initialDelaySeconds: 5
+    # @ignored when generating docs
+    periodSeconds: 5
+    # @ignored when generating docs
+    timeoutSeconds: 1
+    # @ignored when generating docs
+    failureThreshold: 6
+    # @ignored when generating docs
+    successThreshold: 1
+  # ingress:
+    # annotations: {}
+    # host: define host to expose service
+  ## -- resources for the container
+  resources: {}
+  ## -- node labels for pod assignment
+  nodeSelector: {}
 
 # -- `Processing Services` map
 processing: {}

@@ -1,19 +1,20 @@
-{{- range $name, $processing := .Values.processing }}
+{{- if .Values.rest_ingestion.enabled -}}
+{{- if .Values.rest_ingestion.podMonitor.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
-  name: {{ include "streamx.component.fullname" (dict "componentName" $name "context" $) }}
+  name: {{ include "streamx.component.fullname" (dict "componentName" "rest-ingestion" "context" $) }}
   labels:
-    {{- include "streamx.component.labels" (dict "componentName" $name "context" $) | nindent 4 }}
-    release: {{ $.Release.Name }}
+    {{- include "streamx.component.labels" (dict "componentName" "rest-ingestion" "context" $) | nindent 4 }}
+    release: {{ .Release.Name }}
 spec:
   jobLabel: app.kubernetes.io/component
   podMetricsEndpoints:
-    - port: metrics
-      path: {{ ($processing.podMonitor).path | default "/q/metrics" }}
+    - port: http
+      path: /q/metrics
       scheme: http
-      interval: {{ ($processing.podMonitor).interval | default "10s" }}
-      scrapeTimeout: {{ ($processing.podMonitor).scrapeTimeout | default "10s" }}
+      interval: {{ .Values.rest_ingestion.podMonitor.interval }}
+      scrapeTimeout: {{ .Values.rest_ingestion.podMonitor.scrapeTimeout }}
       relabelings:
         - action: labelmap
           regex: __meta_kubernetes_pod_label_(.+)
@@ -34,6 +35,6 @@ spec:
           targetLabel: application
   selector:
     matchLabels:
-      {{- include "streamx.component.selectorLabels" (dict "componentName" $name "context" $) | nindent 6 }}
----
+      {{- include "streamx.component.selectorLabels" (dict "componentName" "rest-ingestion" "context" $) | nindent 6 }}
+{{- end }}
 {{- end }}
