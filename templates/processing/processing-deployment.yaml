@@ -32,6 +32,18 @@ spec:
           ports:
             - name: metrics
               containerPort: 8080
+          {{- if $processing.command }}
+          command:
+            {{- range $cmd := $processing.command }}
+            - {{ $cmd | quote }}
+            {{- end }}
+          {{- end }}
+          {{- if $processing.args }}
+          args:
+            {{- range $arg := $processing.args }}
+            - {{ $arg | quote }}
+            {{- end }}
+          {{- end }}
           env:
             - name: PULSAR_BROKER_URL
               value: {{ $.Values.pulsar.serviceUrl }}

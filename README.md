@@ -72,6 +72,27 @@ Every delivery service container gets the following environment variables:
 - `PULSAR_SERVICE_URL` - Apache Pulsar Broker Service URL
 - `PULSAR_WEB_SERVICE_URL` - Apache Pulsar REST API URL
 
+### Development
+
+Install required dependencies:
+
+```bash
+.github/scripts/install-prerequisites.sh
+```
+
+Run the command below to install the chart:
+
+```bash
+kubectl create namespace streamx
+helm upgrade --install streamx . -n streamx -f examples/dummy/processing.yaml -f examples/dummy/delivery.yaml
+```
+
+and check that all the dummy processing and delivery services pods are running:
+
+```bash
+kubectl get pods -n streamx -l app.kubernetes.io/instance=streamx
+```
+
 ### Testing
 
 #### Helm unit tests

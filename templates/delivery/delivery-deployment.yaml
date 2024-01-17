@@ -72,13 +72,13 @@ spec:
           {{- if $container.command }}
           command:
             {{- range $cmd := $container.command }}
-            - {{ $cmd }}
+            - {{ $cmd | quote }}
             {{- end }}
           {{- end }}
           {{- if $container.args }}
           args:
             {{- range $arg := $container.args }}
-            - {{ $arg }}
+            - {{ $arg | quote}}
             {{- end }}
           {{- end }}
           env:
