@@ -53,9 +53,9 @@ spec:
               value: {{ $.Values.pulsar.serviceUrl }}
             - name: PLUGIN_STORE_TENANT
               value: {{ include "streamx.tenant" $ }}
-            {{- range $index, $value := $processing.inputs }}
-            - name: PLUGIN_FUNCTIONS_{{ $index }}__INPUT
-              value: {{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" $value "context" $) }}
+            {{- range $key, $channel := $processing.incoming }}
+            - name: MP_MESSAGING_INCOMING_{{ $key | upper }}_TOPIC
+              value: {{ include "streamx.channelTopic" (dict "channel" $channel "context" $) }}
             {{- end }}
             {{- range $index, $value := $processing.outputs }}
             - name: PLUGIN_FUNCTIONS_{{ $index }}__OUTPUT
