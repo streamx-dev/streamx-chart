@@ -103,7 +103,7 @@ helm upgrade --install streamx . -n streamx \
   --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
   --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
   --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
-  -f examples/dummy/processing.yaml -f examples/dummy/delivery.yaml
+  -f examples/reference/processing.yaml -f examples/dummy/delivery.yaml
 ```
 
 and check that all deployments are running:

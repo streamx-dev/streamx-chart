@@ -45,10 +45,12 @@ spec:
             {{- end }}
           {{- end }}
           env:
-            - name: PULSAR_BROKER_URL
-              value: {{ $.Values.pulsar.serviceUrl }}
-            - name: PULSAR_REST_HTTP_URL
+            - name: PULSAR_ADMIN_SERVICEURL
               value: {{ $.Values.pulsar.webServiceUrl }}
+            - name: PULSAR_CLIENT_SERVICEURL
+              value: {{ $.Values.pulsar.serviceUrl }}
+            - name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
+              value: {{ $.Values.pulsar.serviceUrl }}
             - name: PLUGIN_STORE_TENANT
               value: {{ include "streamx.tenant" $ }}
             {{- range $index, $value := $processing.inputs }}
