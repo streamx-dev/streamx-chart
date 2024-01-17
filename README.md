@@ -13,7 +13,7 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | delivery | object | `{}` | `Delivery Services` map |
-| imagePullSecrets | list | `[]` | imagePullSecrets used to authenticate to registry containing StreamX Blueprints |
+| imagePullSecrets | list | `[]` | imagePullSecrets used to authenticate to registry containing StreamX and custom services |
 | processing | object | `{}` | `Processing Services` map |
 | pulsar.serviceUrl | string | `"pulsar://pulsar-service:6650"` | Apache Pulsar Broker Service URL |
 | pulsar.tenant | string | `nil` | overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name` |
@@ -84,6 +84,7 @@ Run the command below to install the chart:
 
 ```bash
 kubectl create namespace streamx
+kubectl create configmap streamx-site-nginx-config -n streamx --from-file=examples/dummy/nginx/streamx.conf
 helm upgrade --install streamx . -n streamx -f examples/dummy/processing.yaml -f examples/dummy/delivery.yaml
 ```
 
