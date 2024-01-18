@@ -15,18 +15,18 @@ pulsar:
 
 ## StreamX REST Ingestion Service
 rest_ingestion:
-  ## -- enables REST Ingestion Service
+  # -- enables REST Ingestion Service
   enabled: true
-  ## -- number of replicas
+  # -- number of replicas
   replicas: 1
-  ## -- image repository and tag
+  # -- image repository and tag
   image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service:1.0-SNAPSHOT
-  ## -- environment variables
+  # -- environment variables
   env:
     # @ignored when generating docs
     - name: MP_MESSAGING_OUTGOING_ALL-INBOXES_TOPICSPATTERN
       value: "persistent://public/default/.*"
-  ## -- pod monitoring configuration
+  # -- pod monitoring configuration
   monitoring: {}
   # -- liveness probe settings
   livenessProbe:
@@ -76,9 +76,9 @@ rest_ingestion:
     # host: define host to expose service
     # tls:
     #   secretName: tls-secret
-  ## -- resources for the container
+  # -- resources for the container
   resources: {}
-  ## -- node labels for pod assignment
+  # -- node labels for pod assignment
   nodeSelector: {}
 
 # -- `Processing Services` map
