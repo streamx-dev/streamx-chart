@@ -5,6 +5,8 @@ set:
   rest_ingestion:
     ingress:
       host: unit.test.host
+    monitoring:
+      path: /metrics
   processing:
     service1:
       image:

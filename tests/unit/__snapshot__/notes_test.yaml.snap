@@ -11,11 +11,11 @@ when rest_ingestion service ingress host is set then it is printed in notes with
       Happy StreamX Helming!
       ---------------------
       Ingestion services:
-      - http://rest.ingestion.host
+      - http://rest.ingestion.host/q/swagger-ui
 when rest_ingestion service ingress tls is set then it is printed in notes with https:
   1: |
     raw: |-
       Happy StreamX Helming!
       ---------------------
       Ingestion services:
-      - https://rest.ingestion.host
+      - https://rest.ingestion.host/q/swagger-ui

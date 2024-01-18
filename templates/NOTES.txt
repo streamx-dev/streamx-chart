@@ -3,7 +3,7 @@ Happy StreamX Helming!
 
 {{- with (.Values.rest_ingestion).ingress }}
 Ingestion services:
-- http{{ if (.tls).secretName }}s{{ end }}://{{ .host }}
+- http{{ if (.tls).secretName }}s{{ end }}://{{ .host }}/q/swagger-ui
 {{- end }}
 
 {{- if gt (len .Values.delivery) 0 }}
