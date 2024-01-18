@@ -21,6 +21,7 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | rest_ingestion.enabled | bool | `true` |  |
 | rest_ingestion.env | list | `[]` |  |
 | rest_ingestion.image | string | `"europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service:1.0-SNAPSHOT"` |  |
+| rest_ingestion.ingress | object | `{}` | ingress settings, set `host` to enable ingress |
 | rest_ingestion.livenessProbe | object | `{}` | liveness probe settings |
 | rest_ingestion.nodeSelector | object | `{}` |  |
 | rest_ingestion.podMonitor.enabled | bool | `true` | enables monitoring coreos podMonitor |

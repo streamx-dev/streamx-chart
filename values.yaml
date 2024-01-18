@@ -77,9 +77,12 @@ rest_ingestion:
     failureThreshold: 6
     # @ignored when generating docs
     successThreshold: 1
-  # ingress:
+  # -- ingress settings, set `host` to enable ingress
+  ingress: {}
     # annotations: {}
     # host: define host to expose service
+    # tls:
+    #   secretName: tls-secret
   ## -- resources for the container
   resources: {}
   ## -- node labels for pod assignment
