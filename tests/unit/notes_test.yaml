@@ -5,13 +5,27 @@ templates:
   - templates/NOTES.txt
 tests:
   # @Test
-  - it: when rest_ingestion service ingress enabled then host printed in notes
+  - it: when rest_ingestion service ingress host is set then it is printed in notes with http
     set:
       rest_ingestion:
         ingress:
           host: rest.ingestion.host
     asserts:
       - matchSnapshot: {}
+      - matchRegexRaw:
+          pattern: http://rest.ingestion.host
+  # @Test
+  - it: when rest_ingestion service ingress tls is set then it is printed in notes with https
+    set:
+      rest_ingestion:
+        ingress:
+          host: rest.ingestion.host
+          tls:
+            secretName: tls-secret
+    asserts:
+      - matchSnapshot: {}
+      - matchRegexRaw:
+          pattern: https://rest.ingestion.host
   # @Test
   - it: when delivery service ingress enabled then host printed in notes
     set:

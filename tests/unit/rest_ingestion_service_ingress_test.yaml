@@ -9,6 +9,7 @@ tests:
     asserts:
       - hasDocuments:
           count: 0
+  # @Test
   - it: when ingress host is set then ingress should be created
     set:
       rest_ingestion:
@@ -22,3 +23,39 @@ tests:
       - matchRegex:
           path: spec.rules[0].host
           pattern: unit.test.host
+  # @Test
+  - it: when ingress tls secret is set then ingress should be created with tls settings
+    set:
+      rest_ingestion:
+        ingress:
+          host: unit.test.host
+          tls:
+            secretName: tls-secret-test
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind: 
+          of: Ingress
+      - matchRegex:
+          path: spec.rules[0].host
+          pattern: unit.test.host
+      - matchRegex:
+          path: spec.tls[0].secretName
+          pattern: tls-secret-test
+      - matchRegex:
+          path: spec.tls[0].hosts[0]
+          pattern: unit.test.host
+  # @Test
+  - it: when ingressClassName not set then use "nginx" as default
+    set:
+      rest_ingestion:
+        ingress:
+          host: unit.test.host
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind: 
+          of: Ingress
+      - matchRegex:
+          path: spec.ingressClassName
+          pattern: nginx

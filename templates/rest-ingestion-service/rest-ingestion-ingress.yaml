@@ -11,7 +11,13 @@ metadata:
   labels:
     {{- include "streamx.component.labels" (dict "componentName" "rest-ingestion" "context" $) | nindent 4 }}
 spec:
-  ingressClassName: nginx
+  ingressClassName: {{ .ingressClassName | default "nginx" }}
+  {{- if (.tls).secretName }}
+  tls:
+    - hosts:
+        - {{ .host }}
+      secretName: {{ .tls.secretName }}
+  {{- end }}
   rules:
   - host: {{ .host }}
     http:

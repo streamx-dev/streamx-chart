@@ -3,7 +3,7 @@ Happy StreamX Helming!
 
 {{- with (.Values.rest_ingestion).ingress }}
 Ingestion services:
-- http://{{ .host }}
+- http{{ if (.tls).secretName }}s{{ end }}://{{ .host }}
 {{- end }}
 
 {{- if gt (len .Values.delivery) 0 }}

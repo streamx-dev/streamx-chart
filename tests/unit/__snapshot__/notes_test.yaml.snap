@@ -5,10 +5,17 @@ when delivery service ingress enabled then host printed in notes:
       ---------------------
       Delivery services:
       - http://service1.host
-when rest_ingestion service ingress enabled then host printed in notes:
+when rest_ingestion service ingress host is set then it is printed in notes with http:
   1: |
     raw: |-
       Happy StreamX Helming!
       ---------------------
       Ingestion services:
       - http://rest.ingestion.host
+when rest_ingestion service ingress tls is set then it is printed in notes with https:
+  1: |
+    raw: |-
+      Happy StreamX Helming!
+      ---------------------
+      Ingestion services:
+      - https://rest.ingestion.host
