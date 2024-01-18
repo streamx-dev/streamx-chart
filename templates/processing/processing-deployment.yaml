@@ -57,9 +57,9 @@ spec:
             - name: MP_MESSAGING_INCOMING_{{ $key | upper }}_TOPIC
               value: {{ include "streamx.channelTopic" (dict "channel" $channel "context" $) }}
             {{- end }}
-            {{- range $index, $value := $processing.outputs }}
-            - name: PLUGIN_FUNCTIONS_{{ $index }}__OUTPUT
-              value: {{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" $value "context" $) }}
+            {{- range $key, $channel := $processing.outgoing }}
+            - name: MP_MESSAGING_OUTGOING_{{ $key | upper }}_TOPIC
+              value: {{ include "streamx.channelTopic" (dict "channel" $channel "context" $) }}
             {{- end }}
             {{- if $processing.env }}
 {{ toYaml $processing.env | indent 12 }}

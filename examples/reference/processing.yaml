@@ -4,7 +4,11 @@ processing:
     incoming:
       incoming-pages:
         namespace: default
-        topic: incoming-pages
+        topic: inbox-pages
+    outgoing:
+      outgoing-pages:
+        namespace: default
+        topic: outbox-pages
     env:
       - name: QUARKUS_LOG_LEVEL
         value: DEBUG

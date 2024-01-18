@@ -39,9 +39,9 @@ For the example above and `pulsar.tenant: my-tenant`, the environment variable w
 MP_MESSAGING_INCOMING_INCOMING-PAGES_TOPIC=persistent://my-tenant/my-namespace/my-topic
 ```
 
-##### Outputs
-Processing services can produce data to `outputs`. The following evniroment variables are available for each output:
-- `PLUGIN_FUNCTIONS_<OUTPUT_INDEX>__OUTPUT` - a fully qualified Apache Pulsar URL (e.g. `persistent://my-tenant/my-namespace/my-topic`) of the topic to write to, where `<OUTPUT_INDEX>` is the index of the output in the `outputs` list e.g. `PLUGIN_FUNCTIONS_0__OUTPUT`, `PLUGIN_FUNCTIONS_1__OUTPUT`, etc.
+##### Outgoing channels
+Processing services can produce data to `outgoing` channels. The following evniroment variables are available for each channel:
+- `MP_MESSAGING_OUTGOING_<CHANNEL>_TOPIC` - a fully qualified Apache Pulsar URL (e.g. `persistent://my-tenant/my-namespace/my-topic`) of the topic to write to, where `<CHANNEL>` is the channel name in upper case (e.g. `MP_MESSAGING_OUTGOING_INCOMING-PAGES_TOPIC`)
 
 ##### Environment variables
 Every processing service container gets the following environment variables:

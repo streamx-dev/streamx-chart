@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 
-suite: test processing services envs
+suite: test processing services outgoing channels
 set:
   pulsar:
     tenant:
@@ -8,9 +8,13 @@ set:
     service1:
       image:
         repository: test/repository
-      outputs:
-        - project1/output1
-        - project2/output2
+      outgoing:
+        outgoing-pages:
+          namespace: project1
+          topic: output1
+        outgoing-templates:
+          namespace: project2
+          topic: output2
       
 tests:
   # @Test
@@ -20,12 +24,12 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: PLUGIN_FUNCTIONS_0__OUTPUT
+            name: MP_MESSAGING_OUTGOING_OUTGOING-PAGES_TOPIC
             value: persistent://RELEASE-NAME/project1/output1
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: PLUGIN_FUNCTIONS_1__OUTPUT
+            name: MP_MESSAGING_OUTGOING_OUTGOING-TEMPLATES_TOPIC
             value: persistent://RELEASE-NAME/project2/output2
   # @Test
   - it: when tenant is set then tenant is used in topic URL for outputs
@@ -37,10 +41,10 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: PLUGIN_FUNCTIONS_0__OUTPUT
+            name: MP_MESSAGING_OUTGOING_OUTGOING-PAGES_TOPIC
             value: persistent://tenant1/project1/output1
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: PLUGIN_FUNCTIONS_1__OUTPUT
+            name: MP_MESSAGING_OUTGOING_OUTGOING-TEMPLATES_TOPIC
             value: persistent://tenant1/project2/output2
