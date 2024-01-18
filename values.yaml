@@ -26,15 +26,8 @@ rest_ingestion:
     # @ignored when generating docs
     - name: MP_MESSAGING_OUTGOING_ALL-INBOXES_TOPICSPATTERN
       value: "persistent://public/default/.*"
-  podMonitor:
-    # -- enables monitoring coreos podMonitor
-    enabled: true
-    # -- metrics scrape interval
-    interval: 10s
-    # -- metrics scrape timeout
-    scrapeTimeout: 10s
-    # -- metrics scrape path
-    path: /q/metrics
+  ## -- pod monitoring configuration
+  monitoring: {}
   # -- liveness probe settings
   livenessProbe:
     # @ignored when generating docs
