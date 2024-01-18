@@ -34,6 +34,12 @@ spec:
               value: {{ .Values.pulsar.webServiceUrl }}
             - name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
               value: {{ .Values.pulsar.serviceUrl }}
+            - name: MP_MESSAGING_OUTGOING_ALL-INBOXES_TOPICSPATTERN
+              value: {{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" .Values.rest_ingestion.allInboxesTopicPatter "context" $) }}
+            - name: MP_MESSAGING_OUTGOING_ALL-INBOXES_PRODUCERNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             {{- if .Values.rest_ingestion.env }}
 {{ toYaml .Values.rest_ingestion.env | indent 12 }}
             {{- end }}
