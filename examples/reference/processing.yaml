@@ -1,6 +1,6 @@
 processing:
   reference-relay-service:
-    image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-relay-service:1.0-SNAPSHOT
+    image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-relay-processing-service:1.0-SNAPSHOT
     incoming:
       incoming-pages:
         namespace: default
