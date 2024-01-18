@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test rest-ingestion configs
+templates:
+  - templates/rest-ingestion-service/rest-ingestion-deployment.yaml
+tests:
+  # @Test
+  - it: verify pulsar configuration set properly
+    set:
+      pulsar:
+        serviceUrl: pulsar://pulsar-service-url:6650
+        webServiceUrl: http://pulsar-web-service-url:8080
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PULSAR_CLIENT_SERVICEURL
+            value: pulsar://pulsar-service-url:6650
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PULSAR_ADMIN_SERVICEURL
+            value: http://pulsar-web-service-url:8080
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
+            value: pulsar://pulsar-service-url:6650
+  # @Test
+  - it: verify 'all-inboxes' configuration set properly
+    set:
+      pulsar:
+        tenant: tenant1
+      rest_ingestion:
+        allInboxesTopicPatter: "inboxes/.*"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MP_MESSAGING_OUTGOING_ALL-INBOXES_TOPICSPATTERN
+            value: persistent://tenant1/inboxes/.*
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MP_MESSAGING_OUTGOING_ALL-INBOXES_PRODUCERNAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
