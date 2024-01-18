@@ -18,19 +18,16 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | pulsar.serviceUrl | string | `"pulsar://pulsar-service:6650"` | Apache Pulsar Broker Service URL |
 | pulsar.tenant | string | `"public"` | FixMe: **other tenant than `public` is not supported**; overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name` |
 | pulsar.webServiceUrl | string | `"http://pulsar-web-service:8080"` | Apache Pulsar REST API URL |
-| rest_ingestion.enabled | bool | `true` |  |
-| rest_ingestion.env | list | `[]` |  |
-| rest_ingestion.image | string | `"europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service:1.0-SNAPSHOT"` |  |
+| rest_ingestion.enabled | bool | `true` | enables REST Ingestion Service |
+| rest_ingestion.env | list | `[]` | environment variables |
+| rest_ingestion.image | string | `"europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service:1.0-SNAPSHOT"` | image repository and tag |
 | rest_ingestion.ingress | object | `{}` | ingress settings, set `host` to enable ingress |
 | rest_ingestion.livenessProbe | object | `{}` | liveness probe settings |
-| rest_ingestion.nodeSelector | object | `{}` |  |
-| rest_ingestion.podMonitor.enabled | bool | `true` | enables monitoring coreos podMonitor |
-| rest_ingestion.podMonitor.interval | string | `"10s"` | metrics scrape interval |
-| rest_ingestion.podMonitor.path | string | `"/q/metrics"` | metrics scrape path |
-| rest_ingestion.podMonitor.scrapeTimeout | string | `"10s"` | metrics scrape timeout |
+| rest_ingestion.monitoring | object | `{}` | pod monitoring configuration |
+| rest_ingestion.nodeSelector | object | `{}` | node labels for pod assignment |
 | rest_ingestion.readinessProbe | object | `{}` | readiness probe settings |
-| rest_ingestion.replicas | int | `1` |  |
-| rest_ingestion.resources | object | `{}` |  |
+| rest_ingestion.replicas | int | `1` | number of replicas |
+| rest_ingestion.resources | object | `{}` | resources for the container |
 | rest_ingestion.startupProbe | object | `{}` | startup probe settings |
 
 ### Services Mesh
