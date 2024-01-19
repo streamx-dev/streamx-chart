@@ -2,20 +2,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "streamx.component.fullname" (dict "componentName" $name "context" $) }}
+  name: {{ include "streamx.component.fullname" (dict "componentName" (printf "%s-%s" "processing" $name ) "context" $) }}
   labels:
-    {{- include "streamx.component.labels" (dict "componentName" $name "context" $) | nindent 4 }}
+    {{- include "streamx.component.labels" (dict "componentName" (printf "%s-%s" "processing" $name ) "context" $) | nindent 4 }}
 spec:
   replicas: {{ if hasKey $processing "replicas" }}{{ $processing.replicas }}{{ else }}1{{ end }}
   selector:
     matchLabels:
-      {{- include "streamx.component.selectorLabels" (dict "componentName" $name "context" $) | nindent 6 }}
+      {{- include "streamx.component.selectorLabels" (dict "componentName" (printf "%s-%s" "processing" $name ) "context" $) | nindent 6 }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        {{- include "streamx.component.labels" (dict "componentName" $name "context" $) | nindent 8 }}
+        {{- include "streamx.component.labels" (dict "componentName" (printf "%s-%s" "processing" $name ) "context" $) | nindent 8 }}
     spec:
       {{- if $.Values.imagePullSecrets }}
       imagePullSecrets: {{- $.Values.imagePullSecrets | toYaml | nindent 8 }}
@@ -78,6 +78,18 @@ spec:
             requests:
               cpu: 400m
               memory: 256Mi
+          {{- end }}
+          {{- if $processing.livenessProbe }}
+          livenessProbe:
+{{ toYaml $processing.livenessProbe | indent 12 }}
+          {{- end }}
+          {{- if $processing.readinessProbe }}
+            readinessProbe:
+{{ toYaml $processing.readinessProbe | indent 12 }}
+          {{- end }}
+          {{- if $processing.startupProbe }}
+            startupProbe:
+{{ toYaml $processing.startupProbe | indent 12 }}
           {{- end }}
 ---
 {{- end }}

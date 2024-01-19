@@ -71,10 +71,10 @@ Delivery service is a `Deployment` that is responsible for delivering the conten
 
 Delivery services are configured via `delivery` list of objects. See the [`values.yaml`](values.yaml) for more details.
 
-##### Inputs
-Delivery services synchronize data from `inputs` to their `data` volumes. The following evniroment variables are available for each input:
-- `PULSAR_OUTBOX_TOPIC` - a fully qualified Apache Pulsar URL (e.g. `persistent://my-tenant/my-namespace/my-topic`) of the topic to read from
-- `PULSAR_OUTBOX_SUBSCRIPTION_NAME` - unique subscription name for the input topic
+##### Incoming
+Delivery services, similarly to Processing services synchronize data from `incoming` channels to their `data` volumes. The following environment variables are available for each input:
+- `MP_MESSAGING_INCOMING_<CHANNEL>_TOPIC` - a fully qualified Apache Pulsar URL (e.g. `persistent://my-tenant/my-namespace/my-topic`) of the topic to read from
+- `MP_MESSAGING_INCOMING_<CHANNEL>_SUBSCRIPTIONNAME` - unique subscription name for the incoming topic
 
 ##### Outputs
 The important concept of each delivery service is its `output` object. A single delivery service may define multiple `outputs`. See the sketch below:
@@ -114,12 +114,11 @@ Run the command below to install the chart:
 
 ```bash
 kubectl create namespace streamx
-kubectl create configmap streamx-site-nginx-config -n streamx --from-file=examples/dummy/nginx/streamx.conf
 helm upgrade --install streamx . -n streamx \
   --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
   --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
   --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
-  -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/dummy/delivery.yaml
+  -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/reference/delivery.yaml
 ```
 
 and check that all deployments are running:

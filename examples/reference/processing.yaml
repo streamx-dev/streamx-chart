@@ -1,5 +1,5 @@
 processing:
-  reference-relay-service:
+  reference-relay:
     image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-relay-processing-service
     imagePullPolicy: Never
     replicas: 2
@@ -14,3 +14,18 @@ processing:
     env:
       - name: QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL
         value: TRACE
+    # livenessProbe:
+    #   httpGet:
+    #     path: /q/health/live
+    #     port: 8080
+    #     scheme: HTTP
+    # readinessProbe:
+    #   httpGet:
+    #     path: /q/health/ready
+    #     port: 8080
+    #     scheme: HTTP
+    # startupProbe:
+    #   httpGet:
+    #     path: /q/health/started
+    #     port: 8080
+    #     scheme: HTTP

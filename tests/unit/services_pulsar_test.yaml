@@ -21,7 +21,6 @@ templates:
 tests:
   # @Test
   - it: when pulsar connection is set then services' containers have PULSAR_BROKER_URL and PULSAR_REST_HTTP_URL env variables
-    template: templates/processing/processing-deployment.yaml
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env

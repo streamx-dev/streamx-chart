@@ -1,7 +1,0 @@
-processing:
-  example-processing-service:
-    image: busybox
-    args:
-      - tail
-      - -f
-      - /dev/null

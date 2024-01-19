@@ -1,0 +1,39 @@
+delivery:
+  reference-web:
+    incoming:
+      pages:
+        namespace: default
+        topic: outbox-pages
+    outputs:
+      - name: http
+        service:
+          containerRef:
+            name: webserver
+          port: 80
+          targetPort: http
+        ingress:
+          enabled: true
+          host: streamx.127.0.0.1.nip.io
+          path: /
+    containers:
+      - name: webserver
+        image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-web-delivery-service
+        imagePullPolicy: Never
+        ports:
+          - name: http
+            containerPort: 8080
+        # livenessProbe:
+        #   httpGet:
+        #     path: /q/health/live
+        #     port: 8080
+        #     scheme: HTTP
+        # readinessProbe:
+        #   httpGet:
+        #     path: /q/health/ready
+        #     port: 8080
+        #     scheme: HTTP
+        # startupProbe:
+        #   httpGet:
+        #     path: /q/health/started
+        #     port: 8080
+        #     scheme: HTTP
