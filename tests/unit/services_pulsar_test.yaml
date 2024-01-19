@@ -26,10 +26,15 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: PULSAR_BROKER_URL
+            name: PULSAR_CLIENT_SERVICEURL
             value: "pulsar://pulsar-service:6650"
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: PULSAR_REST_HTTP_URL
+            name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
+            value: "pulsar://pulsar-service:6650"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PULSAR_ADMIN_SERVICEURL
             value: "http://pulsar-web-service:8080"

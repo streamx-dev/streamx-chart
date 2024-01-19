@@ -1,0 +1,7 @@
+rest_ingestion:
+  imagePullPolicy: Never
+  replicas: 2
+  allInboxesTopicPatter: "default/inbox-.*"
+  env: 
+    - name: QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL
+      value: TRACE

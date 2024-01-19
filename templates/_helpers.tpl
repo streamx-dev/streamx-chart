@@ -89,3 +89,12 @@ Usage:
 {{- define "streamx.pulsarTopic" -}}
 {{- printf "persistent://%s/%s" (include "streamx.tenant" .context) .namespaceAndTopic }}
 {{- end }}
+
+{{/*
+Pulsar topic
+Usage:
+{{ include "streamx.channelTopic" (dict "channel" .channel "context" $) }}
+*/}}
+{{- define "streamx.channelTopic" -}}
+{{- printf "persistent://%s/%s/%s" (include "streamx.tenant" .context) .channel.namespace .channel.topic }}
+{{- end }}

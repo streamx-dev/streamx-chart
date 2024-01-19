@@ -18,10 +18,10 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | pulsar.serviceUrl | string | `"pulsar://pulsar-service:6650"` | Apache Pulsar Broker Service URL |
 | pulsar.tenant | string | `"public"` | FixMe: **other tenant than `public` is not supported**; overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name` |
 | pulsar.webServiceUrl | string | `"http://pulsar-web-service:8080"` | Apache Pulsar REST API URL |
-| rest_ingestion.allInboxesTopicPatter | string | `"default/inbox-.*"` | all-inboxes topic pattern in format: `namespace/topic-regex` |
+| rest_ingestion.allInboxesTopicPatter | string | `"inboxes/.*"` | all-inboxes topic pattern in format: `namespace/topic-regex` |
 | rest_ingestion.enabled | bool | `true` | enables REST Ingestion Service |
 | rest_ingestion.env | list | `[]` | additional environment variables |
-| rest_ingestion.image | string | `"europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service:1.0-SNAPSHOT"` | image repository and tag |
+| rest_ingestion.image | string | `"europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service"` | image repository and tag |
 | rest_ingestion.ingress | object | `{}` | ingress settings, set `host` to enable ingress |
 | rest_ingestion.livenessProbe | object | `{}` | liveness probe settings |
 | rest_ingestion.monitoring | object | `{}` | pod monitoring configuration |
@@ -39,13 +39,26 @@ Services Mesh is a set of services that process and deliver the content to the e
 
 Configuring processing services is done via `processing` object, check the syntax in `values.yaml`. The chart comes with an empty `processing` object, which means that no processing services will be deployed.
 
-##### Inputs
-Processing services process data from `inputs` and based on their logic, they can produce data to `outputs`. The following evniroment variables are available for each input:
-- `PLUGIN_FUNCTIONS_<INPUT_INDEX>__INPUT` - a fully qualified Apache Pulsar URL (e.g. `persistent://my-tenant/my-namespace/my-topic`) of the topic to read from, where `<INPUT_INDEX>` is the index of the input in the `inputs` list e.g. `PLUGIN_FUNCTIONS_0__INPUT`, `PLUGIN_FUNCTIONS_1__INPUT`, etc.
+##### Incoming channels
+Processing services process data from `incoming` channels and can produce data to `outgoing` channels. Channels are defined as a map of channel objects, where key is a channel name and value is a channel configuration. See the [`values.yaml`](values.yaml) for more details.
+```yaml
+incoming:
+  incoming-pages:
+    namespace: my-namespace
+    topic: my-topic
+```
+The namespace and topic are used for Apache Pulsar topic URL construction. The fully qualified Apache Pulsar URL is constructed as follows: `persistent://<tenant>/<namespace>/<topic>`. The tenant is configured via `pulsar.tenant` value.
 
-##### Outputs
-Processing services can produce data to `outputs`. The following evniroment variables are available for each output:
-- `PLUGIN_FUNCTIONS_<OUTPUT_INDEX>__OUTPUT` - a fully qualified Apache Pulsar URL (e.g. `persistent://my-tenant/my-namespace/my-topic`) of the topic to write to, where `<OUTPUT_INDEX>` is the index of the output in the `outputs` list e.g. `PLUGIN_FUNCTIONS_0__OUTPUT`, `PLUGIN_FUNCTIONS_1__OUTPUT`, etc.
+Apache Pulsar topic URL is available as an environment variable in the processing service container under the following name: `MP_MESSAGING_INCOMING_<CHANNEL>_TOPIC`.
+
+For the example above and `pulsar.tenant: my-tenant`, the environment variable will be:
+```conf
+MP_MESSAGING_INCOMING_INCOMING-PAGES_TOPIC=persistent://my-tenant/my-namespace/my-topic
+```
+
+##### Outgoing channels
+Processing services can produce data to `outgoing` channels. The following evniroment variables are available for each channel:
+- `MP_MESSAGING_OUTGOING_<CHANNEL>_TOPIC` - a fully qualified Apache Pulsar URL (e.g. `persistent://my-tenant/my-namespace/my-topic`) of the topic to write to, where `<CHANNEL>` is the channel name in upper case (e.g. `MP_MESSAGING_OUTGOING_INCOMING-PAGES_TOPIC`)
 
 ##### Environment variables
 Every processing service container gets the following environment variables:
@@ -92,7 +105,10 @@ Install required dependencies:
 .github/scripts/install-prerequisites.sh
 ```
 
-Clone `streamx-dev/streamx` repository and build it locally for Docker images.
+Clone `streamx-dev/streamx` repository and build it locally for Docker images
+```bash
+./mvnw clean package -Dquarkus.container-image.tag=latest
+```
 
 Run the command below to install the chart:
 
@@ -103,7 +119,7 @@ helm upgrade --install streamx . -n streamx \
   --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
   --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
   --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
-  -f examples/dummy/processing.yaml -f examples/dummy/delivery.yaml
+  -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/dummy/delivery.yaml
 ```
 
 and check that all deployments are running:
@@ -120,7 +136,21 @@ curl -X 'GET' \
   -H 'accept: */*'
 ```
 
-It should return an empty array.
+It should return an array of available publication types.
+
+Run the command below to publish a new publication:
+
+```bash
+curl -X 'PUT' \
+  'http://streamx-api.127.0.0.1.nip.io/publications/v1/inbox-pages/test.html' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "content": {"bytes": "<h1>Hello StreamX!</h1>"}
+}'
+```
+
+More coming soon...
 
 ### Testing
 

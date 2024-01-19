@@ -29,6 +29,7 @@ spec:
       containers:
         - name: {{ $name }}
           image: {{ $processing.image }}
+          imagePullPolicy: {{ $processing.imagePullPolicy }}
           ports:
             - name: metrics
               containerPort: 8080
@@ -45,19 +46,27 @@ spec:
             {{- end }}
           {{- end }}
           env:
-            - name: PULSAR_BROKER_URL
-              value: {{ $.Values.pulsar.serviceUrl }}
-            - name: PULSAR_REST_HTTP_URL
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: PULSAR_ADMIN_SERVICEURL
               value: {{ $.Values.pulsar.webServiceUrl }}
+            - name: PULSAR_CLIENT_SERVICEURL
+              value: {{ $.Values.pulsar.serviceUrl }}
+            - name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
+              value: {{ $.Values.pulsar.serviceUrl }}
             - name: PLUGIN_STORE_TENANT
               value: {{ include "streamx.tenant" $ }}
-            {{- range $index, $value := $processing.inputs }}
-            - name: PLUGIN_FUNCTIONS_{{ $index }}__INPUT
-              value: {{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" $value "context" $) }}
+            {{- range $key, $channel := $processing.incoming }}
+            - name: MP_MESSAGING_INCOMING_{{ $key | upper }}_TOPIC
+              value: {{ include "streamx.channelTopic" (dict "channel" $channel "context" $) }}
             {{- end }}
-            {{- range $index, $value := $processing.outputs }}
-            - name: PLUGIN_FUNCTIONS_{{ $index }}__OUTPUT
-              value: {{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" $value "context" $) }}
+            {{- range $key, $channel := $processing.outgoing }}
+            - name: MP_MESSAGING_OUTGOING_{{ $key | upper }}_TOPIC
+              value: {{ include "streamx.channelTopic" (dict "channel" $channel "context" $) }}
+            - name: MP_MESSAGING_OUTGOING_{{ $key | upper }}_PRODUCERNAME
+              value: "$(POD_NAME)-{{ $key }}"
             {{- end }}
             {{- if $processing.env }}
 {{ toYaml $processing.env | indent 12 }}
