@@ -45,6 +45,10 @@ spec:
             {{- end }}
           {{- end }}
           env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: PULSAR_ADMIN_SERVICEURL
               value: {{ $.Values.pulsar.webServiceUrl }}
             - name: PULSAR_CLIENT_SERVICEURL
@@ -60,6 +64,8 @@ spec:
             {{- range $key, $channel := $processing.outgoing }}
             - name: MP_MESSAGING_OUTGOING_{{ $key | upper }}_TOPIC
               value: {{ include "streamx.channelTopic" (dict "channel" $channel "context" $) }}
+            - name: MP_MESSAGING_OUTGOING_{{ $key | upper }}_PRODUCERNAME
+              value: "$(POD_NAME)-{{ $key }}"
             {{- end }}
             {{- if $processing.env }}
 {{ toYaml $processing.env | indent 12 }}

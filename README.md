@@ -18,7 +18,7 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | pulsar.serviceUrl | string | `"pulsar://pulsar-service:6650"` | Apache Pulsar Broker Service URL |
 | pulsar.tenant | string | `"public"` | FixMe: **other tenant than `public` is not supported**; overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name` |
 | pulsar.webServiceUrl | string | `"http://pulsar-web-service:8080"` | Apache Pulsar REST API URL |
-| rest_ingestion.allInboxesTopicPatter | string | `"default/inbox-.*"` | all-inboxes topic pattern in format: `namespace/topic-regex` |
+| rest_ingestion.allInboxesTopicPatter | string | `"inboxes/.*"` | all-inboxes topic pattern in format: `namespace/topic-regex` |
 | rest_ingestion.enabled | bool | `true` | enables REST Ingestion Service |
 | rest_ingestion.env | list | `[]` | additional environment variables |
 | rest_ingestion.image | string | `"europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service:1.0-SNAPSHOT"` | image repository and tag |
@@ -116,7 +116,7 @@ helm upgrade --install streamx . -n streamx \
   --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
   --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
   --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
-  -f examples/reference/processing.yaml -f examples/dummy/delivery.yaml
+  -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/dummy/delivery.yaml
 ```
 
 and check that all deployments are running:
