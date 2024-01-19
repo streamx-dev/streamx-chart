@@ -29,6 +29,7 @@ spec:
       containers:
         - name: {{ $name }}
           image: {{ $processing.image }}
+          imagePullPolicy: {{ $processing.imagePullPolicy }}
           ports:
             - name: metrics
               containerPort: 8080

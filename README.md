@@ -21,7 +21,7 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | rest_ingestion.allInboxesTopicPatter | string | `"inboxes/.*"` | all-inboxes topic pattern in format: `namespace/topic-regex` |
 | rest_ingestion.enabled | bool | `true` | enables REST Ingestion Service |
 | rest_ingestion.env | list | `[]` | additional environment variables |
-| rest_ingestion.image | string | `"europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service:1.0-SNAPSHOT"` | image repository and tag |
+| rest_ingestion.image | string | `"europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service"` | image repository and tag |
 | rest_ingestion.ingress | object | `{}` | ingress settings, set `host` to enable ingress |
 | rest_ingestion.livenessProbe | object | `{}` | liveness probe settings |
 | rest_ingestion.monitoring | object | `{}` | pod monitoring configuration |
@@ -105,7 +105,10 @@ Install required dependencies:
 .github/scripts/install-prerequisites.sh
 ```
 
-Clone `streamx-dev/streamx` repository and build it locally for Docker images.
+Clone `streamx-dev/streamx` repository and build it locally for Docker images
+```bash
+./mvnw clean package -Dquarkus.container-image.tag=latest
+```
 
 Run the command below to install the chart:
 

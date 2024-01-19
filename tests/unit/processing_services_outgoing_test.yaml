@@ -48,3 +48,17 @@ tests:
           content:
             name: MP_MESSAGING_OUTGOING_OUTGOING-TEMPLATES_TOPIC
             value: persistent://tenant1/project2/output2
+  # @Test
+  - it: each outgoing channel has its own producer name
+    template: templates/processing/processing-deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MP_MESSAGING_OUTGOING_OUTGOING-PAGES_PRODUCERNAME
+            value: $(POD_NAME)-outgoing-pages
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MP_MESSAGING_OUTGOING_OUTGOING-TEMPLATES_PRODUCERNAME
+            value: $(POD_NAME)-outgoing-templates

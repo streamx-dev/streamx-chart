@@ -88,7 +88,10 @@ Install required dependencies:
 .github/scripts/install-prerequisites.sh
 ```
 
-Clone `streamx-dev/streamx` repository and build it locally for Docker images.
+Clone `streamx-dev/streamx` repository and build it locally for Docker images
+```bash
+./mvnw clean package -Dquarkus.container-image.tag=latest
+```
 
 Run the command below to install the chart:
 

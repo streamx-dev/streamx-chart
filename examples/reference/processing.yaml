@@ -1,7 +1,8 @@
 processing:
   reference-relay-service:
-    image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-relay-processing-service:1.0-SNAPSHOT
-    replicas: 1
+    image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-relay-processing-service
+    imagePullPolicy: Never
+    replicas: 2
     incoming:
       incoming-pages:
         namespace: default
@@ -11,9 +12,5 @@ processing:
         namespace: default
         topic: outbox-pages
     env:
-      - name: QUARKUS_LOG_MIN_LEVEL
-        value: TRACE
-      - name: QUARKUS_LOG_LEVEL
-        value: TRACE
       - name: QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL
         value: TRACE

@@ -20,7 +20,7 @@ rest_ingestion:
   # -- number of replicas
   replicas: 1
   # -- image repository and tag
-  image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service:1.0-SNAPSHOT
+  image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service
   # -- all-inboxes topic pattern in format: `namespace/topic-regex`
   allInboxesTopicPatter: "inboxes/.*"
   # -- additional environment variables
