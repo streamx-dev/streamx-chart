@@ -29,7 +29,7 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | rest_ingestion.replicas | int | `1` | number of replicas |
 | rest_ingestion.resources | object | `{}` | resources for the container |
 | rest_ingestion.startupProbe | object | `{}` | startup probe settings |
-| tenant | string | `"public"` | FixMe: **other tenant than `public` is not supported**; overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name` |
+| tenant | string | `"public"` | FixMe: **other tenant than `public` is not supported**; overwrites tenant for this release installation, defaults to `.Release.Name` |
 
 ### Services Mesh
 
@@ -149,7 +149,14 @@ curl -X 'PUT' \
 }'
 ```
 
-More coming soon...
+Open in the browser [streamx-api.127.0.0.1.nip.io/test.html](http://streamx-api.127.0.0.1.nip.io/test.html).
+
+Clanup published page:
+```bash
+curl -X 'DELETE' \
+  'http://streamx-api.127.0.0.1.nip.io/publications/v1/inbox-pages/test.html' \
+  -H 'accept: */*'
+```
 
 ### Testing
 

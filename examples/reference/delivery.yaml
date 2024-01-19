@@ -23,6 +23,9 @@ delivery:
         ports:
           - name: http
             containerPort: 8080
+        env:
+          - name: QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL
+            value: TRACE
         # livenessProbe:
         #   httpGet:
         #     path: /q/health/live
