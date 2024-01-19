@@ -50,12 +50,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            - name: PULSAR_ADMIN_SERVICEURL
-              value: {{ $.Values.pulsar.webServiceUrl }}
-            - name: PULSAR_CLIENT_SERVICEURL
-              value: {{ $.Values.pulsar.serviceUrl }}
-            - name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
-              value: {{ $.Values.pulsar.serviceUrl }}
+            {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
             - name: PLUGIN_STORE_TENANT
               value: {{ include "streamx.tenant" $ }}
             {{- range $key, $channel := $processing.incoming }}

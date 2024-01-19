@@ -1,5 +1,6 @@
 delivery:
   reference-web:
+    replicas: 2
     incoming:
       pages:
         namespace: default

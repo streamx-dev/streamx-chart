@@ -29,12 +29,7 @@ spec:
             - name: http
               containerPort: 8080          
           env:
-            - name: PULSAR_CLIENT_SERVICEURL
-              value: {{ .Values.pulsar.serviceUrl }}
-            - name: PULSAR_ADMIN_SERVICEURL
-              value: {{ .Values.pulsar.webServiceUrl }}
-            - name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
-              value: {{ .Values.pulsar.serviceUrl }}
+            {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
             - name: MP_MESSAGING_OUTGOING_ALL-INBOXES_TOPICSPATTERN
               value: {{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" .Values.rest_ingestion.allInboxesTopicPatter "context" $) }}
             - name: MP_MESSAGING_OUTGOING_ALL-INBOXES_PRODUCERNAME

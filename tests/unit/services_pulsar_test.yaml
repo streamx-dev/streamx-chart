@@ -16,6 +16,7 @@ set:
           image:
             repository: test/delivery-service
 templates:
+  - templates/rest-ingestion-service/rest-ingestion-deployment.yaml
   - templates/processing/processing-deployment.yaml
   - templates/delivery/delivery-deployment.yaml
 tests:
