@@ -29,12 +29,7 @@ spec:
             - name: http
               containerPort: 8080          
           env:
-            - name: PULSAR_CLIENT_SERVICEURL
-              value: {{ .Values.pulsar.serviceUrl }}
-            - name: PULSAR_ADMIN_SERVICEURL
-              value: {{ .Values.pulsar.webServiceUrl }}
-            - name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
-              value: {{ .Values.pulsar.serviceUrl }}
+            {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
             - name: MP_MESSAGING_OUTGOING_ALL-INBOXES_TOPICSPATTERN
               value: {{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" .Values.rest_ingestion.allInboxesTopicPatter "context" $) }}
             - name: MP_MESSAGING_OUTGOING_ALL-INBOXES_PRODUCERNAME
@@ -48,41 +43,17 @@ spec:
           resources:
 {{ toYaml .Values.rest_ingestion.resources | indent 12 }}
         {{- end }}
-        {{- if .Values.rest_ingestion.livenessProbe.enabled }}
+        {{- if .Values.rest_ingestion.livenessProbe }}
           livenessProbe:
-            initialDelaySeconds: {{ .Values.rest_ingestion.livenessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.rest_ingestion.livenessProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.rest_ingestion.livenessProbe.timeoutSeconds }}
-            failureThreshold: {{ .Values.rest_ingestion.livenessProbe.failureThreshold }}
-            successThreshold: {{ .Values.rest_ingestion.livenessProbe.successThreshold }}
-            httpGet:
-              path: /q/health/live
-              port: 8080
-              scheme: HTTP
-          {{- end }}
-        {{- if .Values.rest_ingestion.readinessProbe.enabled }}
+{{ toYaml .Values.rest_ingestion.livenessProbe | indent 12 }}
+        {{- end }}
+        {{- if .Values.rest_ingestion.readinessProbe }}
           readinessProbe:
-            initialDelaySeconds: {{ .Values.rest_ingestion.readinessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.rest_ingestion.readinessProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.rest_ingestion.readinessProbe.timeoutSeconds }}
-            failureThreshold: {{ .Values.rest_ingestion.readinessProbe.failureThreshold }}
-            successThreshold: {{ .Values.rest_ingestion.readinessProbe.successThreshold }}
-            httpGet:
-              path: /q/health/ready
-              port: 8080
-              scheme: HTTP
-          {{- end }}
-          {{- if .Values.rest_ingestion.startupProbe.enabled }}
+{{ toYaml .Values.rest_ingestion.readinessProbe | indent 12 }}
+        {{- end }}
+        {{- if .Values.rest_ingestion.startupProbe }}
           startupProbe:
-            initialDelaySeconds: {{ .Values.rest_ingestion.startupProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.rest_ingestion.startupProbe.periodSeconds }}
-            timeoutSeconds: {{ .Values.rest_ingestion.startupProbe.timeoutSeconds }}
-            failureThreshold: {{ .Values.rest_ingestion.startupProbe.failureThreshold }}
-            successThreshold: {{ .Values.rest_ingestion.startupProbe.successThreshold }}
-            httpGet:
-              path: /q/health/started
-              port: 8080
-              scheme: HTTP
-          {{- end }}
+{{ toYaml .Values.rest_ingestion.startupProbe | indent 12 }}
+        {{- end }}
 
 {{- end }}

@@ -4,14 +4,15 @@
 # -- imagePullSecrets used to authenticate to registry containing StreamX and custom services
 imagePullSecrets: []
 
+# -- FixMe: **other tenant than `public` is not supported**; overwrites tenant for this release installation, defaults to `.Release.Name`
+tenant: public
+
 # Common settings related to Apache Pulsar connectivity and setup
 pulsar:
   # -- Apache Pulsar Broker Service URL
   serviceUrl: "pulsar://pulsar-service:6650"
   # -- Apache Pulsar REST API URL
   webServiceUrl: "http://pulsar-web-service:8080"
-  # -- FixMe: **other tenant than `public` is not supported**; overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name`
-  tenant: public
 
 ## StreamX REST Ingestion Service
 rest_ingestion:
@@ -28,47 +29,11 @@ rest_ingestion:
   # -- pod monitoring configuration
   monitoring: {}
   # -- liveness probe settings
-  livenessProbe:
-    # @ignored when generating docs
-    enabled: true
-    # @ignored when generating docs
-    initialDelaySeconds: 0
-    # @ignored when generating docs
-    periodSeconds: 5
-    # @ignored when generating docs
-    timeoutSeconds: 1
-    # @ignored when generating docs
-    failureThreshold: 6
-    # @ignored when generating docs
-    successThreshold: 1
+  livenessProbe: {}
   # -- readiness probe settings
-  readinessProbe:
-    # @ignored when generating docs
-    enabled: true
-    # @ignored when generating docs
-    initialDelaySeconds: 0
-    # @ignored when generating docs
-    periodSeconds: 5
-    # @ignored when generating docs
-    timeoutSeconds: 1
-    # @ignored when generating docs
-    failureThreshold: 6
-    # @ignored when generating docs
-    successThreshold: 1
+  readinessProbe: {}
   # -- startup probe settings
-  startupProbe:
-    # @ignored when generating docs
-    enabled: true
-    # @ignored when generating docs
-    initialDelaySeconds: 5
-    # @ignored when generating docs
-    periodSeconds: 5
-    # @ignored when generating docs
-    timeoutSeconds: 1
-    # @ignored when generating docs
-    failureThreshold: 6
-    # @ignored when generating docs
-    successThreshold: 1
+  startupProbe: {}
   # -- ingress settings, set `host` to enable ingress
   ingress: {}
     # annotations: {}
@@ -85,10 +50,14 @@ processing: {}
   # example-processing-service: # unique service name
   #   replicas: 2 # to override default (1) service replicas
   #   image: <image-repository>:<image-tag>
-  #   inputs: # list of input topics, order matters
-  #     - <namespace>/<topic-name>
-  #   outputs: # list of output topics, order matters
-  #     - <namespace>/<topic-name>
+  #   incoming: # map of incoming channels
+  #     incoming-pages:
+  #       namespace: default
+  #       topic: inbox-pages
+  #   outgoing: # map of outgoing channels
+  #     outgoing-pages:
+  #       namespace: default
+  #       topic: outbox-pages
   #   env:
   #     - name: NAME
   #       value: VALUE
@@ -102,13 +71,18 @@ processing: {}
   #     interval: 10s
   #     scrapeTimeout: 10s
   #     path: /q/metrics
+  #     livenessProbe:
+  #     readinessProbe:
+  #     startupProbe:
 
 # -- `Delivery Services` map
 delivery: {}
   # example-delivery-service: # unique service name
   #   replicas: 2 # to override default (1) service replicas
-  #   inputs:
-  #     - <namespace>/<topic-name>
+  #   incoming: # map of incoming channels
+  #     pages:
+  #       namespace: default
+  #       topic: outbox-pages
   #   outputs:
   #     - name: http
   #       service:

@@ -16,7 +16,6 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | imagePullSecrets | list | `[]` | imagePullSecrets used to authenticate to registry containing StreamX and custom services |
 | processing | object | `{}` | `Processing Services` map |
 | pulsar.serviceUrl | string | `"pulsar://pulsar-service:6650"` | Apache Pulsar Broker Service URL |
-| pulsar.tenant | string | `"public"` | FixMe: **other tenant than `public` is not supported**; overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name` |
 | pulsar.webServiceUrl | string | `"http://pulsar-web-service:8080"` | Apache Pulsar REST API URL |
 | rest_ingestion.allInboxesTopicPatter | string | `"inboxes/.*"` | all-inboxes topic pattern in format: `namespace/topic-regex` |
 | rest_ingestion.enabled | bool | `true` | enables REST Ingestion Service |
@@ -30,6 +29,7 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | rest_ingestion.replicas | int | `1` | number of replicas |
 | rest_ingestion.resources | object | `{}` | resources for the container |
 | rest_ingestion.startupProbe | object | `{}` | startup probe settings |
+| tenant | string | `"public"` | FixMe: **other tenant than `public` is not supported**; overwrites tenant for this release installation, defaults to `.Release.Name` |
 
 ### Services Mesh
 
@@ -51,7 +51,7 @@ The namespace and topic are used for Apache Pulsar topic URL construction. The f
 
 Apache Pulsar topic URL is available as an environment variable in the processing service container under the following name: `MP_MESSAGING_INCOMING_<CHANNEL>_TOPIC`.
 
-For the example above and `pulsar.tenant: my-tenant`, the environment variable will be:
+For the example above and `tenant: my-tenant`, the environment variable will be:
 ```conf
 MP_MESSAGING_INCOMING_INCOMING-PAGES_TOPIC=persistent://my-tenant/my-namespace/my-topic
 ```
@@ -71,10 +71,10 @@ Delivery service is a `Deployment` that is responsible for delivering the conten
 
 Delivery services are configured via `delivery` list of objects. See the [`values.yaml`](values.yaml) for more details.
 
-##### Inputs
-Delivery services synchronize data from `inputs` to their `data` volumes. The following evniroment variables are available for each input:
-- `PULSAR_OUTBOX_TOPIC` - a fully qualified Apache Pulsar URL (e.g. `persistent://my-tenant/my-namespace/my-topic`) of the topic to read from
-- `PULSAR_OUTBOX_SUBSCRIPTION_NAME` - unique subscription name for the input topic
+##### Incoming
+Delivery services, similarly to Processing services synchronize data from `incoming` channels to their `data` volumes. The following environment variables are available for each input:
+- `MP_MESSAGING_INCOMING_<CHANNEL>_TOPIC` - a fully qualified Apache Pulsar URL (e.g. `persistent://my-tenant/my-namespace/my-topic`) of the topic to read from
+- `MP_MESSAGING_INCOMING_<CHANNEL>_SUBSCRIPTIONNAME` - unique subscription name for the incoming topic
 
 ##### Outputs
 The important concept of each delivery service is its `output` object. A single delivery service may define multiple `outputs`. See the sketch below:
@@ -114,12 +114,11 @@ Run the command below to install the chart:
 
 ```bash
 kubectl create namespace streamx
-kubectl create configmap streamx-site-nginx-config -n streamx --from-file=examples/dummy/nginx/streamx.conf
 helm upgrade --install streamx . -n streamx \
   --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
   --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
   --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
-  -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/dummy/delivery.yaml
+  -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/reference/delivery.yaml
 ```
 
 and check that all deployments are running:
@@ -150,7 +149,14 @@ curl -X 'PUT' \
 }'
 ```
 
-More coming soon...
+Open in the browser [streamx-api.127.0.0.1.nip.io/test.html](http://streamx-api.127.0.0.1.nip.io/test.html).
+
+Clanup published page:
+```bash
+curl -X 'DELETE' \
+  'http://streamx-api.127.0.0.1.nip.io/publications/v1/inbox-pages/test.html' \
+  -H 'accept: */*'
+```
 
 ### Testing
 

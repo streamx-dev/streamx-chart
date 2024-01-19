@@ -2,9 +2,9 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
-  name: {{ include "streamx.component.fullname" (dict "componentName" $name "context" $) }}
+  name: {{ include "streamx.component.fullname" (dict "componentName" (printf "%s-%s" "processing" $name ) "context" $) }}
   labels:
-    {{- include "streamx.component.labels" (dict "componentName" $name "context" $) | nindent 4 }}
+    {{- include "streamx.component.labels" (dict "componentName" (printf "%s-%s" "processing" $name ) "context" $) | nindent 4 }}
     release: {{ $.Release.Name }}
 spec:
   jobLabel: app.kubernetes.io/component
@@ -34,6 +34,6 @@ spec:
           targetLabel: application
   selector:
     matchLabels:
-      {{- include "streamx.component.selectorLabels" (dict "componentName" $name "context" $) | nindent 6 }}
+      {{- include "streamx.component.selectorLabels" (dict "componentName" (printf "%s-%s" "processing" $name ) "context" $) | nindent 6 }}
 ---
 {{- end }}

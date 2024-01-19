@@ -2,8 +2,7 @@
 
 suite: test processing services incoming channels
 set:
-  pulsar:
-    tenant:
+  tenant:
   processing:
     service1:
       image:
@@ -35,8 +34,7 @@ tests:
   - it: when tenant is set then tenant is used in topic URL for inputs
     template: templates/processing/processing-deployment.yaml
     set:
-      pulsar:
-        tenant: tenant1
+      tenant: tenant1
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env

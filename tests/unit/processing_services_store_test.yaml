@@ -2,8 +2,7 @@
 
 suite: test processing services store
 set:
-  pulsar:
-    tenant:
+  tenant:
   processing:
     service1:
       image:

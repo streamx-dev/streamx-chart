@@ -78,7 +78,7 @@ Usage:
 {{ include "streamx.tenant" . }}
 */}}
 {{- define "streamx.tenant" -}}
-{{- default .Release.Name .Values.pulsar.tenant }}
+{{- default .Release.Name .Values.tenant }}
 {{- end }}
 
 {{/*
@@ -97,4 +97,19 @@ Usage:
 */}}
 {{- define "streamx.channelTopic" -}}
 {{- printf "persistent://%s/%s/%s" (include "streamx.tenant" .context) .channel.namespace .channel.topic }}
+{{- end }}
+
+
+{{/*
+Common Pulsar environment variables
+Usage:
+{{ include "streamx.pulsarEnvs" . }}
+*/}}
+{{- define "streamx.pulsarEnvs" -}}
+- name: PULSAR_ADMIN_SERVICEURL
+  value: {{ .Values.pulsar.webServiceUrl }}
+- name: PULSAR_CLIENT_SERVICEURL
+  value: {{ .Values.pulsar.serviceUrl }}
+- name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
+  value: {{ .Values.pulsar.serviceUrl }}
 {{- end }}

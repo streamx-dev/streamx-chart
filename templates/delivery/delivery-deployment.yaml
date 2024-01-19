@@ -83,29 +83,26 @@ spec:
             {{- end }}
           {{- end }}
           env:
-            {{- range $index, $value := $delivery.inputs }}
-            - name: PULSAR_OUTBOX_TOPIC #FixMe in StreamX to DELIVERY_{{ $index }}__INPUT
-              value: {{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" $value "context" $) }}
-            - name: PULSAR_OUTBOX_SUBSCRIPTION_NAME #FixMe in StreamX to DELIVERY_{{ $index }}__INPUT_SUBSCRIPTION
+            - name: POD_NAME
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name # FixMe the value should be unique per each input
+                  fieldPath: metadata.name
+            {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
+            - name: PLUGIN_STORE_TENANT
+              value: {{ include "streamx.tenant" $ }}
+            {{- range $key, $channel := $delivery.incoming }}
+            - name: MP_MESSAGING_INCOMING_{{ $key | upper }}_TOPIC
+              value: {{ include "streamx.channelTopic" (dict "channel" $channel "context" $) }}
+            - name: MP_MESSAGING_INCOMING_{{ $key | upper }}_SUBSCRIPTIONNAME
+              value: "$(POD_NAME)-{{ $container.name }}-{{ $key }}"
             {{- end }}
-            - name: PULSAR_ADMIN_SERVICEURL
-              value: {{ $.Values.pulsar.webServiceUrl }}
-            - name: PULSAR_CLIENT_SERVICEURL
-              value: {{ $.Values.pulsar.serviceUrl }}
-            - name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
-              value: {{ $.Values.pulsar.serviceUrl }}
-            - name: APPLICATION_MODE # FixMe: to be removed in StreamX
-              value: sync
             {{- with $container.data }}
             {{- if .repositoryMountPath }}
-            - name: REPOSITORY_RESOURCE_ROOT_DIRECTORY # FixMe: change to REPOSITORY_ROOT_PATH in StreamX
+            - name: REPOSITORY_RESOURCE_ROOT_DIRECTORY
               value: {{ .repositoryMountPath }}
             {{- end }}
             {{- if .metadataMountPath }}
-            - name: REPOSITORY_METADATA_ROOT_DIRECTORY # FixMe: change to METADATA_ROOT_PATH in StreamX
+            - name: REPOSITORY_METADATA_ROOT_DIRECTORY # FixMe: to be checked if this is needed in StreamX
               value: {{ .metadataMountPath }}
             {{- end }}
             {{- end }}
