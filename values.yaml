@@ -4,14 +4,15 @@
 # -- imagePullSecrets used to authenticate to registry containing StreamX and custom services
 imagePullSecrets: []
 
+# -- FixMe: **other tenant than `public` is not supported**; overwrites tenant for this release installation, defaults to `.Release.Name`
+tenant: public
+
 # Common settings related to Apache Pulsar connectivity and setup
 pulsar:
   # -- Apache Pulsar Broker Service URL
   serviceUrl: "pulsar://pulsar-service:6650"
   # -- Apache Pulsar REST API URL
   webServiceUrl: "http://pulsar-web-service:8080"
-  # -- FixMe: **other tenant than `public` is not supported**; overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name`
-  tenant: public
 
 ## StreamX REST Ingestion Service
 rest_ingestion:

@@ -10,8 +10,7 @@ tests:
   - it: when incoming channels defined then topic url and unique subscription is cofigured for each container
     template: templates/delivery/delivery-deployment.yaml
     set:
-      pulsar:
-        tenant: tenant1
+      tenant: tenant1
       delivery:
         service1:
           incoming:

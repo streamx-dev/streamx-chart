@@ -34,7 +34,7 @@ The namespace and topic are used for Apache Pulsar topic URL construction. The f
 
 Apache Pulsar topic URL is available as an environment variable in the processing service container under the following name: `MP_MESSAGING_INCOMING_<CHANNEL>_TOPIC`.
 
-For the example above and `pulsar.tenant: my-tenant`, the environment variable will be:
+For the example above and `tenant: my-tenant`, the environment variable will be:
 ```conf
 MP_MESSAGING_INCOMING_INCOMING-PAGES_TOPIC=persistent://my-tenant/my-namespace/my-topic
 ```

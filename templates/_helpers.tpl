@@ -78,7 +78,7 @@ Usage:
 {{ include "streamx.tenant" . }}
 */}}
 {{- define "streamx.tenant" -}}
-{{- default .Release.Name .Values.pulsar.tenant }}
+{{- default .Release.Name .Values.tenant }}
 {{- end }}
 
 {{/*

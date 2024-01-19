@@ -29,8 +29,7 @@ tests:
   # @Test
   - it: verify 'all-inboxes' configuration set properly
     set:
-      pulsar:
-        tenant: tenant1
+      tenant: tenant1
       rest_ingestion:
         allInboxesTopicPatter: "inboxes/.*"
     asserts:

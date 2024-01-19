@@ -16,7 +16,6 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | imagePullSecrets | list | `[]` | imagePullSecrets used to authenticate to registry containing StreamX and custom services |
 | processing | object | `{}` | `Processing Services` map |
 | pulsar.serviceUrl | string | `"pulsar://pulsar-service:6650"` | Apache Pulsar Broker Service URL |
-| pulsar.tenant | string | `"public"` | FixMe: **other tenant than `public` is not supported**; overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name` |
 | pulsar.webServiceUrl | string | `"http://pulsar-web-service:8080"` | Apache Pulsar REST API URL |
 | rest_ingestion.allInboxesTopicPatter | string | `"inboxes/.*"` | all-inboxes topic pattern in format: `namespace/topic-regex` |
 | rest_ingestion.enabled | bool | `true` | enables REST Ingestion Service |
@@ -30,6 +29,7 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | rest_ingestion.replicas | int | `1` | number of replicas |
 | rest_ingestion.resources | object | `{}` | resources for the container |
 | rest_ingestion.startupProbe | object | `{}` | startup probe settings |
+| tenant | string | `"public"` | FixMe: **other tenant than `public` is not supported**; overwrites Apache Pulsar tenant for this release installation, defaults to `.Release.Name` |
 
 ### Services Mesh
 
@@ -51,7 +51,7 @@ The namespace and topic are used for Apache Pulsar topic URL construction. The f
 
 Apache Pulsar topic URL is available as an environment variable in the processing service container under the following name: `MP_MESSAGING_INCOMING_<CHANNEL>_TOPIC`.
 
-For the example above and `pulsar.tenant: my-tenant`, the environment variable will be:
+For the example above and `tenant: my-tenant`, the environment variable will be:
 ```conf
 MP_MESSAGING_INCOMING_INCOMING-PAGES_TOPIC=persistent://my-tenant/my-namespace/my-topic
 ```
