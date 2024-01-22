@@ -12,21 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Happy StreamX Helming!
----------------------
+header:
+  license:
+    spdx-id: Apache-2.0
+    copyright-owner: Dynamic Solutions Sp. z o.o. sp.k.
 
-{{- with (.Values.rest_ingestion).ingress }}
-Ingestion services:
-- http{{ if (.tls).secretName }}s{{ end }}://{{ .host }}/q/swagger-ui
-{{- end }}
+  paths-ignore:
+    - '**/*.md'
+    - '**/*.md.gotmpl'
+    - '.github/CODEOWNERS'
+    - 'tests/unit/__snapshot__/*.snap'
+    - 'LICENSE'
+    - 'NOTICE'
 
-{{- if gt (len .Values.delivery) 0 }}
-Delivery services:
-{{- end }}
-{{- range $delivery := .Values.delivery }}
-  {{- range $delivery.outputs }}
-  {{- if (.ingress).enabled }}
-- http://{{ .ingress.host }}
-  {{- end }}
-  {{- end }}
-{{- end }}
+  license-location-threshold: 80
+
+  language:
+    YAML:
+      extensions:
+        - ".yaml"
+
+dependency:
+  licenses:
+    - name: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/rest-ingestion-service
+      version: 0.0.1
+      license: 'All rights reserved'

@@ -12,21 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Happy StreamX Helming!
----------------------
+name: 'Test: Verify StreamX Helm chart license'
 
-{{- with (.Values.rest_ingestion).ingress }}
-Ingestion services:
-- http{{ if (.tls).secretName }}s{{ end }}://{{ .host }}/q/swagger-ui
-{{- end }}
+on:
+  pull_request:
+  push:
+    branches:
+      - main
 
-{{- if gt (len .Values.delivery) 0 }}
-Delivery services:
-{{- end }}
-{{- range $delivery := .Values.delivery }}
-  {{- range $delivery.outputs }}
-  {{- if (.ingress).enabled }}
-- http://{{ .ingress.host }}
-  {{- end }}
-  {{- end }}
-{{- end }}
+jobs:
+  verify-license:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check License Header
+        uses: apache/skywalking-eyes/header@main
