@@ -110,18 +110,33 @@ Clone `streamx-dev/streamx` repository and build it locally for Docker images
 ./mvnw clean package
 ```
 
-Run the command below to install the chart:
+#### Local setup
+Run the command below to install the chart from the repository:
 
 ```bash
 kubectl create namespace streamx
 helm upgrade --install streamx ./chart -n streamx \
   --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
   --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
-  --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
   -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/reference/delivery.yaml
 ```
 
-and check that all deployments are running:
+<details>
+<summary>Show how to install from public release</summary>
+<p>
+
+```bash
+kubectl create namespace streamx
+helm upgrade --install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
+  --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
+  --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
+  -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/reference/delivery.yaml
+```
+</p>
+</details>
+
+#### Validation
+Check that all deployments are running:
 
 ```bash
 kubectl get deployment -n streamx -l app.kubernetes.io/instance=streamx
@@ -149,9 +164,9 @@ curl -X 'PUT' \
 }'
 ```
 
-Open in the browser [streamx-api.127.0.0.1.nip.io/test.html](http://streamx-api.127.0.0.1.nip.io/test.html).
+Open in the browser [streamx.127.0.0.1.nip.io/test.html](http://streamx.127.0.0.1.nip.io/test.html).
 
-Clanup published page:
+Cleanup published page:
 ```bash
 curl -X 'DELETE' \
   'http://streamx-api.127.0.0.1.nip.io/publications/v1/inbox-pages/test.html' \
@@ -162,3 +177,9 @@ curl -X 'DELETE' \
 
 #### Helm unit tests
 Run `helm unittest -f 'tests/unit/*.yaml' .` from `chart`.
+
+### Releasing
+1. Update the version in `chart/Chart.yaml`.
+2. Generate README.md with `./generate-docs.sh`.
+3. Commit and push changes.
+4. Run [Release action](https://github.com/streamx-dev/streamx-chart/actions/workflows/release-publish-chart.yaml) to publish the chart to the GitHub Pages.
