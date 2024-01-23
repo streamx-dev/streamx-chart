@@ -37,7 +37,7 @@ spec:
       {{- end }}
       containers:
         - name: rest-ingestion
-          image: {{ .Values.rest_ingestion.image }}
+          image: {{ .Values.rest_ingestion.image | default (printf "europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/rest-ingestion-service:%s" .Chart.AppVersion) }}
           imagePullPolicy: {{ .Values.rest_ingestion.imagePullPolicy }}
           ports:
             - name: http

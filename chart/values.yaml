@@ -34,8 +34,8 @@ rest_ingestion:
   enabled: true
   # -- number of replicas
   replicas: 1
-  # -- image repository and tag
-  image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/rest-ingestion-service
+  # -- image repository and tag, defaults to `europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/rest-ingestion-service:{{ .Chart.AppVersion }}`
+  image:
   # -- all-inboxes topic pattern in format: `namespace/topic-regex`
   allInboxesTopicPatter: "inboxes/.*"
   # -- additional environment variables

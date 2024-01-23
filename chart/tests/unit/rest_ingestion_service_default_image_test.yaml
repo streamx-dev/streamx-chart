@@ -1,0 +1,37 @@
+# Copyright 2024 Dynamic Solutions Sp. z o.o. sp.k.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test rest-ingestion default image
+templates:
+  - templates/rest-ingestion-service/rest-ingestion-deployment.yaml
+tests:
+  # @Test
+  - it: verify image set with appVersion by default
+    chart:
+      appVersion: unit.test.version
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/rest-ingestion-service:unit.test.version
+  # @Test
+  - it: verify image overwritten when image is set
+    set:
+      rest_ingestion:
+        image: custom-repo/image-name:myVersion
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: custom-repo/image-name:myVersion

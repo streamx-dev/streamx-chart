@@ -20,7 +20,7 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | rest_ingestion.allInboxesTopicPatter | string | `"inboxes/.*"` | all-inboxes topic pattern in format: `namespace/topic-regex` |
 | rest_ingestion.enabled | bool | `true` | enables REST Ingestion Service |
 | rest_ingestion.env | list | `[]` | additional environment variables |
-| rest_ingestion.image | string | `"europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/rest-ingestion-service"` | image repository and tag |
+| rest_ingestion.image | string | `nil` | image repository and tag, defaults to `europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/rest-ingestion-service:{{ .Chart.AppVersion }}` |
 | rest_ingestion.ingress | object | `{}` | ingress settings, set `host` to enable ingress |
 | rest_ingestion.livenessProbe | object | `{}` | liveness probe settings |
 | rest_ingestion.monitoring | object | `{}` | pod monitoring configuration |
