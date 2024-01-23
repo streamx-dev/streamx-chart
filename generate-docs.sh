@@ -14,4 +14,5 @@
 
 #!/usr/bin/env bash
 
-docker run --rm --volume "$(pwd):/helm-docs" -u $(id -u) jnorwood/helm-docs:latest
+docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest
+mv chart/README.md .

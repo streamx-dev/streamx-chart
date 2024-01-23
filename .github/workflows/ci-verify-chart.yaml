@@ -34,12 +34,13 @@ jobs:
 
       - name: Run chart helm-unittest
         run: |
+          cd chart
           helm plugin install https://github.com/helm-unittest/helm-unittest.git
           helm unittest -f 'tests/unit/*.yaml' .
 
       - name: Verify reference example
         run: |
-          helm template --output-dir generated streamx . \
+          helm template --output-dir generated streamx ./chart \
             --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
             --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
             --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \

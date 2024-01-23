@@ -114,7 +114,7 @@ Run the command below to install the chart:
 
 ```bash
 kubectl create namespace streamx
-helm upgrade --install streamx . -n streamx \
+helm upgrade --install streamx ./chart -n streamx \
   --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
   --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
   --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
@@ -161,4 +161,4 @@ curl -X 'DELETE' \
 ### Testing
 
 #### Helm unit tests
-Run `helm unittest -f 'tests/unit/*.yaml' .`
+Run `helm unittest -f 'tests/unit/*.yaml' .` from `chart`.
