@@ -32,14 +32,13 @@ delivery:
           path: /
     containers:
       - name: webserver
-        image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-web-delivery-service
-        imagePullPolicy: Never
+        image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-web-delivery-service:1.0-SNAPSHOT
         ports:
           - name: http
             containerPort: 8080
         env:
-          - name: QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL
-            value: TRACE
+        # - name: QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL
+        #   value: DEBUG
         # livenessProbe:
         #   httpGet:
         #     path: /q/health/live

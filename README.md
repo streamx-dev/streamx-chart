@@ -107,7 +107,7 @@ Install required dependencies:
 
 Clone `streamx-dev/streamx` repository and build it locally for Docker images
 ```bash
-./mvnw clean package -Dquarkus.container-image.tag=latest
+./mvnw clean package
 ```
 
 Run the command below to install the chart:
