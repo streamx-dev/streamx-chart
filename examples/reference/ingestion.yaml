@@ -13,13 +13,12 @@
 # limitations under the License.
 
 rest_ingestion:
-  image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service
-  imagePullPolicy: Never
+  image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service:1.0-SNAPSHOT
   replicas: 2
   allInboxesTopicPatter: "default/inbox-.*"
   env: 
-    - name: QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL
-      value: TRACE
+  # - name: QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL
+  #   value: DEBUG
   livenessProbe:
     httpGet:
       path: /q/health/live
