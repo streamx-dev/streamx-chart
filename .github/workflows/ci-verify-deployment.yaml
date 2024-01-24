@@ -1,0 +1,90 @@
+# Copyright 2024 Dynamic Solutions Sp. z o.o. sp.k.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: 'Test: Verify StreamX Helm chart deployment'
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  verify-chart-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21.6'
+  
+      - name: Setup Kind
+        run: go install sigs.k8s.io/kind@v0.20.0
+
+      - name: Create K8s cluster with Kind
+        run: kind create cluster --config .github/cluster/kind-cluster.yaml
+
+      - uses: azure/setup-helm@v3
+        with:
+          version: v3.13.2
+
+      - name: Install prerequisites
+        run:  .github/scripts/install-prerequisites.sh
+
+      - name: Configure Docker Registry with StreamX images
+        env:
+          REGISTRY_JSON_KEY: ${{ secrets.STREAMX_RELEASES_DOCKER_SNAPSHOTS }}
+        run: |
+          kubectl create namespace streamx || true
+          kubectl create secret docker-registry streamx-gar-json-key \
+            --docker-server=europe-west1-docker.pkg.dev \
+            --docker-username=_json_key_base64 \
+            --docker-password="${REGISTRY_JSON_KEY}" \
+            --namespace streamx
+
+      - name: Install StreamX with reference flow
+        run: |
+          helm upgrade --install streamx ./chart -n streamx \
+            --set "imagePullSecrets[0].name=streamx-gar-json-key" \
+            --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
+            --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
+            --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
+            -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/reference/delivery.yaml
+
+      - name: Verify StreamX deployment
+        run: |
+          kubectl -n streamx rollout status deployment streamx-rest-ingestion
+          kubectl -n streamx rollout status deployment streamx-processing-reference-relay
+          kubectl -n streamx rollout status deployment streamx-delivery-reference-web
+      
+      - name: Publish page with StreamX API
+        uses: nick-fields/retry@v2
+        with:
+          timeout_seconds: 15
+          max_attempts: 4
+          command: |
+            [ $(curl --write-out %{http_code} --silent --output /dev/null -X 'PUT' 'http://streamx-api.127.0.0.1.nip.io/publications/v1/inbox-pages/test.html' -H 'Content-Type: application/json' -d '{ "content": {"bytes": "<h1>Hello StreamX!</h1>"} }') -eq 202 ] && exit 0 || exit 1
+      
+      - name: Check published page
+        uses: nick-fields/retry@v2
+        with:
+          timeout_seconds: 15
+          max_attempts: 4
+          command: |
+            [ $(curl --write-out %{http_code} --silent --output /dev/null http://streamx.127.0.0.1.nip.io/test.html) -eq 200 ] && exit 0 || exit 1

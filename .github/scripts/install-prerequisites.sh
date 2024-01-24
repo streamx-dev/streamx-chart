@@ -32,3 +32,7 @@ kubectl create namespace pulsar || true
 kubectl run pulsar --image=apachepulsar/pulsar:3.1.2 --command --namespace pulsar -- bin/pulsar standalone
 kubectl expose pod pulsar --port=6650 --target-port=6650 --name=service --namespace pulsar
 kubectl expose pod pulsar --port=8080 --target-port=8080 --name=web-service --namespace pulsar
+kubectl wait --namespace pulsar \
+  --for=condition=ready pod \
+  --selector=run=pulsar \
+  --timeout=300s
