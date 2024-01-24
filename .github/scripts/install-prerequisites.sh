@@ -16,16 +16,21 @@
 
 set -x -e
 
-helm upgrade --install ingress-nginx ingress-nginx \
-  --repo https://kubernetes.github.io/ingress-nginx \
-  --namespace ingress-nginx --create-namespace
+# Install Kind-dedicated NgInx Ingress Controller
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+kubectl wait --namespace ingress-nginx \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/component=controller \
+  --timeout=90s
 
+# Install Kube-Prometheus Stack
 helm upgrade --install monitoring kube-prometheus-stack \
   --repo https://prometheus-community.github.io/helm-charts \
   --set prometheus.prometheusSpec.podMonitorSelector=null \
   --set prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues=false \
   --namespace monitoring --create-namespace
 
+# Install Apache Pulsar in Standalone Mode
 kubectl create namespace pulsar || true
 kubectl run pulsar --image=apachepulsar/pulsar:3.1.2 --command --namespace pulsar -- bin/pulsar standalone
 kubectl expose pod pulsar --port=6650 --target-port=6650 --name=service --namespace pulsar

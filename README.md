@@ -97,43 +97,67 @@ Every delivery service container gets the following environment variables:
 - `PULSAR_SERVICE_URL` - Apache Pulsar Broker Service URL
 - `PULSAR_WEB_SERVICE_URL` - Apache Pulsar REST API URL
 
-### Development
+### Local development
 
-Install required dependencies:
+#### Prerequisites
 
-```bash
-.github/scripts/install-prerequisites.sh
-```
+1. Install [`kind`](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) and configure [`kind` cluster with `extraPortMappings`](https://kind.sigs.k8s.io/docs/user/ingress/#create-cluster) and `kubectl` context to use it.
+2. Install [`helm`](https://helm.sh/docs/intro/install/).
+3. Install StreamX Chart prerequisites with `./.github/scripts/install-prerequisites.sh`. It will install:
+   - NginX Ingress controller configured for Kind,
+   - Prometheus Operator,
+   - Apache Pulsar.
 
-Clone `streamx-dev/streamx` repository and build it locally for Docker images
-```bash
-./mvnw clean package
-```
+#### Installing StreamX from Chart
 
-#### Local setup
-Run the command below to install the chart from the repository:
+> Note: to run StreamX services locally, you need access to StreamX private repository.
 
-```bash
-kubectl create namespace streamx
-helm upgrade --install streamx ./chart -n streamx \
-  --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
-  --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
-  -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/reference/delivery.yaml
-```
+1. Create `docker-registry` secret to enable Kubernetes to pull images from the StreamX private repository:
+   ```bash
+   TOKEN=$(gcloud auth print-access-token)
+   kubectl create namespace streamx || true
+   kubectl create secret docker-registry streamx-gar-json-key \
+     --docker-server=europe-west1-docker.pkg.dev \
+     --docker-username=oauth2accesstoken \
+     --docker-password="${TOKEN}" \
+     --namespace streamx
+   ```
+   <details>
+   <summary>Show how to use locally built images</summary>
+   <p>
+   Alternatively, you can build images on your host and use `kind load` to load them into the cluster, e.g.: 
+  
+   ```bash
+   kind load docker-image europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-web-delivery-service:1.0-SNAPSHOT
+   kind load docker-image europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-relay-processing-service:1.0-SNAPSHOT
+   kind load docker-image europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service:1.0-SNAPSHOT
+   ```
+   </p>
+   </details>
+2. Install StreamX Chart with:
+   ```bash
+   helm upgrade --install streamx ./chart -n streamx \
+     --set "imagePullSecrets[0].name=streamx-gar-json-key" \
+     --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
+     --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
+     --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
+     -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/reference/delivery.yaml
+   ```
 
-<details>
-<summary>Show how to install from public release</summary>
-<p>
-
-```bash
-kubectl create namespace streamx
-helm upgrade --install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
-  --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
-  --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
-  -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/reference/delivery.yaml
-```
-</p>
-</details>
+   <details>
+   <summary>Show how to install StreamX chart from public release</summary>
+   <p>
+   > You still need to download `examples/reference/*.yaml` files from the repository.
+  
+   ```bash
+   helm upgrade --install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
+     --set "imagePullSecrets[0].name=streamx-gar-json-key" \
+     --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
+     --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
+     -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/reference/delivery.yaml
+   ```
+   </p>
+   </details>
 
 #### Validation
 Check that all deployments are running:
