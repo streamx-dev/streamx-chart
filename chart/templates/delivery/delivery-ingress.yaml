@@ -14,25 +14,31 @@
 
 {{- range $name, $delivery := .Values.delivery }}
 {{- range $output := $delivery.outputs }}
-{{- if ($output.ingress).enabled }}
+{{ with $output.ingress }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "streamx.component.fullname" (dict "componentName" (printf "%s-%s-%s" "delivery" $name $output.name ) "context" $) }}
   annotations:
-    {{- if $output.ingress.annotations }}
-    {{- $output.ingress.annotations | toYaml | nindent 4 }}
+    {{- if .annotations }}
+    {{- .annotations | toYaml | nindent 4 }}
     {{- end }}
   labels:
     {{- include "streamx.component.labels" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) | nindent 4 }}
 spec:
-  ingressClassName: nginx
+  ingressClassName: {{ .ingressClassName | default "nginx" }}
+  {{- if (.tls).secretName }}
+  tls:
+    - hosts:
+        - {{ .host | quote }}
+      secretName: {{ .tls.secretName }}
+  {{- end }}
   rules:
-  - host: {{ $output.ingress.host | quote }}
+  - host: {{ .host | quote }}
     http:
       paths:
       - pathType: Prefix
-        path: {{ $output.ingress.path | quote }}
+        path: {{ .path | default "/" | quote }}
         backend:
           service:
             name: {{ include "streamx.component.fullname" (dict "componentName" (printf "%s-%s" "delivery" $name) "context" $) }}
