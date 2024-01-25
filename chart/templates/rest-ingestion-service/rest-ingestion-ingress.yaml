@@ -33,7 +33,7 @@ spec:
       secretName: {{ .tls.secretName }}
   {{- end }}
   rules:
-  - host: {{ .host }}
+  - host: {{ .host | quote }}
     http:
       paths:
       - pathType: Prefix

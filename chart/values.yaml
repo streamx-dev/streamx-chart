@@ -104,11 +104,12 @@ delivery: {}
   #           name: client # corresponds to container name in `containers` section
   #         port: 80
   #         targetPort: http
-  #       ingress:
-  #         enabled: true
+  #       ingress: # optional, set `host` to enable ingress
   #         host: my-domain.com
-  #         path: /
+  #         path: /my-path # optional, defaults to "/"
   #         annotations: {}
+  #         tls:
+  #          secretName: tls-secret # set to enable TLS
   #   containers:
   #     - name: client
   #       image: <image-repository>:<image-tag>

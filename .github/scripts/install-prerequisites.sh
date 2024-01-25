@@ -18,10 +18,7 @@ set -x -e
 
 # Install Kind-dedicated NgInx Ingress Controller
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
-kubectl wait --namespace ingress-nginx \
-  --for=condition=ready pod \
-  --selector=app.kubernetes.io/component=controller \
-  --timeout=90s
+kubectl rollout status deployment ingress-nginx-controller -n ingress-nginx
 
 # Install Kube-Prometheus Stack
 helm upgrade --install monitoring kube-prometheus-stack \
