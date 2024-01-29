@@ -1,0 +1,31 @@
+{{- if .Release.IsInstall }}
+{{- with .Values.messaging.pulsar }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "streamx.component.fullname" (dict "componentName" "pulsar-init-tenant" "context" $) }}
+  labels:
+    {{- include "streamx.component.labels" (dict "componentName" "pulsar-init-tenant" "context" $) | nindent 4 }}
+spec:
+  template:
+    spec:
+      {{- if $.Values.imagePullSecrets }}
+      imagePullSecrets: {{- $.Values.imagePullSecrets | toYaml | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: pulsar-init
+          image: {{ .initTenant.image | default (printf "europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/pulsar-init:%s" $.Chart.AppVersion) }}
+          env:
+            - name: QUASAR_TENANT
+              value: {{ include "streamx.tenant" $ }}
+            {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-pulsar-proxy-ready
+          image: alpine/curl:8.1.2
+          command: ["sh", "-c"]
+          args:
+          - >
+            until [[ $(curl -s -o /dev/null -w "%{http_code}" {{ .webServiceUrl }}/admin/v2/clusters) == "200" ]]; do echo "waiting for pulsar api"; sleep 5; done;
+{{- end }}
+{{- end }}

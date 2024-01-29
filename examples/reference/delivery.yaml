@@ -17,8 +17,8 @@ delivery:
     replicas: 2
     incoming:
       pages:
-        namespace: default
-        topic: outbox-pages
+        namespace: outboxes
+        topic: pages
     outputs:
       - name: http
         service:

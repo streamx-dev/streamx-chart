@@ -18,12 +18,12 @@ processing:
     replicas: 2
     incoming:
       incoming-pages:
-        namespace: default
-        topic: inbox-pages
+        namespace: inboxes
+        topic: pages
     outgoing:
       outgoing-pages:
-        namespace: default
-        topic: outbox-pages
+        namespace: outboxes
+        topic: pages
     env:
     # - name: QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL
     #   value: DEBUG
