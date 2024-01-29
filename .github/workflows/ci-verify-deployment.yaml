@@ -77,14 +77,14 @@ jobs:
         uses: nick-fields/retry@v2
         with:
           timeout_seconds: 15
-          max_attempts: 4
+          max_attempts: 8
           command: |
-            [ $(curl --write-out %{http_code} --silent --output /dev/null -X 'PUT' 'http://streamx-api.127.0.0.1.nip.io/publications/v1/inbox-pages/test.html' -H 'Content-Type: application/json' -d '{ "content": {"bytes": "<h1>Hello StreamX!</h1>"} }') -eq 202 ] && exit 0 || exit 1
+            [ $(curl --write-out %{http_code} --silent --output /dev/null -X 'PUT' 'http://streamx-api.127.0.0.1.nip.io/publications/v1/pages/test.html' -H 'Content-Type: application/json' -d '{ "content": {"bytes": "<h1>Hello StreamX!</h1>"} }') -eq 202 ] && exit 0 || exit 1
       
       - name: Check published page
         uses: nick-fields/retry@v2
         with:
           timeout_seconds: 15
-          max_attempts: 4
+          max_attempts: 8
           command: |
             [ $(curl --write-out %{http_code} --silent --output /dev/null http://streamx.127.0.0.1.nip.io/test.html) -eq 200 ] && exit 0 || exit 1
