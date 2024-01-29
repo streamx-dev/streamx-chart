@@ -23,10 +23,10 @@ set:
         repository: test/repository
       outgoing:
         outgoing-pages:
-          namespace: project1
+          namespace: outboxes
           topic: output1
         outgoing-templates:
-          namespace: project2
+          namespace: outboxes
           topic: output2
       
 tests:
@@ -38,12 +38,12 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: MP_MESSAGING_OUTGOING_OUTGOING-PAGES_TOPIC
-            value: persistent://RELEASE-NAME/project1/output1
+            value: persistent://RELEASE-NAME/outboxes/output1
       - contains:
           path: spec.template.spec.containers[0].env
           content:
             name: MP_MESSAGING_OUTGOING_OUTGOING-TEMPLATES_TOPIC
-            value: persistent://RELEASE-NAME/project2/output2
+            value: persistent://RELEASE-NAME/outboxes/output2
   # @Test
   - it: when tenant is set then tenant is used in topic URL for outputs
     template: templates/processing/processing-deployment.yaml
@@ -54,12 +54,12 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: MP_MESSAGING_OUTGOING_OUTGOING-PAGES_TOPIC
-            value: persistent://tenant1/project1/output1
+            value: persistent://tenant1/outboxes/output1
       - contains:
           path: spec.template.spec.containers[0].env
           content:
             name: MP_MESSAGING_OUTGOING_OUTGOING-TEMPLATES_TOPIC
-            value: persistent://tenant1/project2/output2
+            value: persistent://tenant1/outboxes/output2
   # @Test
   - it: each outgoing channel has its own producer name
     template: templates/processing/processing-deployment.yaml

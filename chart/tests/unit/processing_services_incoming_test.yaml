@@ -23,10 +23,10 @@ set:
         repository: test/repository
       incoming:
         incoming-pages:
-          namespace: project1
+          namespace: inboxes
           topic: input1
         incoming-templates:
-          namespace: project2
+          namespace: relays
           topic: input2
       
 tests:
@@ -38,12 +38,12 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: MP_MESSAGING_INCOMING_INCOMING-PAGES_TOPIC
-            value: persistent://RELEASE-NAME/project1/input1
+            value: persistent://RELEASE-NAME/inboxes/input1
       - contains:
           path: spec.template.spec.containers[0].env
           content:
             name: MP_MESSAGING_INCOMING_INCOMING-TEMPLATES_TOPIC
-            value: persistent://RELEASE-NAME/project2/input2
+            value: persistent://RELEASE-NAME/relays/input2
   # @Test
   - it: when tenant is set then tenant is used in topic URL for inputs
     template: templates/processing/processing-deployment.yaml
@@ -54,9 +54,9 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: MP_MESSAGING_INCOMING_INCOMING-PAGES_TOPIC
-            value: persistent://tenant1/project1/input1
+            value: persistent://tenant1/inboxes/input1
       - contains:
           path: spec.template.spec.containers[0].env
           content:
             name: MP_MESSAGING_INCOMING_INCOMING-TEMPLATES_TOPIC
-            value: persistent://tenant1/project2/input2
+            value: persistent://tenant1/relays/input2

@@ -37,7 +37,7 @@ templates:
   - templates/messaging/pulsar-init-tenant-job.yaml
 tests:
   # @Test
-  - it: when pulsar connection is set then services' containers have PULSAR_BROKER_URL and PULSAR_REST_HTTP_URL env variables
+  - it: when pulsar connection is set then services' containers have Apache Pulsar connectivity env variables
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
