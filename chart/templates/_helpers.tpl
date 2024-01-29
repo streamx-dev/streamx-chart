@@ -120,10 +120,12 @@ Usage:
 {{ include "streamx.pulsarEnvs" . }}
 */}}
 {{- define "streamx.pulsarEnvs" -}}
+{{ with (.Values.messaging).pulsar }}
 - name: PULSAR_ADMIN_SERVICEURL
-  value: {{ .Values.pulsar.webServiceUrl }}
+  value: {{ .webServiceUrl }}
 - name: PULSAR_CLIENT_SERVICEURL
-  value: {{ .Values.pulsar.serviceUrl }}
+  value: {{ .serviceUrl }}
 - name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
-  value: {{ .Values.pulsar.serviceUrl }}
+  value: {{ .serviceUrl }}
+{{- end }}
 {{- end }}

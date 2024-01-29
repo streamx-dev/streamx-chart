@@ -14,11 +14,8 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 |-----|------|---------|-------------|
 | delivery | object | `{}` | `Delivery Services` map |
 | imagePullSecrets | list | `[]` | imagePullSecrets used to authenticate to registry containing StreamX and custom services |
-| messaging | string | `nil` |  |
+| messaging | object | `{}` | used to configure messaging system like Apache Pulsar, see examples for reference |
 | processing | object | `{}` | `Processing Services` map |
-| pulsar | object | `{"serviceUrl":"pulsar://pulsar-service:6650","webServiceUrl":"http://pulsar-web-service:8080"}` | Apache Pulsar Messaging pulsar:   # -- Apache Pulsar Broker Service URL   serviceUrl: "pulsar://pulsar-service:6650"   # -- Apache Pulsar REST API URL   webServiceUrl: "http://pulsar-web-service:8080" Common settings related to Apache Pulsar connectivity and setup |
-| pulsar.serviceUrl | string | `"pulsar://pulsar-service:6650"` | Apache Pulsar Broker Service URL |
-| pulsar.webServiceUrl | string | `"http://pulsar-web-service:8080"` | Apache Pulsar REST API URL |
 | rest_ingestion.allInboxesTopicPatter | string | `"inboxes/.*"` | all-inboxes topic pattern in format: `namespace/topic-regex` |
 | rest_ingestion.enabled | bool | `true` | enables REST Ingestion Service |
 | rest_ingestion.env | list | `[]` | additional environment variables |
