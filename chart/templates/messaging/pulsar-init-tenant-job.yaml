@@ -1,5 +1,5 @@
 {{- if .Release.IsInstall }}
-{{- with .Values.messaging.pulsar }}
+{{- with (.Values.messaging).pulsar }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -14,7 +14,7 @@ spec:
       {{- end }}
       containers:
         - name: pulsar-init
-          image: {{ .initTenant.image | default (printf "europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/pulsar-init:%s" $.Chart.AppVersion) }}
+          image: {{ (.initTenant).image | default (printf "europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/pulsar-init:%s" $.Chart.AppVersion) }}
           env:
             - name: QUASAR_TENANT
               value: {{ include "streamx.tenant" $ }}

@@ -24,9 +24,9 @@ tenant:
 messaging:
   # -- Apache Pulsar Messaging
   # pulsar:
-  #   # -- Apache Pulsar Broker Service URL
+  #   # -- mandatory: Apache Pulsar Broker Service URL
   #   serviceUrl: "pulsar://pulsar-service:6650"
-  #   # -- Apache Pulsar REST API URL
+  #   # -- mandatory: Apache Pulsar REST API URL
   #   webServiceUrl: "http://pulsar-web-service:8080"
   
 # Common settings related to Apache Pulsar connectivity and setup
