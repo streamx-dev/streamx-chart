@@ -62,10 +62,10 @@ jobs:
         run: |
           helm upgrade --install streamx ./chart -n streamx \
             --set "imagePullSecrets[0].name=streamx-gar-json-key" \
-            --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
-            --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
-            --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
-            -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/reference/delivery.yaml
+            -f examples/reference/messaging.yaml \
+            -f examples/reference/ingestion.yaml \
+            -f examples/reference/processing.yaml \
+            -f examples/reference/delivery.yaml
 
       - name: Verify StreamX deployment
         run: |
