@@ -22,6 +22,8 @@ header:
     - '**/*.md.gotmpl'
     - '.github/CODEOWNERS'
     - 'tests/unit/__snapshot__/*.snap'
+    - 'examples/reference/e2e/mvnw*'
+    - 'examples/reference/e2e/.mvn/**/*'
     - 'LICENSE'
     - 'NOTICE'
 
@@ -35,5 +37,8 @@ header:
 dependency:
   licenses:
     - name: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/rest-ingestion-service
+      version: 0.0.1
+      license: 'All rights reserved'
+    - name: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/pulsar-init
       version: 0.0.1
       license: 'All rights reserved'
