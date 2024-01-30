@@ -62,29 +62,37 @@ jobs:
         run: |
           helm upgrade --install streamx ./chart -n streamx \
             --set "imagePullSecrets[0].name=streamx-gar-json-key" \
-            --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
-            --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
-            --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
-            -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/reference/delivery.yaml
+            -f examples/reference/messaging.yaml \
+            -f examples/reference/ingestion.yaml \
+            -f examples/reference/processing.yaml \
+            -f examples/reference/delivery.yaml
 
       - name: Verify StreamX deployment
         run: |
           kubectl -n streamx rollout status deployment streamx-rest-ingestion
           kubectl -n streamx rollout status deployment streamx-processing-reference-relay
           kubectl -n streamx rollout status deployment streamx-delivery-reference-web
-      
+
+      - name: Refresh StreamX REST Intestion schema
+        uses: nick-fields/retry@v2
+        with:
+          timeout_seconds: 15
+          max_attempts: 2
+          command: |
+            curl -X 'GET' 'http://streamx-api.127.0.0.1.nip.io/publications/v1/schema' -H 'accept: */*' | jq -e '.pages'
+
       - name: Publish page with StreamX API
         uses: nick-fields/retry@v2
         with:
           timeout_seconds: 15
-          max_attempts: 4
+          max_attempts: 3
           command: |
-            [ $(curl --write-out %{http_code} --silent --output /dev/null -X 'PUT' 'http://streamx-api.127.0.0.1.nip.io/publications/v1/inbox-pages/test.html' -H 'Content-Type: application/json' -d '{ "content": {"bytes": "<h1>Hello StreamX!</h1>"} }') -eq 202 ] && exit 0 || exit 1
-      
+            [ $(curl --write-out %{http_code} --silent --output /dev/null -X 'PUT' 'http://streamx-api.127.0.0.1.nip.io/publications/v1/pages/test.html' -H 'Content-Type: application/json' -d '{ "content": {"bytes": "<h1>Hello StreamX!</h1>"} }') -eq 202 ] && exit 0 || exit 1
+
       - name: Check published page
         uses: nick-fields/retry@v2
         with:
           timeout_seconds: 15
-          max_attempts: 4
+          max_attempts: 8
           command: |
             [ $(curl --write-out %{http_code} --silent --output /dev/null http://streamx.127.0.0.1.nip.io/test.html) -eq 200 ] && exit 0 || exit 1

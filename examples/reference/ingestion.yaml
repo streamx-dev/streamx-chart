@@ -14,8 +14,8 @@
 
 rest_ingestion:
   image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service:1.0-SNAPSHOT
-  replicas: 2
-  allInboxesTopicPatter: "default/inbox-.*"
+  replicas: 1
+  allInboxesTopicPatter: "inboxes/.*"
   env: 
   # - name: QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL
   #   value: DEBUG

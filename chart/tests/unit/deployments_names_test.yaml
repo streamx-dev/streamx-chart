@@ -16,6 +16,9 @@
 
 suite: test deployments names
 set:
+  messaging:
+    pulsar:
+      serviceUrl: pulsar://service.pulsar:6650
   rest_ingestion:
     ingress:
       host: unit.test.host

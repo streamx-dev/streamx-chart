@@ -14,11 +14,11 @@
 
 delivery:
   reference-web:
-    replicas: 2
+    replicas: 1
     incoming:
       pages:
-        namespace: default
-        topic: outbox-pages
+        namespace: outboxes
+        topic: pages
     outputs:
       - name: http
         service:

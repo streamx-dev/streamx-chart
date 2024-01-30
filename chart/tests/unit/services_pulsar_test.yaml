@@ -16,9 +16,10 @@
 
 suite: test services pulsar
 set:
-  pulsar:
-    serviceUrl: "pulsar://pulsar-service:6650"
-    webServiceUrl: "http://pulsar-web-service:8080"
+  messaging:
+    pulsar:
+      serviceUrl: "pulsar://pulsar-service:6650"
+      webServiceUrl: "http://pulsar-web-service:8080"
   processing:
     service1:
       image:
@@ -33,6 +34,7 @@ templates:
   - templates/rest-ingestion-service/rest-ingestion-deployment.yaml
   - templates/processing/processing-deployment.yaml
   - templates/delivery/delivery-deployment.yaml
+  - templates/messaging/pulsar-init-tenant-job.yaml
 tests:
   # @Test
   - it: when pulsar connection is set then services' containers have PULSAR_BROKER_URL and PULSAR_REST_HTTP_URL env variables

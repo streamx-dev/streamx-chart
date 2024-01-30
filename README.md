@@ -14,9 +14,8 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 |-----|------|---------|-------------|
 | delivery | object | `{}` | `Delivery Services` map |
 | imagePullSecrets | list | `[]` | imagePullSecrets used to authenticate to registry containing StreamX and custom services |
+| messaging | object | `{}` | used to configure messaging system like Apache Pulsar, see examples for reference |
 | processing | object | `{}` | `Processing Services` map |
-| pulsar.serviceUrl | string | `"pulsar://pulsar-service:6650"` | Apache Pulsar Broker Service URL |
-| pulsar.webServiceUrl | string | `"http://pulsar-web-service:8080"` | Apache Pulsar REST API URL |
 | rest_ingestion.allInboxesTopicPatter | string | `"inboxes/.*"` | all-inboxes topic pattern in format: `namespace/topic-regex` |
 | rest_ingestion.enabled | bool | `true` | enables REST Ingestion Service |
 | rest_ingestion.env | list | `[]` | additional environment variables |
@@ -29,7 +28,7 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | rest_ingestion.replicas | int | `1` | number of replicas |
 | rest_ingestion.resources | object | `{}` | resources for the container |
 | rest_ingestion.startupProbe | object | `{}` | startup probe settings |
-| tenant | string | `"public"` | FixMe: **other tenant than `public` is not supported**; overwrites tenant for this release installation, defaults to `.Release.Name` |
+| tenant | string | `nil` | overwrites tenant for this release installation, defaults to `.Release.Name` |
 
 ### Services Mesh
 
@@ -129,8 +128,8 @@ Every delivery service container gets the following environment variables:
    <details>
    <summary>Show how to use locally built images</summary>
    <p>
-   Alternatively, you can build images on your host and use `kind load` to load them into the cluster, e.g.: 
-  
+   Alternatively, you can build images on your host and use `kind load` to load them into the cluster, e.g.:
+ 
    ```bash
    kind load docker-image europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-web-delivery-service:1.0-SNAPSHOT
    kind load docker-image europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-relay-processing-service:1.0-SNAPSHOT
@@ -142,23 +141,24 @@ Every delivery service container gets the following environment variables:
    ```bash
    helm upgrade --install streamx ./chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
-     --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
-     --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
-     --set rest_ingestion.ingress.host="streamx-api.127.0.0.1.nip.io" \
-     -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/reference/delivery.yaml
+     -f examples/reference/messaging.yaml \
+     -f examples/reference/ingestion.yaml \
+     -f examples/reference/processing.yaml \
+     -f examples/reference/delivery.yaml
    ```
 
    <details>
    <summary>Show how to install StreamX chart from public release</summary>
    <p>
    > You still need to download `examples/reference/*.yaml` files from the repository.
-  
+ 
    ```bash
    helm upgrade --install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
-     --set pulsar.serviceUrl="pulsar://service.pulsar:6650" \
-     --set pulsar.webServiceUrl="http://web-service.pulsar:8080" \
-     -f examples/reference/ingestion.yaml -f examples/reference/processing.yaml -f examples/reference/delivery.yaml
+     -f examples/reference/messaging.yaml \
+     -f examples/reference/ingestion.yaml \
+     -f examples/reference/processing.yaml \
+     -f examples/reference/delivery.yaml
    ```
    </p>
    </details>
@@ -184,7 +184,7 @@ Run the command below to publish a new publication:
 
 ```bash
 curl -X 'PUT' \
-  'http://streamx-api.127.0.0.1.nip.io/publications/v1/inbox-pages/test.html' \
+  'http://streamx-api.127.0.0.1.nip.io/publications/v1/pages/test.html' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -197,7 +197,7 @@ Open in the browser [streamx.127.0.0.1.nip.io/test.html](http://streamx.127.0.0.
 Cleanup published page:
 ```bash
 curl -X 'DELETE' \
-  'http://streamx-api.127.0.0.1.nip.io/publications/v1/inbox-pages/test.html' \
+  'http://streamx-api.127.0.0.1.nip.io/publications/v1/pages/test.html' \
   -H 'accept: */*'
 ```
 
