@@ -15,7 +15,7 @@
 processing:
   reference-relay:
     image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-relay-processing-service:1.0-SNAPSHOT
-    replicas: 2
+    replicas: 1
     incoming:
       incoming-pages:
         namespace: inboxes

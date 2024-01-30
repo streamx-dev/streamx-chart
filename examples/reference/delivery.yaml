@@ -14,7 +14,7 @@
 
 delivery:
   reference-web:
-    replicas: 2
+    replicas: 1
     incoming:
       pages:
         namespace: outboxes

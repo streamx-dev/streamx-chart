@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-pulsar:
-  serviceUrl: pulsar://service.pulsar:6650
-  webServiceUrl: http://web-service.pulsar:8080
-
 messaging:
   pulsar:
     serviceUrl: pulsar://service.pulsar:6650
