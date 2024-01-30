@@ -96,23 +96,38 @@ Usage:
 {{- end }}
 
 {{/*
-Pulsar topic
+Checks if namespace is one of: inboxes, outboxes, relays
 Usage:
-{{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" .Values.<component-name>.topic "context" $) }}
+{{ include "streamx.services.checkNamespace" .namespace }}
 */}}
-{{- define "streamx.pulsarTopic" -}}
-{{- printf "persistent://%s/%s" (include "streamx.tenant" .context) .namespaceAndTopic }}
+{{- define "streamx.services.checkNamespace" -}}
+{{- $allowedNamespaces := list "inboxes" "outboxes" "relays"}}
+{{- if not (has . $allowedNamespaces) }}
+{{- fail (printf "Invalid namespace: '%s'. Topic namespace must be one of: 'inboxes', 'outboxes', 'relays'" .) }}
+{{- end }}
 {{- end }}
 
 {{/*
 Pulsar topic
 Usage:
+{{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" .Values.<component-name>.topic "context" $) }}
+*/}}
+{{- define "streamx.pulsarTopic" -}}
+{{- $channelParts := split "/" .namespaceAndTopic }}
+{{- $channel := dict "namespace" $channelParts._0 "topic" $channelParts._1 }}
+{{- include "streamx.services.checkNamespace" $channelParts._0 }}
+{{- printf "persistent://%s/%s/%s" (include "streamx.tenant" .context) $channelParts._0 $channelParts._1 }}
+{{- end }}
+
+{{/*
+Channel topic
+Usage:
 {{ include "streamx.channelTopic" (dict "channel" .channel "context" $) }}
 */}}
 {{- define "streamx.channelTopic" -}}
+{{ include "streamx.services.checkNamespace" .channel.namespace }}
 {{- printf "persistent://%s/%s/%s" (include "streamx.tenant" .context) .channel.namespace .channel.topic }}
 {{- end }}
-
 
 {{/*
 Common Pulsar environment variables

@@ -29,7 +29,7 @@ tests:
         service1:
           incoming:
             channel-name:
-              namespace: namespace
+              namespace: inboxes
               topic: topic
           containers:
             - name: container
@@ -40,7 +40,7 @@ tests:
           path: spec.template.spec.containers[0].env
           content: 
             name: MP_MESSAGING_INCOMING_CHANNEL-NAME_TOPIC
-            value: persistent://tenant1/namespace/topic
+            value: persistent://tenant1/inboxes/topic
       - contains:
           path: spec.template.spec.containers[0].env
           content: 

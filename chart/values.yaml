@@ -68,12 +68,12 @@ processing: {}
   #   image: <image-repository>:<image-tag>
   #   incoming: # map of incoming channels
   #     incoming-pages:
-  #       namespace: default
-  #       topic: inbox-pages
+  #       namespace: inboxes
+  #       topic: pages
   #   outgoing: # map of outgoing channels
   #     outgoing-pages:
-  #       namespace: default
-  #       topic: outbox-pages
+  #       namespace: outboxes
+  #       topic: pages
   #   env:
   #     - name: NAME
   #       value: VALUE
@@ -97,8 +97,8 @@ delivery: {}
   #   replicas: 2 # to override default (1) service replicas
   #   incoming: # map of incoming channels
   #     pages:
-  #       namespace: default
-  #       topic: outbox-pages
+  #       namespace: outboxes
+  #       topic: pages
   #   outputs:
   #     - name: http
   #       service:
