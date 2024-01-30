@@ -168,11 +168,21 @@ Every delivery service container gets the following environment variables:
 Check that all deployments are running:
 
 ```bash
-kubectl get deployment -n streamx -l app.kubernetes.io/instance=streamx
+kubectl -n streamx rollout status deployment -l app.kubernetes.io/instance=streamx
 ```
 
-Additionally, you may check that REST Ingestion Service is exposed by calling:
+Next, from the `examples/reference/e2e` run:
+```bash
+./mvnw clean verify
+```
 
+> Note: you need JDK 17 to run the tests.
+
+<details>
+<summary>See how to validate reference flow manually with cURL</summary>
+<p>
+
+Refresh the Ingestion Service schema by calling:
 ```bash
 curl -X 'GET' \
   'http://streamx-api.127.0.0.1.nip.io/publications/v1/schema' \
@@ -181,7 +191,7 @@ curl -X 'GET' \
 
 It should return an array of available publication types.
 
-Run the command below to publish a new publication:
+Run the command below to publish a new page:
 
 ```bash
 curl -X 'PUT' \
@@ -201,6 +211,8 @@ curl -X 'DELETE' \
   'http://streamx-api.127.0.0.1.nip.io/publications/v1/pages/test.html' \
   -H 'accept: */*'
 ```
+</p>
+</details>
 
 ### Testing
 
