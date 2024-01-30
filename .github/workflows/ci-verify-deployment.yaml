@@ -76,8 +76,8 @@ jobs:
       - name: Refresh StreamX REST Intestion schema
         uses: nick-fields/retry@v2
         with:
-          timeout_seconds: 15
-          max_attempts: 2
+          timeout_seconds: 30
+          max_attempts: 3
           command: |
             curl -X 'GET' 'http://streamx-api.127.0.0.1.nip.io/publications/v1/schema' -H 'accept: */*' | jq -e '.pages'
 
