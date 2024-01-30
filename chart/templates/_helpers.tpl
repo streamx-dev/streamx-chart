@@ -135,7 +135,7 @@ Usage:
 {{ include "streamx.pulsarEnvs" . }}
 */}}
 {{- define "streamx.pulsarEnvs" -}}
-{{ with (.Values.messaging).pulsar }}
+{{- with (.Values.messaging).pulsar -}}
 - name: PULSAR_ADMIN_SERVICEURL
   value: {{ .webServiceUrl }}
 - name: PULSAR_CLIENT_SERVICEURL

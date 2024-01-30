@@ -34,7 +34,6 @@ templates:
   - templates/rest-ingestion-service/rest-ingestion-deployment.yaml
   - templates/processing/processing-deployment.yaml
   - templates/delivery/delivery-deployment.yaml
-  - templates/messaging/pulsar-init-tenant-job.yaml
 tests:
   # @Test
   - it: when pulsar connection is set then services' containers have Apache Pulsar connectivity env variables

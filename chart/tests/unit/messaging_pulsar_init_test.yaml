@@ -14,77 +14,98 @@
 
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 
-suite: test pulsar initialisation
+suite: test pulsar initialisation in delivery and processing services
 
 tests:
   # @Test
-  - it: when chart is installed and messaging.pulsar is configured then init job is created
+  - it: when messaging.pulsar is not configured delivery services do not have pulsar-init initContainer
+    chart:
+      appVersion: test.unit.version
+    set:
+      messaging:
+        pulsar: {}
+      delivery:
+        service1: {}
+        service2: {}
+        service3: {}
+    template: templates/delivery/delivery-deployment.yaml
+    asserts:
+      - isNullOrEmpty:
+          path: spec.template.spec.initContainers
+  # @Test
+  - it: when messaging.pulsar is configured then each delivery service has pulsar-init initContainer
+    chart:
+      appVersion: test.unit.version
     release:
-      upgrade: false
+      name: test-release
     set:
       messaging:
         pulsar:
           serviceUrl: pulsar://service.pulsar:6650
           webServiceUrl: http://web-service.pulsar:8080
-    template: templates/messaging/pulsar-init-tenant-job.yaml
-    asserts:
-      - isKind: 
-          of: Job
-      - hasDocuments:
-          count: 1
-  # @Test
-  - it: when chart is installed and messaging.pulsar is not configured
-    release:
-      upgrade: true
-    set:
-      messaging:
-        kafka: {}
-    template: templates/messaging/pulsar-init-tenant-job.yaml
-    asserts:
-      - hasDocuments:
-          count: 0
-  # @Test
-  - it: when chart is upgraded job is not created
-    release:
-      upgrade: true
-    set:
-      messaging:
-        pulsar:
-          serviceUrl: pulsar://service.pulsar:6650
-          webServiceUrl: http://web-service.pulsar:8080
-    template: templates/messaging/pulsar-init-tenant-job.yaml
-    asserts:
-      - hasDocuments:
-          count: 0
-  # @Test
-  - it: when tenant is not set then .Release.name is used as tenant in init job
-    release:
-      name: my-release
-    set:
-      messaging:
-        pulsar: 
-          serviceUrl: pulsar://service.pulsar:6650
-          webServiceUrl: http://web-service.pulsar:8080
-    template: templates/messaging/pulsar-init-tenant-job.yaml
+      delivery:
+        service1: {}
+        service2: {}
+        service3: {}
+    template: templates/delivery/delivery-deployment.yaml
     asserts:
       - contains:
-          path: spec.template.spec.containers[0].env
+          path: spec.template.spec.initContainers
           content:
-            name: QUASAR_TENANT
-            value: my-release
+            name: pulsar-init
+            image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/pulsar-init:test.unit.version
+            env:
+            - name: QUASAR_TENANT
+              value: test-release
+            - name: PULSAR_ADMIN_SERVICEURL
+              value: http://web-service.pulsar:8080
+            - name: PULSAR_CLIENT_SERVICEURL
+              value: pulsar://service.pulsar:6650
+            - name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
+              value: pulsar://service.pulsar:6650
   # @Test
-  - it: when tenant is set then it is used as tenant in init job
+  - it: when messaging.pulsar is not configured processing services do not have pulsar-init initContainer
+    chart:
+      appVersion: test.unit.version
     set:
-      tenant: test-tenant
+      messaging:
+        pulsar: {}
+      processing:
+        service1:
+          replicas: 0
+          image: repository/service
+    template: templates/processing/processing-deployment.yaml
+    asserts:
+      - isNullOrEmpty:
+          path: spec.template.spec.initContainers
+  # @Test
+  - it: when messaging.pulsar is configured then each processing service has pulsar-init initContainer
+    chart:
+      appVersion: test.unit.version
+    release:
+      name: test-release
+    set:
       messaging:
         pulsar:
           serviceUrl: pulsar://service.pulsar:6650
           webServiceUrl: http://web-service.pulsar:8080
-    template: templates/messaging/pulsar-init-tenant-job.yaml
+      processing:
+        service1:
+          replicas: 0
+          image: repository/service
+    template: templates/processing/processing-deployment.yaml
     asserts:
       - contains:
-          path: spec.template.spec.containers[0].env
+          path: spec.template.spec.initContainers
           content:
-            name: QUASAR_TENANT
-            value: test-tenant
-    
+            name: pulsar-init
+            image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/pulsar-init:test.unit.version
+            env:
+            - name: QUASAR_TENANT
+              value: test-release
+            - name: PULSAR_ADMIN_SERVICEURL
+              value: http://web-service.pulsar:8080
+            - name: PULSAR_CLIENT_SERVICEURL
+              value: pulsar://service.pulsar:6650
+            - name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
+              value: pulsar://service.pulsar:6650

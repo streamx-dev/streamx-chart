@@ -68,6 +68,15 @@ spec:
                 - {{ include "streamx.name" $ }}
             topologyKey: "kubernetes.io/hostname"
       {{- end }}
+      initContainers:
+      {{- with ($.Values.messaging).pulsar }}
+        - name: pulsar-init
+          image: {{ (.initTenant).image | default (printf "europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/pulsar-init:%s" $.Chart.AppVersion) }}
+          env:
+            - name: QUASAR_TENANT
+              value: {{ include "streamx.tenant" $ }}
+            {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
+      {{- end }}
       containers:
         {{- range $container := $delivery.containers }}
         - name: {{ $container.name }}
