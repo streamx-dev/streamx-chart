@@ -15,6 +15,17 @@
 Happy StreamX Helming!
 ---------------------
 
+{{- if .Release.IsInstall }}
+{{- if (.Values.messaging).pulsar }}
+Apache Pulsar initialization started...
+Please check the status with:
+
+kubectl -n {{ .Release.Namespace }} wait --for=condition=complete job --selector app.kubernetes.io/component=pulsar-init-tenant --timeout=300s
+
+Deploy StreamX Mesh when the initialization completes successfully.
+{{- end }}
+{{- end }}
+
 {{- with (.Values.rest_ingestion).ingress }}
 Ingestion services:
 - http{{ if (.tls).secretName }}s{{ end }}://{{ .host }}/q/swagger-ui

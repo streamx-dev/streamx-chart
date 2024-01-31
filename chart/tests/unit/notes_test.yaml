@@ -56,3 +56,15 @@ tests:
                 path: /testpath
     asserts:
       - matchSnapshot: {}
+  # @Test
+  - it: when chart is installed and messaging.pulsar is configured then NOTES contains initialisation message
+    release:
+      upgrade: false
+      namespace: my-namespace
+    set:
+      messaging:
+        pulsar:
+          serviceUrl: pulsar://service.pulsar:6650
+          webServiceUrl: http://web-service.pulsar:8080
+    asserts:
+      - matchSnapshot: {}

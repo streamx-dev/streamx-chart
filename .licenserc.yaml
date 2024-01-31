@@ -21,7 +21,7 @@ header:
     - '**/*.md'
     - '**/*.md.gotmpl'
     - '.github/CODEOWNERS'
-    - 'tests/unit/__snapshot__/*.snap'
+    - 'chart/tests/unit/__snapshot__/*.snap'
     - 'examples/reference/e2e/mvnw*'
     - 'examples/reference/e2e/.mvn/**/*'
     - 'LICENSE'

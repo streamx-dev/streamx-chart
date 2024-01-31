@@ -138,7 +138,15 @@ Every delivery service container gets the following environment variables:
    ```
    </p>
    </details>
-2. Install StreamX Chart with:
+2. Prepare Apache Pulsar for StreamX installation (run it only for the first time installation):
+   ```bash
+    helm install streamx ./chart -n streamx \
+      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
+      --set rest_ingestion.enabled=false \
+      -f examples/reference/messaging.yaml
+    ```
+    This command will give you `kubectl` command to check status of initialization job. Run it and wait for the job to complete.
+3. Install StreamX Mesh with Helm chart:
    ```bash
    helm upgrade --install streamx ./chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
@@ -154,6 +162,11 @@ Every delivery service container gets the following environment variables:
    > You still need to download `examples/reference/*.yaml` files from the repository.
  
    ```bash
+   helm install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
+     --set "imagePullSecrets[0].name=streamx-gar-json-key" \
+     --set rest_ingestion.enabled=false \
+     -f examples/reference/messaging.yaml
+
    helm upgrade --install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
      -f examples/reference/messaging.yaml \
