@@ -18,7 +18,6 @@ set -x -e
 
 # Install Kind-dedicated NgInx Ingress Controller
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
-kubectl rollout status deployment ingress-nginx-controller -n ingress-nginx
 
 # Install Kube-Prometheus Stack
 helm upgrade --install monitoring kube-prometheus-stack \
@@ -31,8 +30,12 @@ helm upgrade --install monitoring kube-prometheus-stack \
 kubectl create namespace pulsar || true
 kubectl run pulsar --image=apachepulsar/pulsar:3.1.2 --command --namespace pulsar -- bin/pulsar standalone
 kubectl expose pod pulsar --port=6650 --target-port=6650 --name=service --namespace pulsar
-kubectl expose pod pulsar --port=8080 --target-port=8080 --name=web-service --namespace pulsar
-kubectl wait --namespace pulsar \
+kubectl -n pulsar create service nodeport web-service --tcp=8080:8080 --node-port=30000 -o yaml --dry-run=client | kubectl set selector --local -f - 'run=pulsar' -o yaml | kubectl create -f -
+
+# Wait for all pods to be ready
+kubectl -n ingress-nginx rollout status deployment ingress-nginx-controller 
+kubectl -n monitoring rollout status deployment monitoring-kube-prometheus-operator 
+kubectl -n pulsar wait  \
   --for=condition=ready pod \
   --selector=run=pulsar \
   --timeout=300s
