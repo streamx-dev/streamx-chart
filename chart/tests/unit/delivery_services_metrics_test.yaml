@@ -22,9 +22,11 @@ set:
 
 tests:
   # @Test
-  - it: when a delivery service with a single container defined a single PodMonitor is created
+  - it: when monitoring enabled and a delivery service with a single container defined a single PodMonitor is created
     template: templates/delivery/delivery-podmonitor.yaml
     set:
+      monitoring:
+        enabled: true
       delivery:
         service1:
           containers:
@@ -51,9 +53,11 @@ tests:
           path: spec.podMetricsEndpoints[0].path
           value: /test
   # @Test
-  - it: when a delivery service with multiple containers defined a single PodMonitor is created
+  - it: when monitoring enabled and a delivery service with multiple containers defined a single PodMonitor is created
     template: templates/delivery/delivery-podmonitor.yaml
     set:
+      monitoring:
+        enabled: true
       delivery:
         service1:
           containers:
@@ -91,9 +95,11 @@ tests:
           path: spec.podMetricsEndpoints[1].path
           value: /q/metrics2
   # @Test
-  - it: when a delivery service with a single container defined a monitoring with default port is created
+  - it: when monitoring enabled and a delivery service with a single container defined a monitoring with default port is created
     template: templates/delivery/delivery-deployment.yaml
     set:
+      monitoring:
+        enabled: true
       delivery:
         service1:
           containers:
@@ -110,9 +116,11 @@ tests:
           path: .spec.template.spec.containers[0].ports[0].name
           value: metrics-contain
   # @Test
-  - it: when a delivery service with a single container and monitoring port defined a monitoring port is created
+  - it: when monitoring enabled and a delivery service with a single container and monitoring port defined a monitoring port is created
     template: templates/delivery/delivery-deployment.yaml
     set:
+      monitoring:
+        enabled: true
       delivery:
         service1:
           containers:

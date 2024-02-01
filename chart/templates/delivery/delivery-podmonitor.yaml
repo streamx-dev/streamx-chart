@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+{{- if .Values.monitoring.enabled }}
 {{- range $name, $delivery := .Values.delivery }}
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
@@ -54,4 +55,5 @@ spec:
     matchLabels:
       {{- include "streamx.component.selectorLabels" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) | nindent 6 }}
 ---
+{{- end }}
 {{- end }}
