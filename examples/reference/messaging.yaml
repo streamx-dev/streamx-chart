@@ -16,5 +16,3 @@ messaging:
   pulsar:
     serviceUrl: pulsar://service.pulsar:6650
     webServiceUrl: http://web-service.pulsar:8080
-    initTenant:
-      image: "europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/pulsar-init:1.0-SNAPSHOT"

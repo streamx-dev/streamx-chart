@@ -28,7 +28,7 @@ spec:
       {{- end }}
       containers:
         - name: pulsar-init
-          image: {{ (.initTenant).image | default (printf "europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/pulsar-init:%s" $.Chart.AppVersion) }}
+          image: {{ (.initTenant).image | default (printf "europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/pulsar-init:%s" $.Chart.AppVersion) }}
           env:
             - name: QUASAR_TENANT
               value: {{ include "streamx.tenant" $ }}
