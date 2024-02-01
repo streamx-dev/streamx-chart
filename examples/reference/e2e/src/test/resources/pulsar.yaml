@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pulsar
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: pulsar
+  name: pulsar
+  namespace: pulsar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pulsar
+  template:
+    metadata:
+      labels:
+        app: pulsar
+    spec:
+      containers:
+        - command:
+            - bin/pulsar
+            - standalone
+          image: apachepulsar/pulsar:3.1.2
+          name: pulsar
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: pulsar
+  name: service
+  namespace: pulsar
+spec:
+  ports:
+    - port: 6650
+      protocol: TCP
+      targetPort: 6650
+  selector:
+    app: pulsar
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: web-service
+  name: web-service
+  namespace: pulsar
+spec:
+  ports:
+    - name: 8080-8080
+      nodePort: 30000
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: pulsar
+  type: NodePort
