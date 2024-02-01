@@ -20,11 +20,11 @@ set -x -e
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 
 # Install Kube-Prometheus Stack
-helm upgrade --install monitoring kube-prometheus-stack \
-  --repo https://prometheus-community.github.io/helm-charts \
-  --set prometheus.prometheusSpec.podMonitorSelector=null \
-  --set prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues=false \
-  --namespace monitoring --create-namespace
+# helm upgrade --install monitoring kube-prometheus-stack \
+#   --repo https://prometheus-community.github.io/helm-charts \
+#   --set prometheus.prometheusSpec.podMonitorSelector=null \
+#   --set prometheus.prometheusSpec.podMonitorSelectorNilUsesHelmValues=false \
+#   --namespace monitoring --create-namespace
 
 # Install Apache Pulsar in Standalone Mode
 kubectl create namespace pulsar || true
@@ -34,7 +34,7 @@ kubectl -n pulsar create service nodeport web-service --tcp=8080:8080 --node-por
 
 # Wait for all pods to be ready
 kubectl -n ingress-nginx rollout status deployment ingress-nginx-controller 
-kubectl -n monitoring rollout status deployment monitoring-kube-prometheus-operator 
+# kubectl -n monitoring rollout status deployment monitoring-kube-prometheus-operator 
 kubectl -n pulsar wait  \
   --for=condition=ready pod \
   --selector=run=pulsar \

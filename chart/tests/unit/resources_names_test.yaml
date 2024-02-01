@@ -14,8 +14,10 @@
 
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 
-suite: test deployments names
+suite: test resources names
 set:
+  monitoring:
+    enabled: true
   messaging:
     pulsar:
       serviceUrl: pulsar://service.pulsar:6650

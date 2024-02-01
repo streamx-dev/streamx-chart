@@ -30,6 +30,10 @@ messaging: {}
   #   # -- mandatory: Apache Pulsar REST API URL
   #   webServiceUrl: "http://pulsar-web-service:8080"
 
+monitoring:
+  # -- enabling this flag will enable creating `monitoring.coreos.com` Custom Resources for all services
+  enabled: false
+
 ## StreamX REST Ingestion Service
 rest_ingestion:
   # -- enables REST Ingestion Service

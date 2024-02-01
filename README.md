@@ -15,6 +15,7 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | delivery | object | `{}` | `Delivery Services` map |
 | imagePullSecrets | list | `[]` | imagePullSecrets used to authenticate to registry containing StreamX and custom services |
 | messaging | object | `{}` | used to configure messaging system like Apache Pulsar, see examples for reference |
+| monitoring.enabled | bool | `false` | enabling this flag will enable creating `monitoring.coreos.com` Custom Resources for all services |
 | processing | object | `{}` | `Processing Services` map |
 | rest_ingestion.allInboxesTopicPatter | string | `"inboxes/.*"` | all-inboxes topic pattern in format: `namespace/topic-regex` |
 | rest_ingestion.enabled | bool | `true` | enables REST Ingestion Service |
@@ -108,8 +109,8 @@ Every delivery service container gets the following environment variables:
 2. Install [`helm`](https://helm.sh/docs/intro/install/).
 3. Install StreamX Chart prerequisites with `./.github/scripts/install-prerequisites.sh`. It will install:
    - NginX Ingress controller configured for Kind,
-   - Prometheus Operator,
-   - Apache Pulsar.
+   - Apache Pulsar,
+   - `[optionally]` Prometheus Operator (disabled by default).
 
 #### Installing StreamX from Chart
 
