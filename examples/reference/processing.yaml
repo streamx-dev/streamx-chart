@@ -14,7 +14,7 @@
 
 processing:
   reference-relay:
-    image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-relay-processing-service:1.0-SNAPSHOT
+    image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/reference-relay-processing-service:0.0.1
     replicas: 1
     incoming:
       incoming-pages:
