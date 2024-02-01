@@ -4,9 +4,10 @@ import static com.dajudge.kindcontainer.DeploymentAvailableWaitStrategy.deployme
 
 import com.dajudge.kindcontainer.KindContainer;
 import com.dajudge.kindcontainer.KubernetesContainer;
-import io.fabric8.kubernetes.client.KubernetesClient;
-import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.MountableFile;
@@ -14,9 +15,12 @@ import org.testcontainers.utility.MountableFile;
 @Testcontainers
 public class KindContainerTest {
 
+  Logger log = LoggerFactory.getLogger("KindContainerTest");
+
   @Container
   private final KindContainer<?> KUBE = new KindContainer<>()
-      .withExposedPorts(80, 443);
+      .withExposedPorts(80, 443)
+      .withLogConsumer(new Slf4jLogConsumer(log));
 
   @Test
   public void verify_node_is_present() {
@@ -27,6 +31,9 @@ public class KindContainerTest {
 //    }
     System.out.println(KUBE.getKubeconfig());
     installIngressController(KUBE);
+
+    Integer httpPort = KUBE.getMappedPort(80);
+    System.out.println("http://streamx.127.0.0.1.nip.io:" + httpPort + "/");
 //    installMonitoring(KUBE);
 //    installPulsar(KUBE);
 //    installStreamX(KUBE);
