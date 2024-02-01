@@ -205,15 +205,6 @@ curl -X 'PUT' \
 
 Open in the browser [streamx.127.0.0.1.nip.io/test.html](http://streamx.127.0.0.1.nip.io/test.html).
 
-Cleanup published page:
-```bash
-curl -X 'DELETE' \
-  'http://streamx-api.127.0.0.1.nip.io/publications/v1/pages/test.html' \
-  -H 'accept: */*'
-```
-</p>
-</details>
-
 ### Testing
 
 #### Helm unit tests
