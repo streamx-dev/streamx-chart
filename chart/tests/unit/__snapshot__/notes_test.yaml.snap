@@ -1,3 +1,28 @@
+when chart is installed and messaging.pulsar is configured then NOTES contains initialisation message:
+  1: |
+    raw: |-
+      # Copyright 2024 Dynamic Solutions Sp. z o.o. sp.k.
+      #
+      # Licensed under the Apache License, Version 2.0 (the "License");
+      # you may not use this file except in compliance with the License.
+      # You may obtain a copy of the License at
+      #
+      #     http://www.apache.org/licenses/LICENSE-2.0
+      #
+      # Unless required by applicable law or agreed to in writing, software
+      # distributed under the License is distributed on an "AS IS" BASIS,
+      # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      # See the License for the specific language governing permissions and
+      # limitations under the License.
+
+      Happy StreamX Helming!
+      ---------------------
+      Apache Pulsar initialization started...
+      Please check the status with:
+
+      kubectl -n my-namespace wait --for=condition=complete job --selector app.kubernetes.io/component=pulsar-init-tenant --timeout=300s
+
+      Deploy StreamX Mesh when the initialization completes successfully.
 when delivery service ingress enabled then host printed in notes:
   1: |
     raw: |-

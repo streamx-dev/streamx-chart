@@ -58,7 +58,18 @@ jobs:
             --docker-password="${REGISTRY_JSON_KEY}" \
             --namespace streamx
 
-      - name: Install StreamX with reference flow
+      - name: Initialize Apache Pulsar for StreamX
+        run: |
+          helm install streamx ./chart -n streamx \
+            --set "imagePullSecrets[0].name=streamx-gar-json-key" \
+            --set rest_ingestion.enabled=false \
+            -f examples/reference/messaging.yaml
+
+      - name: Wait for initialization of Apache Pulsar completes
+        run: |
+          kubectl -n streamx wait --for=condition=complete job --selector app.kubernetes.io/component=pulsar-init-tenant --timeout=300s
+
+      - name: Install StreamX Mesh with reference flow
         run: |
           helm upgrade --install streamx ./chart -n streamx \
             --set "imagePullSecrets[0].name=streamx-gar-json-key" \
@@ -67,7 +78,7 @@ jobs:
             -f examples/reference/processing.yaml \
             -f examples/reference/delivery.yaml
 
-      - name: Verify StreamX deployment
+      - name: Wait for StreamX Mesh deployment completes
         run: |
           kubectl -n streamx rollout status deployment streamx-rest-ingestion
           kubectl -n streamx rollout status deployment streamx-processing-reference-relay
