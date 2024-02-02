@@ -23,7 +23,7 @@ processing:
     outgoing:
       outgoing-pages:
         namespace: outboxes
-        topic: pages
+        topic: intentionally-invalid-topic
     env:
     # - name: QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL
     #   value: DEBUG
