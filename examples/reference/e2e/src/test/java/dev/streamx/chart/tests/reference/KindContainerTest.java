@@ -3,6 +3,7 @@ package dev.streamx.chart.tests.reference;
 import static com.dajudge.kindcontainer.DeploymentAvailableWaitStrategy.deploymentIsAvailable;
 
 import com.dajudge.kindcontainer.KindContainer;
+import com.dajudge.kindcontainer.KindContainerVersion;
 import com.dajudge.kindcontainer.KubernetesContainer;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -18,25 +19,19 @@ public class KindContainerTest {
   Logger log = LoggerFactory.getLogger("KindContainerTest");
 
   @Container
-  private final KindContainer<?> KUBE = new KindContainer<>()
+  private final KindContainer<?> KUBE = new KindContainer<>(KindContainerVersion.VERSION_1_28_0)
       .withExposedPorts(80, 443)
       .withLogConsumer(new Slf4jLogConsumer(log));
 
   @Test
   public void verify_node_is_present() {
-//    try (final KubernetesClient client = new KubernetesClientBuilder().withConfig(
-//        KUBE.getKubeconfig()).build()) {
-////      NonNamespaceOperation<Node, NodeList, Resource<Node>> nodes = client.nodes();
-////      assertEquals(1, nodes.list().getItems().size());
-//    }
     System.out.println(KUBE.getKubeconfig());
     installIngressController(KUBE);
 
     Integer httpPort = KUBE.getMappedPort(80);
     System.out.println("http://streamx.127.0.0.1.nip.io:" + httpPort + "/");
-//    installMonitoring(KUBE);
-//    installPulsar(KUBE);
-//    installStreamX(KUBE);
+    installPulsar(KUBE);
+    installStreamX(KUBE);
     System.out.println("test");
   }
 
@@ -49,20 +44,6 @@ public class KindContainerTest {
           .run();
     }).waitingFor(deploymentIsAvailable("ingress-nginx", "ingress-nginx-controller"));
   }
-
-  private void installMonitoring(KubernetesContainer<?> container) {
-    container.withHelm3(helm -> {
-          helm.repo.add.run("prometheus-community",
-              "https://prometheus-community.github.io/helm-charts");
-          helm.repo.update.run();
-          helm.install
-              .namespace("monitoring")
-              .createNamespace(true)
-              .run("monitoring", "prometheus-community/kube-prometheus-stack");
-        })
-        .waitingFor(deploymentIsAvailable("monitoring", "monitoring-kube-prometheus-operator"));
-  }
-
 
   private void installPulsar(KindContainer<?> container) {
     container.withKubectl(kubectl -> {
@@ -87,6 +68,15 @@ public class KindContainerTest {
           .namespace("streamx")
           .createNamespace(true)
           .set("imagePullSecrets[0].name", "streamx-gar-json-key")
+          .set("rest_ingestion.enabled", "false")
+          .run("streamx", "/tmp/streamx");
+    });
+    container.withHelm3(helm -> {
+      helm.copyFileToContainer(MountableFile.forHostPath("../../../chart"), "/tmp/streamx");
+      helm.install
+          .namespace("streamx")
+          .set("imagePullSecrets[0].name", "streamx-gar-json-key")
+          .set("rest_ingestion.enabled", "false")
           .run("streamx", "/tmp/streamx");
     }).waitingFor(deploymentIsAvailable("streamx", "streamx-rest-ingestion"));
   }
