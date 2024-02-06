@@ -52,16 +52,16 @@ jobs:
           REGISTRY_JSON_KEY: ${{ secrets.GCP_STREAMX_RELEASES_GAR_READ_KEY }}
         run: |
           kubectl create namespace streamx || true
-          kubectl create secret docker-registry streamx-gar-json-key \
+          kubectl -n streamx create secret docker-registry streamx-gar-json-key \
             --docker-server=europe-west1-docker.pkg.dev \
             --docker-username=_json_key_base64 \
-            --docker-password="${REGISTRY_JSON_KEY}" \
-            --namespace streamx
+            --docker-password="${REGISTRY_JSON_KEY}"
 
       - name: Initialize Apache Pulsar for StreamX
         run: |
-          helm install streamx ./chart -n streamx \
+          helm -n streamx install streamx ./chart \
             --set "imagePullSecrets[0].name=streamx-gar-json-key" \
+            --set messaging.pulsar.initTenant.enabled=true \
             --set rest_ingestion.enabled=false \
             -f examples/reference/messaging.yaml
 
@@ -71,7 +71,7 @@ jobs:
 
       - name: Install StreamX Mesh with reference flow
         run: |
-          helm upgrade --install streamx ./chart -n streamx \
+          helm -n streamx upgrade streamx ./chart \
             --set "imagePullSecrets[0].name=streamx-gar-json-key" \
             -f examples/reference/messaging.yaml \
             -f examples/reference/ingestion.yaml \

@@ -29,6 +29,9 @@ messaging: {}
   #   serviceUrl: "pulsar://pulsar-service:6650"
   #   # -- mandatory: Apache Pulsar REST API URL
   #   webServiceUrl: "http://pulsar-web-service:8080"
+  #   initTenant: # -- optional: Apache Pulsar tenant and namespaces initialisation for StreamX, this job waits for Apache Pulsar to be ready
+  #     enabled: true # -- enable tenant initialisation, this will create a Job to initialise tenant
+  #     customImage: # -- optional: custom image for tenant initialisation, by default `streamx-docker-releases/dev.streamx/pulsar-init` with the current chart's AppVersion will be used
 
 monitoring:
   # -- enabling this flag will enable creating `monitoring.coreos.com` Custom Resources for all services

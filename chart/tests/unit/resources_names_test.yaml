@@ -20,7 +20,8 @@ set:
     enabled: true
   messaging:
     pulsar:
-      serviceUrl: pulsar://service.pulsar:6650
+      initTenant:
+        enabled: true
   rest_ingestion:
     ingress:
       host: unit.test.host
