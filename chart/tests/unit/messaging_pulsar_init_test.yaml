@@ -85,7 +85,7 @@ tests:
             name: QUASAR_TENANT
             value: test-tenant
   # @Test
-  - it: by default init tenatn job is created with `pulsar-init` image and `appVersion` tag
+  - it: by default init tenant job is created with `pulsar-init` image and `appVersion` tag
     chart: 
       appVersion: unit.test.version
     set:
