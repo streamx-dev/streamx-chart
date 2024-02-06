@@ -20,6 +20,8 @@ set:
     pulsar:
       serviceUrl: "pulsar://pulsar-service:6650"
       webServiceUrl: "http://pulsar-web-service:8080"
+      initTenant:
+        enabled: true
   processing:
     service1:
       image:

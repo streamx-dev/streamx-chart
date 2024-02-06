@@ -12,14 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-{{- if .Release.IsInstall }}
 {{- with (.Values.messaging).pulsar }}
+{{- if (.initTenant).enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ include "streamx.component.fullname" (dict "componentName" "pulsar-init-tenant" "context" $) }}
   labels:
     {{- include "streamx.component.labels" (dict "componentName" "pulsar-init-tenant" "context" $) | nindent 4 }}
+  annotations:
+    "helm.sh/resource-policy": keep
 spec:
   template:
     spec:
@@ -28,7 +30,7 @@ spec:
       {{- end }}
       containers:
         - name: pulsar-init
-          image: {{ (.initTenant).image | default (printf "europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/pulsar-init:%s" $.Chart.AppVersion) }}
+          image: {{ (.initTenant).customImage | default (printf "europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/pulsar-init:%s" $.Chart.AppVersion) }}
           env:
             - name: QUASAR_TENANT
               value: {{ include "streamx.tenant" $ }}

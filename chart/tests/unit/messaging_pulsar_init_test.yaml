@@ -18,7 +18,7 @@ suite: test pulsar initialisation
 
 tests:
   # @Test
-  - it: when chart is installed and messaging.pulsar is configured then init job is created
+  - it: when chart is installed and pulsar's initTenant is enabled then init job is created with skip-delete annotation
     release:
       upgrade: false
     set:
@@ -26,32 +26,25 @@ tests:
         pulsar:
           serviceUrl: pulsar://service.pulsar:6650
           webServiceUrl: http://web-service.pulsar:8080
+          initTenant:
+            enabled: true
     template: templates/messaging/pulsar-init-tenant-job.yaml
     asserts:
       - isKind: 
           of: Job
       - hasDocuments:
           count: 1
+      - isSubset:
+          path: metadata.annotations
+          content:
+            "helm.sh/resource-policy": keep
   # @Test
-  - it: when chart is installed and messaging.pulsar is not configured
+  - it: when chart is installed and pulsar's initTenant is not enabled job is not created
     release:
       upgrade: true
     set:
       messaging:
         kafka: {}
-    template: templates/messaging/pulsar-init-tenant-job.yaml
-    asserts:
-      - hasDocuments:
-          count: 0
-  # @Test
-  - it: when chart is upgraded job is not created
-    release:
-      upgrade: true
-    set:
-      messaging:
-        pulsar:
-          serviceUrl: pulsar://service.pulsar:6650
-          webServiceUrl: http://web-service.pulsar:8080
     template: templates/messaging/pulsar-init-tenant-job.yaml
     asserts:
       - hasDocuments:
@@ -65,6 +58,8 @@ tests:
         pulsar: 
           serviceUrl: pulsar://service.pulsar:6650
           webServiceUrl: http://web-service.pulsar:8080
+          initTenant:
+            enabled: true
     template: templates/messaging/pulsar-init-tenant-job.yaml
     asserts:
       - contains:
@@ -80,6 +75,8 @@ tests:
         pulsar:
           serviceUrl: pulsar://service.pulsar:6650
           webServiceUrl: http://web-service.pulsar:8080
+          initTenant:
+            enabled: true
     template: templates/messaging/pulsar-init-tenant-job.yaml
     asserts:
       - contains:
@@ -87,4 +84,19 @@ tests:
           content:
             name: QUASAR_TENANT
             value: test-tenant
-    
+  # @Test
+  - it: by default init tenatn job is created with `pulsar-init` image and `appVersion` tag
+    chart: 
+      appVersion: unit.test.version
+    set:
+      messaging:
+        pulsar:
+          serviceUrl: pulsar://service.pulsar:6650
+          webServiceUrl: http://web-service.pulsar:8080
+          initTenant:
+            enabled: true
+    template: templates/messaging/pulsar-init-tenant-job.yaml
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/pulsar-init:unit.test.version
