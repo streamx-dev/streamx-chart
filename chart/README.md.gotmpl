@@ -123,6 +123,9 @@ Every delivery service container gets the following environment variables:
    </p>
    </details>
 2. Prepare Apache Pulsar for StreamX installation (run it only for the first time installation):
+
+   > NOTE: DO NOT CHANGE THIS COMMAND TO UPGRADE AS IT WILL CLEAR ALL RUNNING STEAMX PODS!
+
    ```bash
     helm install streamx ./chart -n streamx \
       --set "imagePullSecrets[0].name=streamx-gar-json-key" \
@@ -131,6 +134,22 @@ Every delivery service container gets the following environment variables:
       -f examples/reference/messaging.yaml
     ```
     This command will give you `kubectl` command to check status of initialization job. Run it and wait for the job to complete.
+
+   <details>
+   <summary>Show how to initialise StreamX chart from public release</summary>
+   <p>
+   > You still need to download `examples/reference/*.yaml` files from the repository.
+ 
+   ```bash
+   helm install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
+     --set "imagePullSecrets[0].name=streamx-gar-json-key" \
+     --set messaging.pulsar.initTenant.enabled=true \
+     --set rest_ingestion.enabled=false \
+     -f examples/reference/messaging.yaml
+   ```
+   </p>
+   </details>
+
 3. Install StreamX Mesh with Helm chart:
    ```bash
    helm upgrade streamx ./chart -n streamx \
@@ -147,12 +166,6 @@ Every delivery service container gets the following environment variables:
    > You still need to download `examples/reference/*.yaml` files from the repository.
   
    ```bash
-   helm install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
-     --set "imagePullSecrets[0].name=streamx-gar-json-key" \
-     --set messaging.pulsar.initTenant.enabled=true \
-     --set rest_ingestion.enabled=false \
-     -f examples/reference/messaging.yaml
-
    helm upgrade streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
      -f examples/reference/messaging.yaml \
