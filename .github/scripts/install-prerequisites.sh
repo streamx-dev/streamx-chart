@@ -16,6 +16,8 @@
 
 set -x -e
 
+PULSAR_VERSION=${1:-"3.1.2"}
+
 # Install Kind-dedicated NgInx Ingress Controller
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 
@@ -34,7 +36,7 @@ for i in {1..5}; do
   sleep 10
 done
 
-kubectl run pulsar --image=apachepulsar/pulsar:3.1.2 --command --namespace pulsar -- bin/pulsar standalone
+kubectl run pulsar --image=apachepulsar/pulsar:${PULSAR_VERSION} --command --namespace pulsar -- bin/pulsar standalone
 kubectl expose pod pulsar --port=6650 --target-port=6650 --name=service --namespace pulsar
 kubectl -n pulsar create service nodeport web-service --tcp=8080:8080 --node-port=30000 -o yaml --dry-run=client | kubectl set selector --local -f - 'run=pulsar' -o yaml | kubectl create -f -
 
