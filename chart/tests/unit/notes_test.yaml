@@ -46,7 +46,7 @@ tests:
       delivery:
         service1:
           outputs:
-            - name: output1
+            output1:
               service:
                 port: 80
                 targetPort: http

@@ -21,8 +21,8 @@ metadata:
     {{- include "streamx.component.labels" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) | nindent 4 }}
 spec:
   ports:
-    {{- range $output := $delivery.outputs }}
-    - name: {{ $output.name }}
+    {{- range $outputName, $output := $delivery.outputs }}
+    - name: {{ $outputName }}
       port: {{ $output.service.port }}
       targetPort: {{ $output.service.targetPort }}
     {{- end }}
