@@ -15,15 +15,15 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 
 suite: test delivery services data
-set:
-  delivery:
-    service1:
-      replicas: 1
 
 tests:
   # @Test
   - it: repoistory and metadata volumes are always created as emptyDir (bound to pod's lifecycle)
     template: templates/delivery/delivery-deployment.yaml
+    set:
+      delivery:
+        service1:
+          replicas: 1
     asserts:
       - equal:
           path: spec.template.spec.volumes[0].name
@@ -44,7 +44,7 @@ tests:
       delivery:
         service1:
           containers:
-            - name: container
+            test-container:
               image:
                 repository: test/repository
               data:
@@ -66,7 +66,7 @@ tests:
       delivery:
         service1:
           containers:
-            - name: container
+            test-container:
               image:
                 repository: test/repository
               data:

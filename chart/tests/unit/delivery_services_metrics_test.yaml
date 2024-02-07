@@ -15,10 +15,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 
 suite: test delivery services metrics
-set:
-  delivery:
-    service1:
-      replicas: 1
 
 tests:
   # @Test
@@ -30,7 +26,7 @@ tests:
       delivery:
         service1:
           containers:
-            - name: container
+            test-container:
               image:
                 repository: test/repository
               monitoring:
@@ -48,7 +44,7 @@ tests:
           count: 1
       - equal:
           path: spec.podMetricsEndpoints[0].port
-          value: metrics-contain # port name length is limited to 15 characters
+          value: metrics-test-co # port name length is limited to 15 characters
       - equal:
           path: spec.podMetricsEndpoints[0].path
           value: /test
@@ -61,12 +57,12 @@ tests:
       delivery:
         service1:
           containers:
-            - name: c1
+            c1:
               image:
                 repository: test/repository
               monitoring:
                 path: /q/metrics1
-            - name: c2
+            c2:
               image:
                 repository: test/repository
               monitoring:
@@ -103,7 +99,7 @@ tests:
       delivery:
         service1:
           containers:
-            - name: container
+            c1:
               image:
                 repository: test/repository
               monitoring:
@@ -114,7 +110,7 @@ tests:
           value: 8080
       - equal:
           path: .spec.template.spec.containers[0].ports[0].name
-          value: metrics-contain
+          value: metrics-c1
   # @Test
   - it: when monitoring enabled and a delivery service with a single container and monitoring port defined a monitoring port is created
     template: templates/delivery/delivery-deployment.yaml
@@ -124,7 +120,7 @@ tests:
       delivery:
         service1:
           containers:
-            - name: container
+            c1:
               image:
                 repository: test/repository
               monitoring:
@@ -136,4 +132,4 @@ tests:
           value: 9999
       - equal:
           path: .spec.template.spec.containers[0].ports[0].name
-          value: metrics-contain
+          value: metrics-c1

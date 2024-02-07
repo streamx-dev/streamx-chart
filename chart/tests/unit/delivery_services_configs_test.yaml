@@ -28,7 +28,7 @@ tests:
       delivery:
         service1:
           containers:
-            - name: container
+            test-container:
               image:
                 repository: test/repository
               configs:
@@ -38,11 +38,11 @@ tests:
       - contains:
           path: spec.template.spec.volumes
           content: 
-            name: config-container-0
+            name: config-test-container-0
             configMap:
               name: configMap1
       - contains:
           path: spec.template.spec.containers[0].volumeMounts
           content:
-            name: config-container-0
+            name: config-test-container-0
             mountPath: /config/path

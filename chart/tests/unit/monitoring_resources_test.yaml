@@ -28,7 +28,7 @@ set:
   delivery:
     service1:
       containers:
-        - name: container
+        test-container:
           image:
             repository: test/repository
           monitoring:

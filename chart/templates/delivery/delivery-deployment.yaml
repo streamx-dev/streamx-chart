@@ -69,13 +69,13 @@ spec:
             topologyKey: "kubernetes.io/hostname"
       {{- end }}
       containers:
-        {{- range $container := $delivery.containers }}
-        - name: {{ $container.name }}
+        {{- range $containerName, $container := $delivery.containers }}
+        - name: {{ $containerName }}
           image: {{ $container.image }}
           imagePullPolicy: {{ $container.imagePullPolicy }}
           ports:
             {{- with $container.monitoring }}
-            - name: {{ printf "metrics-%s" $container.name | trunc 15 | trimSuffix "-" }}
+            - name: {{ printf "metrics-%s" $containerName | trunc 15 | trimSuffix "-" }}
               containerPort: {{ .port | default 8080 }}
               protocol: TCP
             {{- end }}
@@ -108,7 +108,7 @@ spec:
             - name: MP_MESSAGING_INCOMING_{{ $key | upper }}_TOPIC
               value: {{ include "streamx.channelTopic" (dict "channel" $channel "context" $) }}
             - name: MP_MESSAGING_INCOMING_{{ $key | upper }}_SUBSCRIPTIONNAME
-              value: "$(POD_NAME)-{{ $container.name }}-{{ $key }}"
+              value: "$(POD_NAME)-{{ $containerName }}-{{ $key }}"
             {{- end }}
             {{- with $container.data }}
             {{- if .repositoryMountPath }}
@@ -135,7 +135,7 @@ spec:
             {{- end }}
             {{- end }}
             {{- range $idx, $mount:= $container.configs }}
-            - name: config-{{ $container.name }}-{{ $idx }}
+            - name: config-{{ $containerName }}-{{ $idx }}
               mountPath: {{ $mount.mountPath }}
             {{- end }}
           {{- if $container.livenessProbe }}
@@ -170,9 +170,9 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
-        {{- range $container := $delivery.containers }}
+        {{- range $containerName, $container := $delivery.containers }}
         {{- range $idx, $volume := $container.configs }}
-        - name: config-{{ $container.name }}-{{ $idx }}
+        - name: config-{{ $containerName }}-{{ $idx }}
           configMap:
             name: {{ $volume.configMapName }}
         {{- end }}
