@@ -45,7 +45,7 @@ set:
             host: unit.test.host
             path: /
       containers:
-        - name: test
+        test:
           image:
             repository: test
             tag: test

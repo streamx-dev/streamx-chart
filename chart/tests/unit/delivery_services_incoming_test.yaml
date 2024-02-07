@@ -15,9 +15,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 
 suite: test delivery services incoming channels
-set:
-  delivery:
-    service1: {}
 
 tests:
   # @Test
@@ -32,7 +29,7 @@ tests:
               namespace: inboxes
               topic: topic
           containers:
-            - name: container
+            test-container:
               image:
                 repository: test/repository
     asserts:
@@ -45,4 +42,4 @@ tests:
           path: spec.template.spec.containers[0].env
           content: 
             name: MP_MESSAGING_INCOMING_CHANNEL-NAME_SUBSCRIPTIONNAME
-            value: $(POD_NAME)-container-channel-name
+            value: $(POD_NAME)-test-container-channel-name

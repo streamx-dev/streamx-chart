@@ -24,9 +24,9 @@ metadata:
 spec:
   jobLabel: app.kubernetes.io/component
   podMetricsEndpoints:
-  {{- range $container := $delivery.containers }}
+  {{- range $containerName, $container := $delivery.containers }}
   {{- with $container.monitoring }}
-    - port: {{ printf "metrics-%s" $container.name | trunc 15 | trimSuffix "-" }}
+    - port: {{ printf "metrics-%s" $containerName | trunc 15 | trimSuffix "-" }}
       path: {{ .path }}
       scheme: http
       interval: {{ .interval | default "10s" }}

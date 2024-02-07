@@ -29,7 +29,7 @@ set:
   delivery:
     service2:
       containers:
-        - name: test
+        test:
           image:
             repository: test/delivery-service
 templates:
