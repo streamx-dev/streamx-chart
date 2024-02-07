@@ -41,7 +41,7 @@ tests:
       - matchRegexRaw:
           pattern: https://rest.ingestion.host
   # @Test
-  - it: when delivery service ingress enabled then host printed in notes
+  - it: when delivery service ingress configured then host printed in notes
     set:
       delivery:
         service1:
@@ -51,9 +51,25 @@ tests:
                 port: 80
                 targetPort: http
               ingress:
-                enabled: true
                 host: service1.host
                 path: /testpath
+    asserts:
+      - matchSnapshot: {}
+  # @Test
+  - it: when delivery service ingress configured with tls then host printed in notes with https
+    set:
+      delivery:
+        service1:
+          outputs:
+            output1:
+              service:
+                port: 80
+                targetPort: http
+              ingress:
+                host: service1.host
+                path: /testpath
+                tls:
+                  secretName: tls-secret
     asserts:
       - matchSnapshot: {}
   # @Test

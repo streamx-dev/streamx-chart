@@ -41,7 +41,6 @@ set:
             port: 80
             targetPort: http
           ingress:
-            enabled: true
             host: unit.test.host
             path: /
       containers:
