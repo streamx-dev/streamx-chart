@@ -27,9 +27,7 @@ delivery:
           port: 80
           targetPort: http
         ingress:
-          enabled: true
           host: streamx.127.0.0.1.nip.io
-          path: /
     containers:
       webserver:
         image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/reference-web-delivery-service:0.0.2

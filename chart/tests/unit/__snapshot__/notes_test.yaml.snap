@@ -23,7 +23,7 @@ when chart is installed and messaging.pulsar is configured then NOTES contains i
       kubectl -n my-namespace wait --for=condition=complete job --selector app.kubernetes.io/component=pulsar-init-tenant --timeout=300s
 
       Deploy StreamX Mesh when the initialization completes successfully.
-when delivery service ingress enabled then host printed in notes:
+when delivery service ingress configured then host printed in notes:
   1: |
     raw: |-
       # Copyright 2024 Dynamic Solutions Sp. z o.o. sp.k.
@@ -44,6 +44,27 @@ when delivery service ingress enabled then host printed in notes:
       ---------------------
       Delivery services:
       - http://service1.host
+when delivery service ingress configured with tls then host printed in notes with https:
+  1: |
+    raw: |-
+      # Copyright 2024 Dynamic Solutions Sp. z o.o. sp.k.
+      #
+      # Licensed under the Apache License, Version 2.0 (the "License");
+      # you may not use this file except in compliance with the License.
+      # You may obtain a copy of the License at
+      #
+      #     http://www.apache.org/licenses/LICENSE-2.0
+      #
+      # Unless required by applicable law or agreed to in writing, software
+      # distributed under the License is distributed on an "AS IS" BASIS,
+      # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      # See the License for the specific language governing permissions and
+      # limitations under the License.
+
+      Happy StreamX Helming!
+      ---------------------
+      Delivery services:
+      - https://service1.host
 when rest_ingestion service ingress host is set then it is printed in notes with http:
   1: |
     raw: |-

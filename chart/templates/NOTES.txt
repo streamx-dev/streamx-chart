@@ -36,8 +36,8 @@ Delivery services:
 {{- end }}
 {{- range $delivery := .Values.delivery }}
   {{- range $delivery.outputs }}
-  {{- if (.ingress).enabled }}
-- http://{{ .ingress.host }}
+  {{- with .ingress }}
+- http{{ if (.tls).secretName }}s{{ end }}://{{ .host }}
   {{- end }}
   {{- end }}
 {{- end }}
