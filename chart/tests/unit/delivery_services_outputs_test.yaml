@@ -15,19 +15,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 
 suite: test delivery services output - service
-set:
-  delivery:
-    service1:
-      replicas: 1
-      containers:
-        - name: test
-          image:
-            repository: test/repository
-          ports:
-            - name: http
-              containerPort: 80
-            - name: https
-              containerPort: 443
 
 tests:
   # @Test
@@ -37,7 +24,7 @@ tests:
       delivery:
         service1:
           outputs:
-            - name: output1
+            output1:
               service:
                 port: 80
                 targetPort: http
@@ -65,11 +52,11 @@ tests:
       delivery:
         service1:
           outputs:
-            - name: output1
+            output1:
               service:
                 port: 80
                 targetPort: http
-            - name: output2
+            output2:
               service:
                 port: 443
                 targetPort: https
@@ -103,7 +90,7 @@ tests:
       delivery:
         service1:
           outputs:
-            - name: output1
+            output1:
               service:
                 port: 80
                 targetPort: http
@@ -136,13 +123,13 @@ tests:
       delivery:
         service1:
           outputs:
-            - name: output1
+            output1:
               service:
                 port: 80
                 targetPort: http
               ingress:
                 host: unit.test.host1
-            - name: output2
+            output2:
               service:
                 port: 443
                 targetPort: https
@@ -166,13 +153,13 @@ tests:
       delivery:
         service1:
           outputs:
-            - name: output1
+            output1:
               service:
                 port: 80
                 targetPort: http
               ingress:
                 host: unit.test.host1
-            - name: output2
+            output2:
               service:
                 port: 443
                 targetPort: https
@@ -188,7 +175,7 @@ tests:
       delivery:
         service1:
           outputs:
-            - name: output1
+            output1:
               service:
                 port: 80
                 targetPort: http

@@ -107,7 +107,7 @@ delivery: {}
   #       namespace: outboxes
   #       topic: pages
   #   outputs:
-  #     - name: http
+  #     http: # unique output name for the service
   #       service:
   #         containerRef:
   #           name: client # corresponds to container name in `containers` section

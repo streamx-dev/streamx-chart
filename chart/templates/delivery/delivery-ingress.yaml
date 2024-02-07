@@ -13,12 +13,12 @@
 # limitations under the License.
 
 {{- range $name, $delivery := .Values.delivery }}
-{{- range $output := $delivery.outputs }}
+{{- range $outputName, $output := $delivery.outputs }}
 {{ with $output.ingress }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "streamx.component.fullname" (dict "componentName" (printf "%s-%s-%s" "delivery" $name $output.name ) "context" $) }}
+  name: {{ include "streamx.component.fullname" (dict "componentName" (printf "%s-%s-%s" "delivery" $name $outputName ) "context" $) }}
   annotations:
     {{- if .annotations }}
     {{- .annotations | toYaml | nindent 4 }}

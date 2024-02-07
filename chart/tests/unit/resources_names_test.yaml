@@ -34,7 +34,7 @@ set:
   delivery:
     unit_test_service:
       outputs:
-        - name: http
+        http:
           service:
             containerRef:
               name: client

@@ -20,7 +20,7 @@ delivery:
         namespace: outboxes
         topic: pages
     outputs:
-      - name: http
+      http:
         service:
           containerRef:
             name: webserver
