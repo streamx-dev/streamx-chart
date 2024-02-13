@@ -1,0 +1,83 @@
+# Copyright 2024 Dynamic Solutions Sp. z o.o. sp.k.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test rest-ingestion auth
+templates:
+  - templates/rest-ingestion-service/rest-ingestion-deployment.yaml
+tests:
+  # @Test
+  - it: mount volume with keys files when auth secret is configured
+    set:
+      rest_ingestion:
+        auth:
+          keysSecretName: jwt-keys-secret
+    asserts:
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: jwt-keys
+            secret:
+              secretName: jwt-keys-secret
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: jwt-keys
+            mountPath: /etc/secrets/streamx
+            readOnly: true
+  # @Test
+  - it: configure default API keys path envs when auth secret is configured but no file names are set
+    set:
+      rest_ingestion:
+        auth:
+          keysSecretName: jwt-keys-secret
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MP_JWT_VERIFY_PUBLICKEY_LOCATION
+            value: /etc/secrets/streamx/key.pub
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SMALLRYE_JWT_SIGN_KEY_LOCATION
+            value: /etc/secrets/streamx/key.pem
+  # @Test
+  - it: configure API keys path envs when auth secret are configured
+    set:
+      rest_ingestion:
+        auth:
+          keysSecretName: jwt-keys-secret
+          publicKeyFileName: 4321-key.pub
+          privateKeyFileName: 1234-key.pem
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: MP_JWT_VERIFY_PUBLICKEY_LOCATION
+            value: /etc/secrets/streamx/4321-key.pub
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SMALLRYE_JWT_SIGN_KEY_LOCATION
+            value: /etc/secrets/streamx/1234-key.pem
+  # @Test
+  - it: configure no auth env when auth secret is not configured
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: QUARKUS_HTTP_AUTH_PERMISSION_BEARER_POLICY
+            value: permit
