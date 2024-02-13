@@ -15,3 +15,7 @@
 charts/*
 generated/*
 *.tgz
+
+publicKey.pub
+privateKey.pem
+rsaPrivateKey.pem

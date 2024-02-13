@@ -99,10 +99,29 @@ Every delivery service container gets the following environment variables:
 
 > Note: to run StreamX services locally, you need access to StreamX private repository.
 
-1. Create `docker-registry` secret to enable Kubernetes to pull images from the StreamX private repository:
+1. Create secret for Rest Ingrestion Auth:
+   ```bash
+   kubectl create namespace streamx || true
+   kubectl apply -f examples/reference/secrets/restIngestionJwtKeys.yaml
+   ```
+
+   <details>
+   <summary>Show how to generate secret for Rest Ingestion Auth</summary>
+   <p>
+
+   ```bash
+   openssl genrsa -out rsaPrivateKey.pem 2048
+   openssl rsa -pubout -in rsaPrivateKey.pem -out publicKey.pub
+   openssl pkcs8 -topk8 -nocrypt -inform pem -in rsaPrivateKey.pem -outform pem -out privateKey.pem
+   kubectl create namespace streamx || true
+   kubectl -n streamx create secret generic streamx-api-keys --from-file=./privateKey.pem --from-file=./publicKey.pub
+   ```
+   </p>
+   </details>
+
+2. Create `docker-registry` secret to enable Kubernetes to pull images from the StreamX private repository:
    ```bash
    TOKEN=$(gcloud auth print-access-token)
-   kubectl create namespace streamx || true
    kubectl create secret docker-registry streamx-gar-json-key \
      --docker-server=europe-west1-docker.pkg.dev \
      --docker-username=oauth2accesstoken \
@@ -112,8 +131,8 @@ Every delivery service container gets the following environment variables:
    <details>
    <summary>Show how to use locally built images</summary>
    <p>
-   Alternatively, you can build images on your host and use `kind load` to load them into the cluster, e.g.: 
-  
+   Alternatively, you can build images on your host and use `kind load` to load them into the cluster, e.g.:
+ 
    ```bash
    kind load docker-image europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-web-delivery-service:1.0-SNAPSHOT
    kind load docker-image europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-relay-processing-service:1.0-SNAPSHOT
@@ -139,7 +158,7 @@ Every delivery service container gets the following environment variables:
    <summary>Show how to initialise StreamX chart from public release</summary>
    <p>
    > You still need to download `examples/reference/*.yaml` files from the repository.
- 
+
    ```bash
    helm install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
@@ -164,9 +183,9 @@ Every delivery service container gets the following environment variables:
    <summary>Show how to install StreamX chart from public release</summary>
    <p>
    > You still need to download `examples/reference/*.yaml` files from the repository.
-  
+ 
    ```bash
-   helm upgrade streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
+   helm install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
      -f examples/reference/messaging.yaml \
      -f examples/reference/ingestion.yaml \
@@ -181,6 +200,11 @@ Check that all deployments are running:
 
 ```bash
 kubectl -n streamx rollout status deployment -l app.kubernetes.io/instance=streamx
+```
+
+Fetch JWT token to authenticate with StreamX REST Ingrestion Service:
+```bash
+export JWT_TOKEN=$(kubectl -n streamx run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
 ```
 
 Next, from the `examples/reference/e2e` run:
@@ -198,6 +222,7 @@ Refresh the Ingestion Service schema by calling:
 ```bash
 curl -X 'GET' \
   'http://streamx-api.127.0.0.1.nip.io/publications/v1/schema' \
+  -H "Authorization: Bearer ${JWT_TOKEN}" \
   -H 'accept: */*'
 ```
 
@@ -210,6 +235,7 @@ curl -X 'PUT' \
   'http://streamx-api.127.0.0.1.nip.io/publications/v1/pages/test.html' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer ${JWT_TOKEN}" \
   -d '{
   "content": {"bytes": "<h1>Hello StreamX!</h1>"}
 }'

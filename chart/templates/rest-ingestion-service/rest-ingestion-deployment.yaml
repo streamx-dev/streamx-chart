@@ -35,15 +35,30 @@ spec:
       {{- if .Values.rest_ingestion.nodeSelector }}
       nodeSelector: {{- .Values.rest_ingestion.nodeSelector | toYaml | nindent 8 }}
       {{- end }}
+      {{- if (.Values.rest_ingestion.auth).keysSecretName }}
+      volumes:
+        - name: jwt-keys
+          secret:
+            secretName: {{ .Values.rest_ingestion.auth.keysSecretName }}
+      {{- end }}
       containers:
         - name: rest-ingestion
-          image: {{ .Values.rest_ingestion.image | default (printf "europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/rest-ingestion-service:%s" .Chart.AppVersion) }}
+          image: {{ .Values.rest_ingestion.image | default (printf "europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/streamx/rest-ingestion-service:%s" .Chart.AppVersion) }}
           imagePullPolicy: {{ .Values.rest_ingestion.imagePullPolicy }}
           ports:
             - name: http
               containerPort: 8080          
           env:
             {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
+            {{- if (.Values.rest_ingestion.auth).keysSecretName }}
+            - name: MP_JWT_VERIFY_PUBLICKEY_LOCATION
+              value: /etc/secrets/streamx/{{ .Values.rest_ingestion.auth.publicKeyFileName | default "key.pub" }}
+            - name: SMALLRYE_JWT_SIGN_KEY_LOCATION
+              value: /etc/secrets/streamx/{{ .Values.rest_ingestion.auth.privateKeyFileName | default "key.pem" }}
+            {{- else }}           
+            - name: QUARKUS_HTTP_AUTH_PERMISSION_BEARER_POLICY
+              value: permit
+            {{- end }}
             - name: MP_MESSAGING_OUTGOING_ALL-INBOXES_TOPICSPATTERN
               value: {{ include "streamx.pulsarTopic" (dict "namespaceAndTopic" .Values.rest_ingestion.allInboxesTopicPatter "context" $) }}
             - name: MP_MESSAGING_OUTGOING_ALL-INBOXES_PRODUCERNAME
@@ -53,6 +68,10 @@ spec:
             {{- if .Values.rest_ingestion.env }}
 {{ toYaml .Values.rest_ingestion.env | indent 12 }}
             {{- end }}
+          volumeMounts:
+            - name: jwt-keys
+              mountPath: /etc/secrets/streamx
+              readOnly: true
         {{- if .Values.rest_ingestion.resources }}
           resources:
 {{ toYaml .Values.rest_ingestion.resources | indent 12 }}
