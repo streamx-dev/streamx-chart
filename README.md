@@ -167,6 +167,7 @@ Every delivery service container gets the following environment variables:
       --set "imagePullSecrets[0].name=streamx-gar-json-key" \
       --set messaging.pulsar.initTenant.enabled=true \
       --set rest_ingestion.enabled=false \
+      --set tenant=test-tenant \
       -f examples/reference/messaging.yaml
     ```
     This command will give you `kubectl` command to check status of initialization job. Run it and wait for the job to complete.
@@ -181,6 +182,7 @@ Every delivery service container gets the following environment variables:
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
      --set messaging.pulsar.initTenant.enabled=true \
      --set rest_ingestion.enabled=false \
+     --set tenant=test-tenant \
      -f examples/reference/messaging.yaml
    ```
    </p>
@@ -190,6 +192,7 @@ Every delivery service container gets the following environment variables:
    ```bash
    helm upgrade streamx ./chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
+     --set tenant=test-tenant \
      -f examples/reference/messaging.yaml \
      -f examples/reference/ingestion.yaml \
      -f examples/reference/processing.yaml \
@@ -204,6 +207,7 @@ Every delivery service container gets the following environment variables:
    ```bash
    helm install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
+     --set tenant=test-tenant \
      -f examples/reference/messaging.yaml \
      -f examples/reference/ingestion.yaml \
      -f examples/reference/processing.yaml \
@@ -219,13 +223,9 @@ Check that all deployments are running:
 kubectl -n streamx rollout status deployment -l app.kubernetes.io/instance=streamx
 ```
 
-Fetch JWT token to authenticate with StreamX REST Ingrestion Service:
-```bash
-export JWT_TOKEN=$(kubectl -n streamx run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
-```
-
 Next, from the `examples/reference/e2e` run:
 ```bash
+export STREAMX_INGESTION_REST_AUTH_TOKEN=$(kubectl -n streamx run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
 ./mvnw clean verify
 ```
 
@@ -235,11 +235,16 @@ Next, from the `examples/reference/e2e` run:
 <summary>See how to validate reference flow manually with cURL</summary>
 <p>
 
+Fetch JWT token to authenticate with StreamX REST Ingrestion Service:
+```bash
+export STREAMX_INGESTION_REST_AUTH_TOKEN=$(kubectl -n streamx run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
+```
+
 Refresh the Ingestion Service schema by calling:
 ```bash
 curl -X 'GET' \
   'http://streamx-api.127.0.0.1.nip.io/publications/v1/schema' \
-  -H "Authorization: Bearer ${JWT_TOKEN}" \
+  -H "Authorization: Bearer ${STREAMX_INGESTION_REST_AUTH_TOKEN}" \
   -H 'accept: */*'
 ```
 
@@ -252,7 +257,7 @@ curl -X 'PUT' \
   'http://streamx-api.127.0.0.1.nip.io/publications/v1/pages/test.html' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer ${JWT_TOKEN}" \
+  -H "Authorization: Bearer ${STREAMX_INGESTION_REST_AUTH_TOKEN}" \
   -d '{
   "content": {"bytes": "<h1>Hello StreamX!</h1>"}
 }'
