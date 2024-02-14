@@ -49,6 +49,8 @@ spec:
             - name: http
               containerPort: 8080          
           env:
+            - name: STREAMX_TENANT
+              value: {{ include "streamx.tenant" $ }}
             {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
             {{- if (.Values.rest_ingestion.auth).keysSecretName }}
             - name: MP_JWT_VERIFY_PUBLICKEY_LOCATION
