@@ -106,6 +106,7 @@ limitations under the License. -->
         <configuration>
           <systemPropertyVariables>
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+            <quarkus.log.level>DEBUG</quarkus.log.level>
             <maven.home>${maven.home}</maven.home>
           </systemPropertyVariables>
           <environmentVariables>
