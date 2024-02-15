@@ -132,7 +132,7 @@ Every delivery service container gets the following environment variables:
    <summary>Show how to use locally built images</summary>
    <p>
    Alternatively, you can build images on your host and use `kind load` to load them into the cluster, e.g.:
- 
+
    ```bash
    kind load docker-image europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-web-delivery-service:1.0-SNAPSHOT
    kind load docker-image europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-relay-processing-service:1.0-SNAPSHOT
@@ -183,7 +183,7 @@ Every delivery service container gets the following environment variables:
    <summary>Show how to install StreamX chart from public release</summary>
    <p>
    > You still need to download `examples/reference/*.yaml` files from the repository.
- 
+
    ```bash
    helm install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
@@ -202,13 +202,9 @@ Check that all deployments are running:
 kubectl -n streamx rollout status deployment -l app.kubernetes.io/instance=streamx
 ```
 
-Fetch JWT token to authenticate with StreamX REST Ingrestion Service:
-```bash
-export JWT_TOKEN=$(kubectl -n streamx run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
-```
-
 Next, from the `examples/reference/e2e` run:
 ```bash
+export STREAMX_INGESTION_REST_AUTH_TOKEN=$(kubectl -n streamx run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
 ./mvnw clean verify
 ```
 
@@ -218,11 +214,16 @@ Next, from the `examples/reference/e2e` run:
 <summary>See how to validate reference flow manually with cURL</summary>
 <p>
 
+Fetch JWT token to authenticate with StreamX REST Ingrestion Service:
+```bash
+export STREAMX_INGESTION_REST_AUTH_TOKEN=$(kubectl -n streamx run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
+```
+
 Refresh the Ingestion Service schema by calling:
 ```bash
 curl -X 'GET' \
   'http://streamx-api.127.0.0.1.nip.io/publications/v1/schema' \
-  -H "Authorization: Bearer ${JWT_TOKEN}" \
+  -H "Authorization: Bearer ${STREAMX_INGESTION_REST_AUTH_TOKEN}" \
   -H 'accept: */*'
 ```
 
@@ -235,7 +236,7 @@ curl -X 'PUT' \
   'http://streamx-api.127.0.0.1.nip.io/publications/v1/pages/test.html' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer ${JWT_TOKEN}" \
+  -H "Authorization: Bearer ${STREAMX_INGESTION_REST_AUTH_TOKEN}" \
   -d '{
   "content": {"bytes": "<h1>Hello StreamX!</h1>"}
 }'

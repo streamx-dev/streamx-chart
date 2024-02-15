@@ -1,5 +1,5 @@
 # StreamX Helm Chart
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.3-jvm](https://img.shields.io/badge/AppVersion-0.0.3--jvm-informational?style=flat-square)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.4-jvm](https://img.shields.io/badge/AppVersion-0.0.4--jvm-informational?style=flat-square)
 
 This chart bootstraps StreamX on a Kubernetes cluster.
 
@@ -167,7 +167,6 @@ Every delivery service container gets the following environment variables:
       --set "imagePullSecrets[0].name=streamx-gar-json-key" \
       --set messaging.pulsar.initTenant.enabled=true \
       --set rest_ingestion.enabled=false \
-      --set tenant=test-tenant \
       -f examples/reference/messaging.yaml
     ```
     This command will give you `kubectl` command to check status of initialization job. Run it and wait for the job to complete.
@@ -182,7 +181,6 @@ Every delivery service container gets the following environment variables:
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
      --set messaging.pulsar.initTenant.enabled=true \
      --set rest_ingestion.enabled=false \
-     --set tenant=test-tenant \
      -f examples/reference/messaging.yaml
    ```
    </p>
@@ -192,7 +190,6 @@ Every delivery service container gets the following environment variables:
    ```bash
    helm upgrade streamx ./chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
-     --set tenant=test-tenant \
      -f examples/reference/messaging.yaml \
      -f examples/reference/ingestion.yaml \
      -f examples/reference/processing.yaml \
@@ -207,7 +204,6 @@ Every delivery service container gets the following environment variables:
    ```bash
    helm install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
-     --set tenant=test-tenant \
      -f examples/reference/messaging.yaml \
      -f examples/reference/ingestion.yaml \
      -f examples/reference/processing.yaml \

@@ -104,9 +104,6 @@ limitations under the License. -->
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.2.3</version>
         <configuration>
-          <dependenciesToScan>
-            <dependency>dev.streamx:streamx-services-it</dependency>
-          </dependenciesToScan>
           <systemPropertyVariables>
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
             <maven.home>${maven.home}</maven.home>
