@@ -47,11 +47,15 @@ jobs:
       - name: Install prerequisites
         run:  .github/scripts/install-prerequisites.sh
 
+      - name: Create StreamX namespace and create ingestion service token secret
+        run: |
+          kubectl create namespace streamx
+          kubectl apply -f examples/reference/secrets/restIngestionJwtKeys.yaml
+
       - name: Configure Docker Registry with StreamX images
         env:
           REGISTRY_JSON_KEY: ${{ secrets.GCP_STREAMX_RELEASES_GAR_READ_KEY }}
         run: |
-          kubectl create namespace streamx || true
           kubectl -n streamx create secret docker-registry streamx-gar-json-key \
             --docker-server=europe-west1-docker.pkg.dev \
             --docker-username=_json_key_base64 \
@@ -97,4 +101,7 @@ jobs:
           cache: 'maven'
 
       - name: Verify reference flow with StreamX API Integration / E2E Tests
-        run: cd examples/reference/e2e && ./mvnw clean verify
+        run: |
+          cd examples/reference/e2e
+          export STREAMX_INGESTION_REST_AUTH_TOKEN=$(kubectl -n streamx run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
+          ./mvnw clean verify
