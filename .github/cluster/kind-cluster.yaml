@@ -27,5 +27,3 @@ nodes:
     hostPort: 80
   - containerPort: 443
     hostPort: 443
-  - containerPort: 30000
-    hostPort: 65328
