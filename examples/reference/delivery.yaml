@@ -30,7 +30,7 @@ delivery:
           host: streamx.127.0.0.1.nip.io
     containers:
       webserver:
-        image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/reference-web-delivery-service:0.0.2
+        image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/streamx/reference-web-delivery-service:0.0.5-jvm
         ports:
           - name: http
             containerPort: 8080

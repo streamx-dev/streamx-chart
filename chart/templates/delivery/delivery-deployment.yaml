@@ -101,6 +101,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: STREAMX_TENANT
+              value: {{ include "streamx.tenant" $ }}
             {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
             - name: PLUGIN_STORE_TENANT
               value: {{ include "streamx.tenant" $ }}

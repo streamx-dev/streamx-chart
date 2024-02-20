@@ -101,23 +101,25 @@ limitations under the License. -->
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
+        <artifactId>maven-failsafe-plugin</artifactId>
         <version>3.2.3</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
-          <dependenciesToScan>
-            <dependency>dev.streamx:streamx-services-it</dependency>
-          </dependenciesToScan>
           <systemPropertyVariables>
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
             <maven.home>${maven.home}</maven.home>
           </systemPropertyVariables>
-          <environmentVariables>
-            <QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL>INFO</QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL>
-          </environmentVariables>
-          <argLine>-Dfile.encoding=UTF-8</argLine>
         </configuration>
       </plugin>
     </plugins>
+
     <extensions>
       <extension>
         <groupId>com.google.cloud.artifactregistry</groupId>

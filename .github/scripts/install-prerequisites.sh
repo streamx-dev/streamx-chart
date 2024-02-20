@@ -36,9 +36,9 @@ for i in {1..5}; do
   sleep 10
 done
 
-kubectl run pulsar --image=apachepulsar/pulsar:${PULSAR_VERSION} --command --namespace pulsar -- bin/pulsar standalone
-kubectl expose pod pulsar --port=6650 --target-port=6650 --name=service --namespace pulsar
-kubectl -n pulsar create service nodeport web-service --tcp=8080:8080 --node-port=30000 -o yaml --dry-run=client | kubectl set selector --local -f - 'run=pulsar' -o yaml | kubectl create -f -
+kubectl -n pulsar run pulsar --image=apachepulsar/pulsar:${PULSAR_VERSION} --command -- bin/pulsar standalone
+kubectl -n pulsar expose pod pulsar --port=6650 --target-port=6650 --name=service
+kubectl -n pulsar expose pod pulsar --port=8080 --target-port=8080 --name=web-service
 
 # Wait for all pods to be ready
 kubectl -n ingress-nginx rollout status deployment ingress-nginx-controller 
