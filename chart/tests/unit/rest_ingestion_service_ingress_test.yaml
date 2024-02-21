@@ -24,7 +24,7 @@ tests:
       - hasDocuments:
           count: 0
   # @Test
-  - it: when ingress host is set then ingress should be created
+  - it: when ingress host is set then ingress should be created and allow only "/publications" path
     set:
       rest_ingestion:
         ingress:
@@ -37,6 +37,9 @@ tests:
       - matchRegex:
           path: spec.rules[0].host
           pattern: unit.test.host
+      - matchRegex:
+          path: spec.rules[0].http.paths[0].path
+          pattern: /publications
   # @Test
   - it: when ingress tls secret is set then ingress should be created with tls settings
     set:

@@ -141,7 +141,7 @@ Every delivery service container gets the following environment variables:
    ```
    </p>
    </details>
-2. Prepare Apache Pulsar for StreamX installation (run it only for the first time installation):
+3. Prepare Apache Pulsar for StreamX installation (run it only for the first time installation):
 
    > NOTE: DO NOT CHANGE THIS COMMAND TO UPGRADE AS IT WILL CLEAR ALL RUNNING STEAMX PODS!
 
@@ -169,7 +169,7 @@ Every delivery service container gets the following environment variables:
    </p>
    </details>
 
-3. Install StreamX Mesh with Helm chart:
+4. Install StreamX Mesh with Helm chart:
    ```bash
    helm upgrade streamx ./chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
@@ -205,7 +205,7 @@ kubectl -n streamx rollout status deployment -l app.kubernetes.io/instance=strea
 Next, from the `examples/reference/e2e` run:
 ```bash
 export STREAMX_INGESTION_REST_AUTH_TOKEN=$(kubectl -n streamx run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
-./mvnw clean verify
+./mvnw verify
 ```
 
 > Note: you need JDK 17 to run the tests.
@@ -214,7 +214,7 @@ export STREAMX_INGESTION_REST_AUTH_TOKEN=$(kubectl -n streamx run jwt-token-prov
 <summary>See how to validate reference flow manually with cURL</summary>
 <p>
 
-Fetch JWT token to authenticate with StreamX REST Ingrestion Service:
+Fetch JWT token to authenticate with StreamX REST Ingrestion Service (`/auth/token` endpoint is not exposed via ingress):
 ```bash
 export STREAMX_INGESTION_REST_AUTH_TOKEN=$(kubectl -n streamx run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
 ```
