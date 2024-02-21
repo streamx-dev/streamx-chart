@@ -37,7 +37,7 @@ spec:
     http:
       paths:
       - pathType: Prefix
-        path: "/"
+        path: "/publications"
         backend:
           service:
             name: {{ include "streamx.component.fullname" (dict "componentName" "rest-ingestion" "context" $) }}

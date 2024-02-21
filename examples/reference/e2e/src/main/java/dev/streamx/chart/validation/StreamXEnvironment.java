@@ -46,12 +46,17 @@ public class StreamXEnvironment {
       return eventTime;
     }
   }
+
   public RequestSpecification newIngestionSchemaRequest() {
-    return given()
-        .baseUri(REST_INGESTION_HOST + PUBLICATIONS_API_BASE_PATH)
-        .basePath("/schema")
+    return newIngestionRequest(PUBLICATIONS_API_BASE_PATH + "/schema")
         .header("Authorization", "Bearer " + getAuthToken())
         .contentType(ContentType.JSON);
+  }
+
+  public RequestSpecification newIngestionRequest(String basePath) {
+    return given()
+        .baseUri(REST_INGESTION_HOST)
+        .basePath(basePath);
   }
 
   public RequestSpecification newDeliveryPageRequest(String pagePath) {

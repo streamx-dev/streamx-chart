@@ -28,7 +28,7 @@ Deploy StreamX Mesh when the initialization completes successfully.
 
 {{- with (.Values.rest_ingestion).ingress }}
 Ingestion services:
-- http{{ if (.tls).secretName }}s{{ end }}://{{ .host }}/q/swagger-ui
+- http{{ if (.tls).secretName }}s{{ end }}://{{ .host }}
 {{- end }}
 
 {{- if gt (len .Values.delivery) 0 }}

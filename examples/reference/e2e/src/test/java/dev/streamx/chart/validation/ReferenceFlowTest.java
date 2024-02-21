@@ -72,4 +72,14 @@ public class ReferenceFlowTest {
     assertPageWithContent(environment.newDeliveryPageRequest(key), REFERENCE_PAGE_CONTENT);
   }
 
+  @Test
+  void makeSureAuthEndpointIsNotExposedPublicly(StreamXEnvironment environment)
+      throws StreamxClientException {
+    environment.newIngestionRequest("/auth/token?upn=test")
+        .post()
+        .then()
+        .assertThat()
+        .statusCode(404);
+  }
+
 }
