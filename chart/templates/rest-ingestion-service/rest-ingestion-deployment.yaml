@@ -52,6 +52,7 @@ spec:
             - name: STREAMX_TENANT
               value: {{ include "streamx.tenant" $ }}
             {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
+            {{- include "streamx.component.quasarEnvs" (dict "componentName" "rest-ingestion" "context" $) | nindent 12 }}
             {{- if (.Values.rest_ingestion.auth).keysSecretName }}
             - name: MP_JWT_VERIFY_PUBLICKEY_LOCATION
               value: /etc/secrets/streamx/{{ .Values.rest_ingestion.auth.publicKeyFileName | default "key.pub" }}

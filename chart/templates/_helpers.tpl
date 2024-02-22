@@ -87,6 +87,18 @@ app.kubernetes.io/component: {{ .componentName }}
 {{- end }}
 
 {{/*
+Common Quasar Reactive Messaging environment variables
+Usage:
+{{ include "streamx.component.quasarEnvs" (dict "componentName" "component-name" "context" $) }}
+*/}}
+{{- define "streamx.component.quasarEnvs" -}}
+- name: QUASAR_APPLICATION_INSTANCE-ID
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.name
+{{- end }}
+
+{{/*
 Tenant name
 Usage:
 {{ include "streamx.tenant" . }}
@@ -135,12 +147,10 @@ Usage:
 {{ include "streamx.pulsarEnvs" . }}
 */}}
 {{- define "streamx.pulsarEnvs" -}}
-{{ with (.Values.messaging).pulsar }}
+{{- with (.Values.messaging).pulsar -}}
 - name: PULSAR_ADMIN_SERVICEURL
   value: {{ .webServiceUrl }}
 - name: PULSAR_CLIENT_SERVICEURL
-  value: {{ .serviceUrl }}
-- name: QUASAR_MESSAGING_DATASTORE_PULSAR_SERVICEURL
   value: {{ .serviceUrl }}
 {{- end }}
 {{- end }}

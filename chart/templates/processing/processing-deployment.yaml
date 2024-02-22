@@ -67,6 +67,7 @@ spec:
             - name: STREAMX_TENANT
               value: {{ include "streamx.tenant" $ }}
             {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
+            {{- include "streamx.component.quasarEnvs" (dict "componentName" (printf "%s-%s" "processing" $name ) "context" $) | nindent 12 }}
             - name: PLUGIN_STORE_TENANT
               value: {{ include "streamx.tenant" $ }}
             {{- range $key, $channel := $processing.incoming }}
