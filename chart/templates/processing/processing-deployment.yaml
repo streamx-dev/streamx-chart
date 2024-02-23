@@ -68,6 +68,7 @@ spec:
               value: {{ include "streamx.tenant" $ }}
             {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
             {{- include "streamx.component.quasarEnvs" (dict "componentName" (printf "%s-%s" "processing" $name ) "context" $) | nindent 12 }}
+            {{- include "streamx.quarkusProbesEnvs" (dict "probes" $processing.probes "context" $) | indent 12 }}
             - name: PLUGIN_STORE_TENANT
               value: {{ include "streamx.tenant" $ }}
             {{- range $key, $channel := $processing.incoming }}
@@ -91,17 +92,6 @@ spec:
               cpu: 400m
               memory: 256Mi
           {{- end }}
-          {{- if $processing.livenessProbe }}
-          livenessProbe:
-{{ toYaml $processing.livenessProbe | indent 12 }}
-          {{- end }}
-          {{- if $processing.readinessProbe }}
-            readinessProbe:
-{{ toYaml $processing.readinessProbe | indent 12 }}
-          {{- end }}
-          {{- if $processing.startupProbe }}
-            startupProbe:
-{{ toYaml $processing.startupProbe | indent 12 }}
-          {{- end }}
+          {{- include "streamx.quarkusProbesConfig" (dict "probes" $processing.probes "context" $) | indent 10 }}
 ---
 {{- end }}

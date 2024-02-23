@@ -51,12 +51,8 @@ rest_ingestion:
   env: []
   # -- pod monitoring configuration
   monitoring: {}
-  # -- liveness probe settings
-  livenessProbe: {}
-  # -- readiness probe settings
-  readinessProbe: {}
-  # -- startup probe settings
-  startupProbe: {}
+  # -- probes settings, see tests for reference
+  probes: {}
   # -- ingress settings, set `host` to enable ingress
   ingress: {}
     # annotations: {}
@@ -94,9 +90,11 @@ processing: {}
   #     interval: 10s
   #     scrapeTimeout: 10s
   #     path: /q/metrics
-  #     livenessProbe:
-  #     readinessProbe:
-  #     startupProbe:
+  #   probes: 
+  #     disabled: true # by default enabled
+  #     livenessOverride: # overrides default livenessProbe settings see tests for reference
+  #     readinessOverride: # overrides default readinessProbe settings see tests for reference
+  #     startupOverride: # overrides default startupProbe settings see tests for reference
 
 # -- `Delivery Services` map
 delivery: {}
@@ -143,9 +141,11 @@ delivery: {}
   #         requests:
   #           memory: 50Mi
   #           cpu: 50m
-  #       livenessProbe:
-  #       readinessProbe:
-  #       startupProbe:
+  #       probes: 
+  #         disabled: true # by default enabled
+  #         livenessOverride: # overrides default livenessProbe settings see tests for reference
+  #         readinessOverride: # overrides default readinessProbe settings see tests for reference
+  #         startupOverride: # overrides default startupProbe settings see tests for reference
   #   data:  # optional
   #     repositorySize: 1Gi
   #     metadataSize: 1Gi

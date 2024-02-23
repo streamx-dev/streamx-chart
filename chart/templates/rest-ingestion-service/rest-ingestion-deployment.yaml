@@ -47,12 +47,13 @@ spec:
           imagePullPolicy: {{ .Values.rest_ingestion.imagePullPolicy }}
           ports:
             - name: http
-              containerPort: 8080          
+              containerPort: 8080
           env:
             - name: STREAMX_TENANT
               value: {{ include "streamx.tenant" $ }}
             {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
             {{- include "streamx.component.quasarEnvs" (dict "componentName" "rest-ingestion" "context" $) | nindent 12 }}
+            {{- include "streamx.quarkusProbesEnvs" (dict "probes" .Values.rest_ingestion.probes "context" $) | indent 12 }}
             {{- if (.Values.rest_ingestion.auth).keysSecretName }}
             - name: MP_JWT_VERIFY_PUBLICKEY_LOCATION
               value: /etc/secrets/streamx/{{ .Values.rest_ingestion.auth.publicKeyFileName | default "key.pub" }}
@@ -79,17 +80,5 @@ spec:
           resources:
 {{ toYaml .Values.rest_ingestion.resources | indent 12 }}
         {{- end }}
-        {{- if .Values.rest_ingestion.livenessProbe }}
-          livenessProbe:
-{{ toYaml .Values.rest_ingestion.livenessProbe | indent 12 }}
-        {{- end }}
-        {{- if .Values.rest_ingestion.readinessProbe }}
-          readinessProbe:
-{{ toYaml .Values.rest_ingestion.readinessProbe | indent 12 }}
-        {{- end }}
-        {{- if .Values.rest_ingestion.startupProbe }}
-          startupProbe:
-{{ toYaml .Values.rest_ingestion.startupProbe | indent 12 }}
-        {{- end }}
-
+        {{- include "streamx.quarkusProbesConfig" (dict "probes" .Values.rest_ingestion.probes "context" $) | indent 10 }}
 {{- end }}

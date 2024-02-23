@@ -105,6 +105,7 @@ spec:
               value: {{ include "streamx.tenant" $ }}
             {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
             {{- include "streamx.component.quasarEnvs" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) | nindent 12 }}
+            {{- include "streamx.quarkusProbesEnvs" (dict "probes" $container.probes "context" $) | indent 12 }}
             - name: PLUGIN_STORE_TENANT
               value: {{ include "streamx.tenant" $ }}
             {{- range $key, $channel := $delivery.incoming }}
@@ -141,22 +142,11 @@ spec:
             - name: config-{{ $containerName }}-{{ $idx }}
               mountPath: {{ $mount.mountPath }}
             {{- end }}
-          {{- if $container.livenessProbe }}
-          livenessProbe:
-{{ toYaml $container.livenessProbe | indent 12 }}
-          {{- end }}
-          {{- if $container.readinessProbe }}
-          readinessProbe:
-{{ toYaml $container.readinessProbe | indent 12 }}
-          {{- end }}
-          {{- if $container.startupProbe }}
-          startupProbe:
-{{ toYaml $container.startupProbe | indent 12 }}
-          {{- end }}
           {{- if $container.resources }}          
           resources:
 {{ toYaml $container.resources | indent 12 }}
           {{- end }}
+          {{- include "streamx.quarkusProbesConfig" (dict "probes" $container.probes "context" $) | indent 10 }}
         {{- end }}
       volumes:
         - name: repository
