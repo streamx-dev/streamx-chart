@@ -47,6 +47,16 @@ public class StreamXEnvironment {
     }
   }
 
+  public Long unpublishPage(String key) throws StreamxClientException {
+    LOG.infof("Unblishing page %s ", key);
+    try (StreamxClient client = StreamxClient.create(REST_INGESTION_HOST, getAuthToken())) {
+      Publisher<Page> pagePublisher = client.newPublisher(PAGES_INBOX_CHANNEL, Page.class);
+      Long eventTime = pagePublisher.unpublish(key);
+      assertNotNull(eventTime);
+      return eventTime;
+    }
+  }
+
   public RequestSpecification newIngestionSchemaRequest() {
     return newIngestionRequest(PUBLICATIONS_API_BASE_PATH + "/schema")
         .header("Authorization", "Bearer " + getAuthToken())

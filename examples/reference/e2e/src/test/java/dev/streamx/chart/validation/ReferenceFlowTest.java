@@ -17,12 +17,14 @@ package dev.streamx.chart.validation;
 
 
 import static dev.streamx.chart.validation.EnvironmentAssertions.assertJsonSchema;
+import static dev.streamx.chart.validation.EnvironmentAssertions.assertPageNotFound;
 import static dev.streamx.chart.validation.EnvironmentAssertions.assertPageWithContent;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.streamx.clients.ingestion.exceptions.StreamxClientException;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,14 +64,19 @@ public class ReferenceFlowTest {
 
   @Test
   @Order(2)
-  void publishedPageShouldBeAvailableOnWebDeliveryService(StreamXEnvironment environment)
+  @DisplayName("After publishing - page should be available on WebDelivery, then after unpublishing it should not be available")
+  void pagesPublishingAndUnpublishingFlow(StreamXEnvironment environment)
       throws StreamxClientException {
     String key = "test-" + UUID.randomUUID() + ".html";
 
-    Long eventTime = environment.publishPage(key, REFERENCE_PAGE_CONTENT);
+    Long publishTime = environment.publishPage(key, REFERENCE_PAGE_CONTENT);
 
-    Assertions.assertTrue(eventTime > 0L);
+    Assertions.assertTrue(publishTime > 0L);
     assertPageWithContent(environment.newDeliveryPageRequest(key), REFERENCE_PAGE_CONTENT);
+
+    Long unpublishTime = environment.unpublishPage(key);
+    Assertions.assertTrue(unpublishTime > 0L);
+    assertPageNotFound(environment.newDeliveryPageRequest(key));
   }
 
   @Test

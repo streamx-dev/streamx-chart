@@ -30,16 +30,23 @@ import org.awaitility.Awaitility;
 public class EnvironmentAssertions {
 
   public static void assertPageWithContent(RequestSpecification request, String expectedContent) {
-    Response response = getResponse(request);
+    Response response = getResponse(request, ok());
 
     response.then()
         .assertThat()
         .body(containsString(expectedContent));
   }
 
+  public static void assertPageNotFound(RequestSpecification request) {
+    Response response = getResponse(request, notFound());
+
+    response.then()
+        .log();
+  }
+
   public static void assertJsonSchema(RequestSpecification request, String expectedSchema)
       throws JsonProcessingException {
-    Response response = getResponse(request);
+    Response response = getResponse(request, ok());
 
     String schema = response.then()
         .extract().body().asString();
@@ -49,16 +56,20 @@ public class EnvironmentAssertions {
     assertEquals(mapper.readTree(expectedSchema), mapper.readTree(schema));
   }
 
-  private static Response getResponse(RequestSpecification request) {
+  private static Response getResponse(RequestSpecification request, Predicate<Response> response) {
     return Awaitility.with()
         .pollDelay(0, TimeUnit.SECONDS)
         .pollInterval(1, TimeUnit.SECONDS)
         .atMost(60, TimeUnit.SECONDS)
-        .until(request::get, isSuccess());
+        .until(request::get, response);
   }
 
-  private static Predicate<Response> isSuccess() {
+  private static Predicate<Response> ok() {
     return resp -> resp.statusCode() == 200;
+  }
+
+  private static Predicate<Response> notFound() {
+    return resp -> resp.statusCode() == 404;
   }
 
 }
