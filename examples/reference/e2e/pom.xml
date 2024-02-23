@@ -58,7 +58,7 @@ limitations under the License. -->
     <dependency>
       <groupId>dev.streamx</groupId>
       <artifactId>ingestion-client</artifactId>
-      <version>0.0.5</version>
+      <version>0.0.6</version>
     </dependency>
 
     <dependency>

@@ -14,14 +14,8 @@
 
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 
-suite: test services pulsar settings
+suite: test services quasar settings
 set:
-  messaging:
-    pulsar:
-      serviceUrl: "pulsar://pulsar-service:6650"
-      webServiceUrl: "http://pulsar-web-service:8080"
-      initTenant:
-        enabled: true
   processing:
     service1:
       image:
@@ -36,18 +30,15 @@ templates:
   - templates/rest-ingestion-service/rest-ingestion-deployment.yaml
   - templates/processing/processing-deployment.yaml
   - templates/delivery/delivery-deployment.yaml
-  - templates/messaging/pulsar-init-tenant-job.yaml
 tests:
   # @Test
-  - it: when pulsar connection is set then services' containers have Apache Pulsar connectivity env variables
+  - it: rinstance ID is set and consists of <service-name>-<pod-name> - which is exactly the metadata.name of the pod
+    template: templates/rest-ingestion-service/rest-ingestion-deployment.yaml
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: PULSAR_CLIENT_SERVICEURL
-            value: "pulsar://pulsar-service:6650"
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: PULSAR_ADMIN_SERVICEURL
-            value: "http://pulsar-web-service:8080"
+            name: QUASAR_APPLICATION_INSTANCE-ID
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
