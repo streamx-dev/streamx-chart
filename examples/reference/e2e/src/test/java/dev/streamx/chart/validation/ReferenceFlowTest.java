@@ -24,10 +24,12 @@ import dev.streamx.clients.ingestion.exceptions.StreamxClientException;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(StreamXEnvironmentExtension.class)
+@Tag("e2e")
 public class ReferenceFlowTest {
 
   static final String REFERENCE_PAGE_CONTENT = "<h1>Unit tests for reference StreamX flow</h1>";
@@ -73,8 +75,7 @@ public class ReferenceFlowTest {
   }
 
   @Test
-  void makeSureAuthEndpointIsNotExposedPublicly(StreamXEnvironment environment)
-      throws StreamxClientException {
+  void makeSureAuthEndpointIsNotExposedPublicly(StreamXEnvironment environment) {
     environment.newIngestionRequest("/auth/token?upn=test")
         .post()
         .then()

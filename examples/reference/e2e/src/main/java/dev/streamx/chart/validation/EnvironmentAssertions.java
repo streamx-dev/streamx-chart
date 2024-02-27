@@ -30,16 +30,20 @@ import org.awaitility.Awaitility;
 public class EnvironmentAssertions {
 
   public static void assertPageWithContent(RequestSpecification request, String expectedContent) {
-    Response response = getResponse(request);
+    Response response = getResponse(request, isOk());
 
     response.then()
         .assertThat()
         .body(containsString(expectedContent));
   }
 
+  public static void assertPageNotExists(RequestSpecification request) {
+    getResponse(request, isNotFound());
+  }
+
   public static void assertJsonSchema(RequestSpecification request, String expectedSchema)
       throws JsonProcessingException {
-    Response response = getResponse(request);
+    Response response = getResponse(request, isOk());
 
     String schema = response.then()
         .extract().body().asString();
@@ -49,16 +53,20 @@ public class EnvironmentAssertions {
     assertEquals(mapper.readTree(expectedSchema), mapper.readTree(schema));
   }
 
-  private static Response getResponse(RequestSpecification request) {
+  private static Response getResponse(RequestSpecification request, Predicate<Response> expected) {
     return Awaitility.with()
         .pollDelay(0, TimeUnit.SECONDS)
         .pollInterval(1, TimeUnit.SECONDS)
         .atMost(60, TimeUnit.SECONDS)
-        .until(request::get, isSuccess());
+        .until(request::get, expected);
   }
 
-  private static Predicate<Response> isSuccess() {
+  private static Predicate<Response> isOk() {
     return resp -> resp.statusCode() == 200;
+  }
+
+  private static Predicate<Response> isNotFound() {
+    return resp -> resp.statusCode() == 404;
   }
 
 }
