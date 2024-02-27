@@ -154,3 +154,41 @@ Usage:
   value: {{ .serviceUrl }}
 {{- end }}
 {{- end }}
+
+{{/*
+Common Container Probes environment variables for Quarkus applications
+Usage:
+{{ include "streamx.quarkusProbesConfig" (dict "probes" <probes-object> "context" $) }}
+*/}}
+{{- define "streamx.quarkusProbesConfig" -}}
+{{- $probes := .probes | default dict }}
+{{- if not $probes.disabled }}
+livenessProbe:
+{{- if $probes.livenessOverride }}
+{{- toYaml $probes.livenessOverride | nindent 2 }}
+{{- else }}
+  httpGet:
+    path: /q/health/live
+    port: 8080
+    scheme: HTTP
+{{- end }}
+readinessProbe:
+{{- if $probes.readinessOverride }}
+{{ toYaml $probes.readinessOverride | nindent 2 }}
+{{- else }}
+  httpGet:
+    path: /q/health/ready
+    port: 8080
+    scheme: HTTP
+{{- end }}
+startupProbe:
+{{- if $probes.startupOverride }}
+{{ toYaml $probes.startupOverride | nindent 2 }}
+{{- else }}
+  httpGet:
+    path: /q/health/started
+    port: 8080
+    scheme: HTTP
+{{- end }}
+{{- end }}
+{{- end }}

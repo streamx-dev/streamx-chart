@@ -22,13 +22,11 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | rest_ingestion.env | list | `[]` | additional environment variables |
 | rest_ingestion.image | string | `nil` | image repository and tag, defaults to `europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/rest-ingestion-service:{{ .Chart.AppVersion }}` |
 | rest_ingestion.ingress | object | `{}` | ingress settings, set `host` to enable ingress |
-| rest_ingestion.livenessProbe | object | `{}` | liveness probe settings |
 | rest_ingestion.monitoring | object | `{}` | pod monitoring configuration |
 | rest_ingestion.nodeSelector | object | `{}` | node labels for pod assignment |
-| rest_ingestion.readinessProbe | object | `{}` | readiness probe settings |
+| rest_ingestion.probes | object | `{}` | probes settings, see tests for reference |
 | rest_ingestion.replicas | int | `1` | number of replicas |
 | rest_ingestion.resources | object | `{}` | resources for the container |
-| rest_ingestion.startupProbe | object | `{}` | startup probe settings |
 | tenant | string | `nil` | overwrites tenant for this release installation, defaults to `.Release.Name` |
 
 ### Services Mesh
@@ -96,6 +94,9 @@ The size of the volumes can be configured via `data.repositorySize` and `data.me
 Every delivery service container gets the following environment variables:
 - `PULSAR_SERVICE_URL` - Apache Pulsar Broker Service URL
 - `PULSAR_WEB_SERVICE_URL` - Apache Pulsar REST API URL
+
+#### Liveness, Readiness and Startup Probes
+By default, each type of services has all probes enabled. You can disable them by setting `enabled` to `false` in the `probes` object for the corresponding service. Additionally, each probe can be configured separately. See the unit tests for reference.
 
 ### Local development
 
@@ -202,7 +203,7 @@ Every delivery service container gets the following environment variables:
    > You still need to download `examples/reference/*.yaml` files from the repository.
 
    ```bash
-   helm install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
+   helm upgrade streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
      -f examples/reference/messaging.yaml \
      -f examples/reference/ingestion.yaml \

@@ -80,6 +80,9 @@ Every delivery service container gets the following environment variables:
 - `PULSAR_SERVICE_URL` - Apache Pulsar Broker Service URL
 - `PULSAR_WEB_SERVICE_URL` - Apache Pulsar REST API URL
 
+#### Liveness, Readiness and Startup Probes
+By default, each type of services has all probes enabled. You can disable them by setting `enabled` to `false` in the `probes` object for the corresponding service. Additionally, each probe can be configured separately. See the unit tests for reference.
+
 ### Local development
 
 #### Prerequisites
@@ -185,7 +188,7 @@ Every delivery service container gets the following environment variables:
    > You still need to download `examples/reference/*.yaml` files from the repository.
 
    ```bash
-   helm install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
+   helm upgrade streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
      -f examples/reference/messaging.yaml \
      -f examples/reference/ingestion.yaml \

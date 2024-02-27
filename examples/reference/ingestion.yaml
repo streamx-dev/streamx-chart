@@ -23,18 +23,3 @@ rest_ingestion:
   #   value: DEBUG
   ingress:
     host: streamx-api.127.0.0.1.nip.io
-  livenessProbe:
-    httpGet:
-      path: /q/health/live
-      port: 8080
-      scheme: HTTP
-  readinessProbe:
-    httpGet:
-      path: /q/health/ready
-      port: 8080
-      scheme: HTTP
-  startupProbe:
-    httpGet:
-      path: /q/health/started
-      port: 8080
-      scheme: HTTP

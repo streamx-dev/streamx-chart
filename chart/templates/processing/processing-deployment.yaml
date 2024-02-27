@@ -91,17 +91,6 @@ spec:
               cpu: 400m
               memory: 256Mi
           {{- end }}
-          {{- if $processing.livenessProbe }}
-          livenessProbe:
-{{ toYaml $processing.livenessProbe | indent 12 }}
-          {{- end }}
-          {{- if $processing.readinessProbe }}
-            readinessProbe:
-{{ toYaml $processing.readinessProbe | indent 12 }}
-          {{- end }}
-          {{- if $processing.startupProbe }}
-            startupProbe:
-{{ toYaml $processing.startupProbe | indent 12 }}
-          {{- end }}
+          {{- include "streamx.quarkusProbesConfig" (dict "probes" $processing.probes "context" $) | indent 10 }}
 ---
 {{- end }}
