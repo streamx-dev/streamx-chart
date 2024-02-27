@@ -33,33 +33,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class ReferenceFlowTest {
 
   static final String REFERENCE_PAGE_CONTENT = "<h1>Unit tests for reference StreamX flow</h1>";
-  static final String PAGES_SCHEMA = """
-      {
-         "pages": {
-           "type":"record",
-           "name":"Page",
-           "namespace":"dev.streamx.reference.relay.model",
-           "fields":[
-             {
-               "name":"content",
-               "type":[
-                 "null",
-                 "bytes"
-               ],
-               "default":null
-             }
-           ]
-         }
-       }
-       """;
-
 
   @Test
   // FixMe order should not matter after schema autoupdate implemented in StreamX
   @Order(1)
   void restIngestionShouldHavePagesSchemaConfigured(StreamXEnvironment environment)
       throws JsonProcessingException {
-    assertJsonSchema(environment.newIngestionSchemaRequest(), PAGES_SCHEMA);
+    assertJsonSchema(environment.newIngestionSchemaRequest());
   }
 
   @Test

@@ -15,24 +15,37 @@
  */
 package dev.streamx.chart.validation;
 
+import static dev.streamx.chart.validation.EnvironmentAssertions.assertJsonSchema;
 import static dev.streamx.chart.validation.EnvironmentAssertions.assertPageNotExists;
 import static dev.streamx.chart.validation.EnvironmentAssertions.assertPageWithContent;
 
 import dev.streamx.clients.ingestion.exceptions.StreamxClientException;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-@Tag("multi-tenancy")
-public class MultiTenancyReferenceFlowTest {
+import com.fasterxml.jackson.core.JsonProcessingException;
 
-  private final StreamXEnvironment tenant1 = new StreamXEnvironment("http://tenant-1-api.127.0.0.1.nip.io", "http://tenant-1.127.0.0.1.nip.io");
+@Tag("multi-tenant")
+public class MultiTenantPublicationTest {
 
-  private final StreamXEnvironment tenant2 = new StreamXEnvironment("http://tenant-2-api.127.0.0.1.nip.io", "http://tenant-2.127.0.0.1.nip.io");
+  private final StreamXEnvironment tenant1 = new StreamXEnvironment("http://tenant-1-api.127.0.0.1.nip.io", "http://tenant-1.127.0.0.1.nip.io", "STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1");
 
+  private final StreamXEnvironment tenant2 = new StreamXEnvironment("http://tenant-2-api.127.0.0.1.nip.io", "http://tenant-2.127.0.0.1.nip.io", "STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_2");
 
   @Test
+  // FixMe order should not matter after schema autoupdate implemented in StreamX
+  @Order(1)
+  void restIngestionShouldHavePagesSchemaConfigured()
+      throws JsonProcessingException {
+    assertJsonSchema(tenant1.newIngestionSchemaRequest());
+    assertJsonSchema(tenant2.newIngestionSchemaRequest());
+  }
+
+  @Test
+  @Order(2)
   @DisplayName("Check page published on first tenant is not visible on second tenant")
   public void checkTenantsPublicationSeparation() throws StreamxClientException {
     String tenant1Key = "test-" + UUID.randomUUID() + ".html";

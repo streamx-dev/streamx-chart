@@ -29,6 +29,26 @@ import org.awaitility.Awaitility;
 
 public class EnvironmentAssertions {
 
+  private static final String PAGES_SCHEMA = """
+    {
+       "pages": {
+         "type":"record",
+         "name":"Page",
+         "namespace":"dev.streamx.reference.relay.model",
+         "fields":[
+           {
+             "name":"content",
+             "type":[
+               "null",
+               "bytes"
+             ],
+             "default":null
+           }
+         ]
+       }
+     }
+     """;
+
   public static void assertPageWithContent(RequestSpecification request, String expectedContent) {
     Response response = getResponse(request, isOk());
 
@@ -39,6 +59,14 @@ public class EnvironmentAssertions {
 
   public static void assertPageNotExists(RequestSpecification request) {
     getResponse(request, isNotFound());
+  }
+
+  public static void assertUnauthenticated(RequestSpecification request) {
+    getResponse(request, isNotAuth());
+  }
+
+  public static void assertJsonSchema(RequestSpecification request) throws JsonProcessingException {
+    assertJsonSchema(request, PAGES_SCHEMA);
   }
 
   public static void assertJsonSchema(RequestSpecification request, String expectedSchema)
@@ -67,6 +95,10 @@ public class EnvironmentAssertions {
 
   private static Predicate<Response> isNotFound() {
     return resp -> resp.statusCode() == 404;
+  }
+
+  private static Predicate<Response> isNotAuth() {
+    return resp -> resp.statusCode() == 401;
   }
 
 }

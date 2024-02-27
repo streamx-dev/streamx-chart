@@ -49,34 +49,36 @@ jobs:
 
       - name: Create StreamX namespace and create ingestion service token secret
         run: |
-          kubectl create namespace streamx
-          kubectl apply -f examples/reference/secrets/restIngestionJwtKeys.yaml
+          kubectl create namespace tenant-1
+          kubectl apply -f examples/reference/secrets/tenant-1-rest-ingestion-jwt-keys.yaml
 
       - name: Configure Docker Registry with StreamX images
         env:
           REGISTRY_JSON_KEY: ${{ secrets.GCP_STREAMX_RELEASES_GAR_READ_KEY }}
         run: |
-          kubectl -n streamx create secret docker-registry streamx-gar-json-key \
+          kubectl -n tenant-1 create secret docker-registry streamx-gar-json-key \
             --docker-server=europe-west1-docker.pkg.dev \
             --docker-username=_json_key_base64 \
             --docker-password="${REGISTRY_JSON_KEY}"
 
       - name: Initialize Apache Pulsar for StreamX
         run: |
-          helm -n streamx install streamx ./chart \
+          helm -n tenant-1 install streamx ./chart \
             --set "imagePullSecrets[0].name=streamx-gar-json-key" \
+            --set tenant=tenant-1 \
             --set messaging.pulsar.initTenant.enabled=true \
             --set rest_ingestion.enabled=false \
             -f examples/reference/messaging.yaml
 
       - name: Wait for initialization of Apache Pulsar completes
         run: |
-          kubectl -n streamx wait --for=condition=complete job --selector app.kubernetes.io/component=pulsar-init-tenant --timeout=300s
+          kubectl -n tenant-1 wait --for=condition=complete job --selector app.kubernetes.io/component=pulsar-init-tenant --timeout=300s
 
       - name: Install StreamX Mesh with reference flow
         run: |
-          helm -n streamx upgrade streamx ./chart \
+          helm -n tenant-1 upgrade streamx ./chart \
             --set "imagePullSecrets[0].name=streamx-gar-json-key" \
+            --set tenant=tenant-1 \
             -f examples/reference/messaging.yaml \
             -f examples/reference/ingestion.yaml \
             -f examples/reference/processing.yaml \
@@ -84,9 +86,9 @@ jobs:
 
       - name: Wait for StreamX Mesh deployment completes
         run: |
-          kubectl -n streamx rollout status deployment streamx-rest-ingestion
-          kubectl -n streamx rollout status deployment streamx-processing-reference-relay
-          kubectl -n streamx rollout status deployment streamx-delivery-reference-web
+          kubectl -n tenant-1 rollout status deployment streamx-rest-ingestion
+          kubectl -n tenant-1 rollout status deployment streamx-processing-reference-relay
+          kubectl -n tenant-1 rollout status deployment streamx-delivery-reference-web
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
@@ -103,5 +105,5 @@ jobs:
       - name: Verify reference flow with StreamX API Integration / E2E Tests
         run: |
           cd examples/reference/e2e
-          export STREAMX_INGESTION_REST_AUTH_TOKEN=$(kubectl -n streamx run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
+          export STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1=$(kubectl -n tenant-1 run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
           ./mvnw clean verify

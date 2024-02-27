@@ -36,15 +36,18 @@ public class StreamXEnvironment {
 
   private final String restIngestionHost;
   private final String webDeliveryHost;
+  private final String authTokenEnv;
 
   StreamXEnvironment() {
     restIngestionHost = "http://streamx-api.127.0.0.1.nip.io";
     webDeliveryHost = "http://streamx.127.0.0.1.nip.io";
+    authTokenEnv = "STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1";
   }
 
-  public StreamXEnvironment(String restIngestionHost, String webDeliveryHost) {
+  public StreamXEnvironment(String restIngestionHost, String webDeliveryHost, String authTokenEnv) {
     this.restIngestionHost = restIngestionHost;
     this.webDeliveryHost = webDeliveryHost;
+    this.authTokenEnv = authTokenEnv;
   }
 
   public Long publishPage(String key, String content) throws StreamxClientException {
@@ -78,7 +81,7 @@ public class StreamXEnvironment {
   }
 
   protected String getAuthToken() {
-    return System.getenv("STREAMX_INGESTION_REST_AUTH_TOKEN");
+    return System.getenv(authTokenEnv);
   }
 
 }
