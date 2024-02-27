@@ -95,6 +95,9 @@ Every delivery service container gets the following environment variables:
 - `PULSAR_SERVICE_URL` - Apache Pulsar Broker Service URL
 - `PULSAR_WEB_SERVICE_URL` - Apache Pulsar REST API URL
 
+#### Liveness, Readiness and Startup Probes
+By default, each type of services has all probes enabled. You can disable them by setting `enabled` to `false` in the `probes` object for the corresponding service. Additionally, each probe can be configured separately. See the unit tests for reference.
+
 ### Local development
 
 #### Prerequisites

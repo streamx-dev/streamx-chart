@@ -158,21 +158,6 @@ Usage:
 {{/*
 Common Container Probes environment variables for Quarkus applications
 Usage:
-{{ include "streamx.quarkusProbesEnvs" (dict "probes" <probes-object> "context" $) }}
-*/}}
-{{- define "streamx.quarkusProbesEnvs" -}}
-{{- $probes := .probes | default dict }}
-{{- if not $probes.disabled }}
-- name: QUARKUS_MANAGEMENT_ENABLED
-  value: "true"
-- name: QUARKUS_MANAGEMENT_PORT
-  value: "9000"
-{{- end }}
-{{- end }}
-
-{{/*
-Common Container Probes environment variables for Quarkus applications
-Usage:
 {{ include "streamx.quarkusProbesConfig" (dict "probes" <probes-object> "context" $) }}
 */}}
 {{- define "streamx.quarkusProbesConfig" -}}
@@ -184,7 +169,7 @@ livenessProbe:
 {{- else }}
   httpGet:
     path: /q/health/live
-    port: 9000
+    port: 8080
     scheme: HTTP
 {{- end }}
 readinessProbe:
@@ -193,7 +178,7 @@ readinessProbe:
 {{- else }}
   httpGet:
     path: /q/health/ready
-    port: 9000
+    port: 8080
     scheme: HTTP
 {{- end }}
 startupProbe:
@@ -202,7 +187,7 @@ startupProbe:
 {{- else }}
   httpGet:
     path: /q/health/started
-    port: 9000
+    port: 8080
     scheme: HTTP
 {{- end }}
 {{- end }}

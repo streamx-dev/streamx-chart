@@ -22,31 +22,7 @@ templates:
 
 tests:
   # @Test
-  - it: by default all services containers have probes enabled on `:9000` port via `quarkus.management` settings using env
-    set:
-      processing:
-        service1:
-          image:
-            repository: test/processing-service
-      delivery:
-        service2:
-          containers:
-            test:
-              image:
-                repository: test/delivery-service
-    asserts:
-    - contains:
-        path: spec.template.spec.containers[0].env
-        content:
-          name: QUARKUS_MANAGEMENT_ENABLED
-          value: "true"
-    - contains:
-        path: spec.template.spec.containers[0].env
-        content:
-          name: QUARKUS_MANAGEMENT_PORT
-          value: "9000"
-  # @Test
-  - it: by default all services containers have httpGet probes set on `/q/health/<probe>` path
+  - it: by default all services containers have httpGet probes set on `/q/health/<probe>` path and port 8080
     set:
       processing:
         service1:
@@ -64,21 +40,21 @@ tests:
         value:
           httpGet:
             path: /q/health/live
-            port: 9000
+            port: 8080
             scheme: HTTP
     - equal:
         path: spec.template.spec.containers[0].readinessProbe
         value:
           httpGet:
             path: /q/health/ready
-            port: 9000
+            port: 8080
             scheme: HTTP
     - equal:
         path: spec.template.spec.containers[0].startupProbe
         value:
           httpGet:
             path: /q/health/started
-            port: 9000
+            port: 8080
             scheme: HTTP
   # @Test
   - it: when probes are disabled then services containers do not have liveness, readiness and startup probes
@@ -101,16 +77,6 @@ tests:
               probes:
                 disabled: true
     asserts:
-    - notContains:
-        path: spec.template.spec.containers[0].env
-        content:
-          name: QUARKUS_MANAGEMENT_ENABLED
-        any: true
-    - notContains:
-        path: spec.template.spec.containers[0].env
-        content:
-          name: QUARKUS_MANAGEMENT_PORT
-        any: true
     - notExists:
         path: spec.template.spec.containers[0].livenessProbe
     - notExists:

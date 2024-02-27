@@ -105,7 +105,6 @@ spec:
               value: {{ include "streamx.tenant" $ }}
             {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
             {{- include "streamx.component.quasarEnvs" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) | nindent 12 }}
-            {{- include "streamx.quarkusProbesEnvs" (dict "probes" $container.probes "context" $) | indent 12 }}
             - name: PLUGIN_STORE_TENANT
               value: {{ include "streamx.tenant" $ }}
             {{- range $key, $channel := $delivery.incoming }}
