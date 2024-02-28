@@ -14,15 +14,15 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 
 {{ template "chart.valuesTable" . }}
 
-### Services Mesh
+## Services Mesh
 
 Services Mesh is a set of services that process and deliver the content to the end-user. The chart comes with an empty services mesh configuration, which means that no processing and delivery services will be deployed.
 
-#### Processing services
+### Processing services
 
 Configuring processing services is done via `processing` object, check the syntax in `values.yaml`. The chart comes with an empty `processing` object, which means that no processing services will be deployed.
 
-##### Incoming channels
+#### Incoming channels
 Processing services process data from `incoming` channels and can produce data to `outgoing` channels. Channels are defined as a map of channel objects, where key is a channel name and value is a channel configuration. See the [`values.yaml`](values.yaml) for more details.
 ```yaml
 incoming:
@@ -39,32 +39,32 @@ For the example above and `tenant: my-tenant`, the environment variable will be:
 MP_MESSAGING_INCOMING_INCOMING-PAGES_TOPIC=persistent://my-tenant/my-namespace/my-topic
 ```
 
-##### Outgoing channels
+#### Outgoing channels
 Processing services can produce data to `outgoing` channels. The following evniroment variables are available for each channel:
 - `MP_MESSAGING_OUTGOING_<CHANNEL>_TOPIC` - a fully qualified Apache Pulsar URL (e.g. `persistent://my-tenant/my-namespace/my-topic`) of the topic to write to, where `<CHANNEL>` is the channel name in upper case (e.g. `MP_MESSAGING_OUTGOING_INCOMING-PAGES_TOPIC`)
 
-##### Environment variables
+#### Environment variables
 Every processing service container gets the following environment variables:
 - `PULSAR_SERVICE_URL` - Apache Pulsar Broker Service URL
 - `PULSAR_WEB_SERVICE_URL` - Apache Pulsar REST API URL
 
-#### Delivery services
+### Delivery services
 
 Delivery service is a `Deployment` that is responsible for delivering the content to the end-user. It reads data from `inputs` and exposes it via `outputs`. It can store its `data` in volumes that are mounted to the `Deployment` PODs. The data lifecycle is connected with the deployment pods' lifecycle (that means if the pod is deleted, the volume is deleted as well).
 
 Delivery services are configured via `delivery` list of objects. See the [`values.yaml`](values.yaml) for more details.
 
-##### Incoming
+#### Incoming
 Delivery services, similarly to Processing services synchronize data from `incoming` channels to their `data` volumes. The following environment variables are available for each input:
 - `MP_MESSAGING_INCOMING_<CHANNEL>_TOPIC` - a fully qualified Apache Pulsar URL (e.g. `persistent://my-tenant/my-namespace/my-topic`) of the topic to read from
 - `MP_MESSAGING_INCOMING_<CHANNEL>_SUBSCRIPTIONNAME` - unique subscription name for the incoming topic
 
-##### Outputs
+#### Outputs
 The important concept of each delivery service is its `output` object. A single delivery service may define multiple `outputs`. See the sketch below:
 
 ![Delivery service outputs](./assets/delivery-service-outputs.jpg)
 
-##### Data
+#### Data
 Delivery service defines two `emptyDir` volumes by default:
 - `repository`
 - `metadata`
@@ -75,15 +75,41 @@ Each delivery service container can mount these volumes to its filesystem under 
 
 The size of the volumes can be configured via `data.repositorySize` and `data.metadataSize` values on the Delivery Service level.
 
-##### Environment variables
+#### Environment variables
 Every delivery service container gets the following environment variables:
 - `PULSAR_SERVICE_URL` - Apache Pulsar Broker Service URL
 - `PULSAR_WEB_SERVICE_URL` - Apache Pulsar REST API URL
 
-#### Liveness, Readiness and Startup Probes
+### Liveness, Readiness and Startup Probes
 By default, each type of services has all probes enabled. You can disable them by setting `enabled` to `false` in the `probes` object for the corresponding service. Additionally, each probe can be configured separately. See the unit tests for reference.
 
+## Multi-tenancy
+
+> This feature is available only for `Apache Pulsar` messaging system.
+
+StreamX supports multi-tenancy. We recommend to create a separate namespace for each tenant. The namespace is used to isolate the services and their data. The tenant is configured via `tenant` value. The default value is the release name.
+
+#### Tenant initialization
+
+When the `messaging.pulsar.initTenant.enabled` is set to `true`, the chart will create a `Job` that initializes the tenant. The tenant initialization includes both Apache Pulsar tenant and namespaces configuration. The tenant initialization is done only once, and it is not idempotent (the automatic update of the tenant configuration is not supported OOTB, manual intervention is required). See the local development section for the example of a single tenant initialization.
+
+To customise tenant initialization, you can:
+- set `messaging.pulsar.initTenant.enabled` to `false` and initialize the tenant manually,
+- configure custom `pulsar-init` container image via `messaging.pulsar.initTenant.customImage` value.
+
+#### Multi-tenant installation
+
+Apache Pulsar supports multi-tenancy, and StreamX supports it as well. We recommend to create a separate namespace for each tenant. Then, the tenant initialization has to be performed in each tenant's namespace (for each tenant). It guarantees that the tenant's data is isolated from other tenants at both the Kubernetes and Apache Pulsar levels (even a single Apache Pulsar installation is used).
+
+The diagram below shows the multi-tenant StreamX installations with a shared Apache Pulsar:
+
+![Multi-tenant installation](assets/multi-tenant-deployment.png)
+
+As you can see, each tenant has its own Kubernetes namespace (`tenant-1`, `tenant-2`, `tenant-3`) and initialize its own Apache Pulsar tenant and namespaces.
+
 ### Local development
+
+For local development, we will prepare a `kind` cluster with `extraPortMappings` and install StreamX from the chart with a single tenant (`tenant-1`).
 
 #### Prerequisites
 
