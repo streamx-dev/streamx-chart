@@ -19,26 +19,27 @@ import static dev.streamx.chart.validation.EnvironmentAssertions.assertJsonSchem
 import static dev.streamx.chart.validation.EnvironmentAssertions.assertPageNotExists;
 import static dev.streamx.chart.validation.EnvironmentAssertions.assertPageWithContent;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.streamx.clients.ingestion.exceptions.StreamxClientException;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
+@ExtendWith(StreamXEnvironmentExtension.class)
 @Tag("multi-tenant")
 public class MultiTenantPublicationTest {
 
-  private final StreamXEnvironment tenant1 = new StreamXEnvironment("http://tenant-1-api.127.0.0.1.nip.io", "http://tenant-1.127.0.0.1.nip.io", "STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1");
-
-  private final StreamXEnvironment tenant2 = new StreamXEnvironment("http://tenant-2-api.127.0.0.1.nip.io", "http://tenant-2.127.0.0.1.nip.io", "STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_2");
+  private final StreamXEnvironment tenant2 = new StreamXEnvironment(
+      "http://tenant-2-api.127.0.0.1.nip.io", "http://tenant-2.127.0.0.1.nip.io",
+      "STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_2");
 
   @Test
   // FixMe order should not matter after schema autoupdate implemented in StreamX
   @Order(1)
-  void restIngestionShouldHavePagesSchemaConfigured()
+  void restIngestionShouldHavePagesSchemaConfigured(StreamXEnvironment tenant1)
       throws JsonProcessingException {
     assertJsonSchema(tenant1.newIngestionSchemaRequest());
     assertJsonSchema(tenant2.newIngestionSchemaRequest());
@@ -47,7 +48,8 @@ public class MultiTenantPublicationTest {
   @Test
   @Order(2)
   @DisplayName("Check page published on first tenant is not visible on second tenant")
-  public void checkTenantsPublicationSeparation() throws StreamxClientException {
+  public void checkTenantsPublicationSeparation(StreamXEnvironment tenant1)
+      throws StreamxClientException {
     String tenant1Key = "test-" + UUID.randomUUID() + ".html";
 
     // publish page on tenant 1

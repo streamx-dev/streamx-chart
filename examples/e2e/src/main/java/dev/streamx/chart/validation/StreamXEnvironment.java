@@ -39,8 +39,8 @@ public class StreamXEnvironment {
   private final String authTokenEnv;
 
   StreamXEnvironment() {
-    restIngestionHost = "http://streamx-api.127.0.0.1.nip.io";
-    webDeliveryHost = "http://streamx.127.0.0.1.nip.io";
+    restIngestionHost = "http://tenant-1-api.127.0.0.1.nip.io";
+    webDeliveryHost = "http://tenant-1.127.0.0.1.nip.io";
     authTokenEnv = "STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1";
   }
 

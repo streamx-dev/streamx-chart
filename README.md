@@ -249,7 +249,7 @@ Check that all deployments are running:
 kubectl -n tenant-1 rollout status deployment -l app.kubernetes.io/instance=streamx
 ```
 
-Next, from the `examples/reference/e2e` run:
+Next, from the `examples/e2e` run:
 ```bash
 export STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1=$(kubectl -n tenant-1 run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
 ./mvnw verify

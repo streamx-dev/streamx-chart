@@ -12,16 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-processing:
-  reference-relay:
-    image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/streamx/reference-relay-processing-service:0.0.6-jvm
+delivery:
+  reference-web:
     replicas: 2
     incoming:
-      incoming-pages:
-        namespace: inboxes
-        topic: pages
-    outgoing:
-      outgoing-pages:
+      pages:
         namespace: outboxes
         topic: pages
-    env:
+    outputs:
+      http:
+        service:
+          containerRef:
+            name: webserver
+          port: 80
+          targetPort: http
+        ingress:
+          host: tenant-1.127.0.0.1.nip.io
+    containers:
+      webserver:
+        image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/streamx/reference-web-delivery-service:0.0.6-jvm
+        ports:
+          - name: http
+            containerPort: 8080
+        env:

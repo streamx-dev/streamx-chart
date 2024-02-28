@@ -12,28 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-delivery:
-  reference-web:
+processing:
+  reference-relay:
+    image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/streamx/reference-relay-processing-service:0.0.6-jvm
     replicas: 2
     incoming:
-      pages:
+      incoming-pages:
+        namespace: inboxes
+        topic: pages
+    outgoing:
+      outgoing-pages:
         namespace: outboxes
         topic: pages
-    outputs:
-      http:
-        service:
-          containerRef:
-            name: webserver
-          port: 80
-          targetPort: http
-        ingress:
-          host: streamx.127.0.0.1.nip.io
-    containers:
-      webserver:
-        image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/streamx/reference-web-delivery-service:0.0.6-jvm
-        ports:
-          - name: http
-            containerPort: 8080
-        env:
-        # - name: QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL
-        #   value: DEBUG
