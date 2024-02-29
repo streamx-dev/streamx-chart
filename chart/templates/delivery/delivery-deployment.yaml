@@ -39,8 +39,8 @@ spec:
         {{- include "streamx.component.labels" (dict "componentName" (printf "%s-%s" "delivery" $name ) "context" $) | nindent 8 }}
         {{- end }}
     spec:
-      {{- if $.Values.imagePullSecrets }}
-      imagePullSecrets: {{- $.Values.imagePullSecrets | toYaml | nindent 8 }}
+      {{- if $.Values.global.imagePullSecrets }}
+      imagePullSecrets: {{- $.Values.global.imagePullSecrets | toYaml | nindent 8 }}
       {{- end }}
       {{- if $delivery.terminationGracePeriod }}
       terminationGracePeriodSeconds:  {{ $delivery.terminationGracePeriod }}

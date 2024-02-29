@@ -22,7 +22,7 @@ tenant:
 global:
   # -- global environment variables for all services, can be overridden by service specific env
   env: []
-  # -- imagePullSecrets used to authenticate to registry containing StreamX and custom services
+  # -- imagePullSecrets used to authenticate to registry containing StreamX and custom images
   imagePullSecrets: []
 
 monitoring:
