@@ -40,7 +40,7 @@ messaging: {}
   #   webServiceUrl: "http://pulsar-web-service:8080"
   #   initTenant: # -- optional: Apache Pulsar tenant and namespaces initialisation for StreamX, this job waits for Apache Pulsar to be ready
   #     enabled: true # -- enable tenant initialisation, this will create a Job to initialise tenant
-  #     customImage: # -- optional: custom image for tenant initialisation, by default `streamx-docker-releases/dev.streamx/pulsar-init` with the current chart's AppVersion will be used
+  #     image: # -- optional: custom image for tenant initialisation, by default `streamx-docker-releases/dev.streamx/pulsar-init` with the current chart's AppVersion will be used
   #     env: [] # -- optional: additional environment variables for tenant initialisation
 
 ## StreamX REST Ingestion Service

@@ -30,7 +30,7 @@ spec:
       {{- end }}
       containers:
         - name: pulsar-init
-          image: {{ (.initTenant).customImage | default (printf "ghcr.io/streamx-dev/streamx/pulsar-init:%s" $.Chart.AppVersion) }}
+          image: {{ (.initTenant).image | default (printf "ghcr.io/streamx-dev/streamx/pulsar-init:%s" $.Chart.AppVersion) }}
           env:
             {{- include "streamx.mergeEnvs" (dict "baseEnvs" $.Values.global.env "overwriteEnvs" (.initTenant).env) | nindent 12 }}
             - name: STREAMX_TENANT
