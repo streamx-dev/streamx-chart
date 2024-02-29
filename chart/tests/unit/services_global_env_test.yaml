@@ -1,0 +1,124 @@
+# Copyright 2024 Dynamic Solutions Sp. z o.o. sp.k.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+
+suite: test services global env vars
+tests:
+  # @Test
+  - it: when global env is set, then it is present in each service's container env
+    templates:
+      - templates/rest-ingestion-service/rest-ingestion-deployment.yaml
+      - templates/processing/processing-deployment.yaml
+      - templates/delivery/delivery-deployment.yaml
+    set:
+      global:
+        env:
+          - name: GLOBAL_ENV
+            value: global-env-value
+      messaging:
+        pulsar:
+          serviceUrl: "pulsar://pulsar-service:6650"
+          webServiceUrl: "http://pulsar-web-service:8080"
+          initTenant:
+            enabled: true
+      processing:
+        service1:
+          image:
+            repository: test/processing-service
+      delivery:
+        service2:
+          containers:
+            test:
+              image:
+                repository: test/delivery-service
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GLOBAL_ENV
+            value: global-env-value
+  # @Test
+  - it: when global env is set the it can be overwritten by rest ingestion service
+    template: templates/rest-ingestion-service/rest-ingestion-deployment.yaml
+    set:
+      global:
+        env:
+          - name: GLOBAL_ENV
+            value: global-env-value
+      rest_ingestion:
+        env:
+          - name: GLOBAL_ENV
+            value: rest-ingestion-env-value
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GLOBAL_ENV
+            value: rest-ingestion-env-value
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GLOBAL_ENV
+            value: global-env-value
+  # @Test
+  - it: when global env is set the it can be overwritten by processing services
+    template: templates/processing/processing-deployment.yaml
+    set:
+      global:
+        env:
+          - name: GLOBAL_ENV
+            value: global-env-value
+      processing:
+        service1:
+          env:
+            - name: GLOBAL_ENV
+              value: processing-env-value
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GLOBAL_ENV
+            value: processing-env-value
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GLOBAL_ENV
+            value: global-env-value
+  # @Test
+  - it: when global env is set the it can be overwritten by each delivery service container
+    template: templates/delivery/delivery-deployment.yaml
+    set:
+      global:
+        env:
+          - name: GLOBAL_ENV
+            value: global-env-value
+      delivery:
+        service2:
+          containers:
+            test:
+              env:
+                - name: GLOBAL_ENV
+                  value: delivery-env-value
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GLOBAL_ENV
+            value: delivery-env-value
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GLOBAL_ENV
+            value: global-env-value

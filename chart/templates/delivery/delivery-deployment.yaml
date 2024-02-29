@@ -97,6 +97,7 @@ spec:
             {{- end }}
           {{- end }}
           env:
+            {{- include "streamx.uniqEnvs" (dict "baseEnvs" $container.env "extraEnvs" $.Values.global.env) | nindent 12 }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -122,9 +123,6 @@ spec:
             - name: REPOSITORY_METADATA_ROOT_DIRECTORY # FixMe: to be checked if this is needed in StreamX
               value: {{ .metadataMountPath }}
             {{- end }}
-            {{- end }}
-            {{- if $container.env }}
-{{ toYaml $container.env | indent 12 }}
             {{- end }}
           volumeMounts:
             {{- with $container.data }}

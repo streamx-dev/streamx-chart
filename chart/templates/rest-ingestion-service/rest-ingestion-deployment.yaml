@@ -49,6 +49,7 @@ spec:
             - name: http
               containerPort: 8080
           env:
+            {{- include "streamx.uniqEnvs" (dict "baseEnvs" .Values.rest_ingestion.env "extraEnvs" $.Values.global.env) | nindent 12 }}
             - name: STREAMX_TENANT
               value: {{ include "streamx.tenant" $ }}
             {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
@@ -68,9 +69,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            {{- if .Values.rest_ingestion.env }}
-{{ toYaml .Values.rest_ingestion.env | indent 12 }}
-            {{- end }}
           volumeMounts:
             - name: jwt-keys
               mountPath: /etc/secrets/streamx
