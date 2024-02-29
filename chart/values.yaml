@@ -18,13 +18,12 @@
 # -- overwrites tenant for this release installation, defaults to `.Release.Name`
 tenant:
 
-# global settings inherited by all chart components
+# global settings inherited by all services
 global:
-  # -- global environment variables for all containers, can be overridden by component specific env
+  # -- global environment variables for all services, can be overridden by service specific env
   env: []
-
-# -- imagePullSecrets used to authenticate to registry containing StreamX and custom services
-imagePullSecrets: []
+  # -- imagePullSecrets used to authenticate to registry containing StreamX and custom services
+  imagePullSecrets: []
 
 monitoring:
   # -- enabling this flag will enable creating `monitoring.coreos.com` Custom Resources for all services
