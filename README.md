@@ -1,5 +1,5 @@
 # StreamX Helm Chart
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.6-jvm](https://img.shields.io/badge/AppVersion-0.0.6--jvm-informational?style=flat-square)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.12-jvm](https://img.shields.io/badge/AppVersion-0.0.12--jvm-informational?style=flat-square)
 
 This chart bootstraps StreamX on a Kubernetes cluster.
 
@@ -165,34 +165,12 @@ For local development, we will prepare a `kind` cluster with `extraPortMappings`
    </p>
    </details>
 
-2. Create `docker-registry` secret to enable Kubernetes to pull images from the StreamX private repository:
-   ```bash
-   TOKEN=$(gcloud auth print-access-token)
-   kubectl -n tenant-1 create secret docker-registry streamx-gar-json-key \
-     --docker-server=europe-west1-docker.pkg.dev \
-     --docker-username=oauth2accesstoken \
-     --docker-password="${TOKEN}"
-   ```
-   <details>
-   <summary>Show how to use locally built images</summary>
-   <p>
-   Alternatively, you can build images on your host and use `kind load` to load them into the cluster, e.g.:
-
-   ```bash
-   kind load docker-image europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-web-delivery-service:1.0-SNAPSHOT
-   kind load docker-image europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/reference-relay-processing-service:1.0-SNAPSHOT
-   kind load docker-image europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/rest-ingestion-service:1.0-SNAPSHOT
-   kind load docker-image europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-snapshots/dev.streamx/pulsar-init:1.0-SNAPSHOT
-   ```
-   </p>
-   </details>
-3. Prepare Apache Pulsar for StreamX installation (run it only for the first time installation):
+2. Prepare Apache Pulsar for StreamX installation (run it only for the first time installation):
 
    > NOTE: DO NOT CHANGE THIS COMMAND TO UPGRADE AS IT WILL CLEAR ALL RUNNING STEAMX PODS!
 
    ```bash
     helm install streamx ./chart -n tenant-1 \
-      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
       --set messaging.pulsar.initTenant.enabled=true \
       --set rest_ingestion.enabled=false \
       -f examples/tenant-1/messaging.yaml
@@ -206,7 +184,6 @@ For local development, we will prepare a `kind` cluster with `extraPortMappings`
 
    ```bash
    helm install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n tenant-1 \
-     --set "imagePullSecrets[0].name=streamx-gar-json-key" \
      --set messaging.pulsar.initTenant.enabled=true \
      --set rest_ingestion.enabled=false \
      -f examples/tenant-1/messaging.yaml
@@ -214,10 +191,9 @@ For local development, we will prepare a `kind` cluster with `extraPortMappings`
    </p>
    </details>
 
-4. Install StreamX Mesh with Helm chart:
+3. Install StreamX Mesh with Helm chart:
    ```bash
    helm upgrade streamx ./chart -n tenant-1 \
-     --set "imagePullSecrets[0].name=streamx-gar-json-key" \
      -f examples/tenant-1/messaging.yaml \
      -f examples/tenant-1/ingestion.yaml \
      -f examples/tenant-1/processing.yaml \
@@ -231,7 +207,6 @@ For local development, we will prepare a `kind` cluster with `extraPortMappings`
 
    ```bash
    helm upgrade streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n tenant-1 \
-     --set "imagePullSecrets[0].name=streamx-gar-json-key" \
      -f examples/tenant-1/messaging.yaml \
      -f examples/tenant-1/ingestion.yaml \
      -f examples/tenant-1/processing.yaml \
@@ -252,6 +227,15 @@ Next, from the `examples/tenant-1/e2e` run:
 export STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1=$(kubectl -n tenant-1 run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
 ./mvnw verify
 ```
+to verify StreamX e2e tests for a single-tenant installation.
+
+Next, from the `examples/tenant-1/e2e` run:
+```bash
+export STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1=$(kubectl -n tenant-1 run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
+export STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_2=$(kubectl -n tenant-2 run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
+./mvnw clean verify -Pmulti-tenant
+```
+to verify recommended StreamX multi-tenant installations.
 
 > Note: you need JDK 17 to run the tests.
 

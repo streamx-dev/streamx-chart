@@ -99,4 +99,4 @@ tests:
     asserts:
       - equal:
           path: spec.template.spec.containers[0].image
-          value: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/streamx/pulsar-init:unit.test.version
+          value: ghcr.io/streamx-dev/streamx/pulsar-init:unit.test.version

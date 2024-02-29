@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: 'Test: Verify StreamX Helm chart multi-tenant deployment'
+name: 'Test: Verify StreamX Helm chart for multi-tenant installations'
 
 on:
   workflow_dispatch:
@@ -54,28 +54,13 @@ jobs:
           kubectl create namespace tenant-2
           kubectl -n tenant-2 apply -f examples/tenant-2/secrets/rest-ingestion-jwt-keys.yaml
 
-      - name: Configure Docker Registry with StreamX images for Tenants 1 and 2
-        env:
-          REGISTRY_JSON_KEY: ${{ secrets.GCP_STREAMX_RELEASES_GAR_READ_KEY }}
-        run: |
-          kubectl -n tenant-1 create secret docker-registry streamx-gar-json-key \
-            --docker-server=europe-west1-docker.pkg.dev \
-            --docker-username=_json_key_base64 \
-            --docker-password="${REGISTRY_JSON_KEY}"
-          kubectl -n tenant-2 create secret docker-registry streamx-gar-json-key \
-            --docker-server=europe-west1-docker.pkg.dev \
-            --docker-username=_json_key_base64 \
-            --docker-password="${REGISTRY_JSON_KEY}"
-
       - name: Initialize Apache Pulsar for Tenants 1 and 2
         run: |
           helm -n tenant-1 install streamx ./chart \
-            --set "imagePullSecrets[0].name=streamx-gar-json-key" \
             --set messaging.pulsar.initTenant.enabled=true \
             --set rest_ingestion.enabled=false \
             -f examples/tenant-1/messaging.yaml
           helm -n tenant-2 install streamx ./chart \
-            --set "imagePullSecrets[0].name=streamx-gar-json-key" \
             --set messaging.pulsar.initTenant.enabled=true \
             --set rest_ingestion.enabled=false \
             -f examples/tenant-2/messaging.yaml
@@ -88,13 +73,11 @@ jobs:
       - name: Install StreamX Mesh with reference flow for Tenants 1 and 2
         run: |
           helm -n tenant-1 upgrade streamx ./chart \
-            --set "imagePullSecrets[0].name=streamx-gar-json-key" \
             -f examples/tenant-1/messaging.yaml \
             -f examples/tenant-1/ingestion.yaml \
             -f examples/tenant-1/processing.yaml \
             -f examples/tenant-1/delivery.yaml
           helm -n tenant-2 upgrade streamx ./chart \
-            --set "imagePullSecrets[0].name=streamx-gar-json-key" \
             -f examples/tenant-2/messaging.yaml \
             -f examples/tenant-2/ingestion.yaml \
             -f examples/tenant-2/processing.yaml \

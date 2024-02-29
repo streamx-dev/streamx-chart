@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: 'Test: Verify StreamX Helm chart deployment'
+name: 'Test: Verify StreamX Helm chart for single tenant installation'
 
 on:
   workflow_dispatch:
@@ -52,19 +52,9 @@ jobs:
           kubectl create namespace tenant-1
           kubectl apply -f examples/tenant-1/secrets/rest-ingestion-jwt-keys.yaml
 
-      - name: Configure Docker Registry with StreamX images
-        env:
-          REGISTRY_JSON_KEY: ${{ secrets.GCP_STREAMX_RELEASES_GAR_READ_KEY }}
-        run: |
-          kubectl -n tenant-1 create secret docker-registry streamx-gar-json-key \
-            --docker-server=europe-west1-docker.pkg.dev \
-            --docker-username=_json_key_base64 \
-            --docker-password="${REGISTRY_JSON_KEY}"
-
       - name: Initialize Apache Pulsar for StreamX
         run: |
           helm -n tenant-1 install streamx ./chart \
-            --set "imagePullSecrets[0].name=streamx-gar-json-key" \
             --set messaging.pulsar.initTenant.enabled=true \
             --set rest_ingestion.enabled=false \
             -f examples/tenant-1/messaging.yaml
@@ -76,7 +66,6 @@ jobs:
       - name: Install StreamX Mesh with reference flow
         run: |
           helm -n tenant-1 upgrade streamx ./chart \
-            --set "imagePullSecrets[0].name=streamx-gar-json-key" \
             -f examples/tenant-1/messaging.yaml \
             -f examples/tenant-1/ingestion.yaml \
             -f examples/tenant-1/processing.yaml \

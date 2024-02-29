@@ -16,6 +16,7 @@
 package dev.streamx.chart.validation;
 
 
+import static dev.streamx.chart.validation.EnvironmentAssertions.assertPageNotExists;
 import static dev.streamx.chart.validation.EnvironmentAssertions.assertPageWithContent;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -51,6 +52,9 @@ public class SingleTenantPublicationTest {
 
     Assertions.assertTrue(eventTime > 0L);
     assertPageWithContent(environment.newDeliveryPageRequest(key), REFERENCE_PAGE_CONTENT);
+
+    environment.unpublishPage(key);
+    assertPageNotExists(environment.newDeliveryPageRequest(key));
   }
 
   @Test
