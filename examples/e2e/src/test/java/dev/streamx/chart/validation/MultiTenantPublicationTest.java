@@ -63,6 +63,10 @@ public class MultiTenantPublicationTest {
 
     // check tenant 1 resource hasn't changed
     assertPageWithContent(tenant1.newDeliveryPageRequest(tenant1Key), "Hello tenant 1!");
+
+    // trying to unpublish page from tenant 1 on tenant 2
+    tenant1.unpublishPage(tenant2Key);
+    assertPageWithContent(tenant2.newDeliveryPageRequest(tenant2Key), "Hello tenant 2!");
   }
 
 }

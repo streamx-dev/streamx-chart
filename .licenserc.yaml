@@ -36,9 +36,9 @@ header:
 
 dependency:
   licenses:
-    - name: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/rest-ingestion-service
-      version: 0.0.1
+    - name: ghcr.io/streamx-dev/streamx/rest-ingestion-service
+      version: 0.0.12-jvm
       license: 'All rights reserved'
-    - name: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/pulsar-init
-      version: 0.0.1
+    - name: ghcr.io/streamx-dev/streamx/pulsar-init
+      version: 0.0.12-jvm
       license: 'All rights reserved'

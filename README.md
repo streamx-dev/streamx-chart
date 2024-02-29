@@ -1,5 +1,5 @@
 # StreamX Helm Chart
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.6-jvm](https://img.shields.io/badge/AppVersion-0.0.6--jvm-informational?style=flat-square)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.12-jvm](https://img.shields.io/badge/AppVersion-0.0.12--jvm-informational?style=flat-square)
 
 This chart bootstraps StreamX on a Kubernetes cluster.
 
@@ -252,6 +252,15 @@ Next, from the `examples/tenant-1/e2e` run:
 export STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1=$(kubectl -n tenant-1 run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
 ./mvnw verify
 ```
+to verify StreamX e2e tests for a single-tenant installation.
+
+Next, from the `examples/tenant-1/e2e` run:
+```bash
+export STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1=$(kubectl -n tenant-1 run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
+export STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_2=$(kubectl -n tenant-2 run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
+./mvnw clean verify -Pmulti-tenant
+```
+to verify recommended StreamX multi-tenant installations.
 
 > Note: you need JDK 17 to run the tests.
 

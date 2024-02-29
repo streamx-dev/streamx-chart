@@ -30,7 +30,7 @@ spec:
       {{- end }}
       containers:
         - name: pulsar-init
-          image: {{ (.initTenant).customImage | default (printf "europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/streamx/pulsar-init:%s" $.Chart.AppVersion) }}
+          image: {{ (.initTenant).customImage | default (printf "ghcr.io/streamx-dev/streamx/pulsar-init:%s" $.Chart.AppVersion) }}
           env:
             - name: STREAMX_TENANT
               value: {{ include "streamx.tenant" $ }}
