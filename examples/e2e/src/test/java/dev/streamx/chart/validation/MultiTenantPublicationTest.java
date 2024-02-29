@@ -15,7 +15,6 @@
  */
 package dev.streamx.chart.validation;
 
-import static dev.streamx.chart.validation.EnvironmentAssertions.assertJsonSchema;
 import static dev.streamx.chart.validation.EnvironmentAssertions.assertPageNotExists;
 import static dev.streamx.chart.validation.EnvironmentAssertions.assertPageWithContent;
 
@@ -41,8 +40,8 @@ public class MultiTenantPublicationTest {
   @Order(1)
   void restIngestionShouldHavePagesSchemaConfigured(StreamXEnvironment tenant1)
       throws JsonProcessingException {
-    assertJsonSchema(tenant1.newIngestionSchemaRequest());
-    assertJsonSchema(tenant2.newIngestionSchemaRequest());
+    EnvironmentAssertions.assertPagesJsonSchema(tenant1.newIngestionSchemaRequest());
+    EnvironmentAssertions.assertPagesJsonSchema(tenant2.newIngestionSchemaRequest());
   }
 
   @Test

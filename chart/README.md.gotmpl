@@ -87,9 +87,11 @@ By default, each type of services has all probes enabled. You can disable them b
 
 > This feature is available only for `Apache Pulsar` messaging system.
 
-StreamX supports multi-tenancy. We recommend to create a separate namespace for each tenant. The namespace is used to isolate the services and their data. The tenant is configured via `tenant` value. The default value is the release name.
+StreamX supports multi-tenant deployments with Apache Pulsar multi-tenancy feature. We recommend to create a separate Kubernetes namespace for each tenant to isolate its services and data. 
 
-#### Tenant initialization
+To configure the tenant directly, use the `tenant` property value, otherwise it will default to the chart's release name.
+
+### Tenant initialization
 
 When the `messaging.pulsar.initTenant.enabled` is set to `true`, the chart will create a `Job` that initializes the tenant. The tenant initialization includes both Apache Pulsar tenant and namespaces configuration. The tenant initialization is done only once, and it is not idempotent (the automatic update of the tenant configuration is not supported OOTB, manual intervention is required). See the local development section for the example of a single tenant initialization.
 
@@ -97,9 +99,9 @@ To customise tenant initialization, you can:
 - set `messaging.pulsar.initTenant.enabled` to `false` and initialize the tenant manually,
 - configure custom `pulsar-init` container image via `messaging.pulsar.initTenant.customImage` value.
 
-#### Multi-tenant installation
+### Multi-tenant installation
 
-Apache Pulsar supports multi-tenancy, and StreamX supports it as well. We recommend to create a separate namespace for each tenant. Then, the tenant initialization has to be performed in each tenant's namespace (for each tenant). It guarantees that the tenant's data is isolated from other tenants at both the Kubernetes and Apache Pulsar levels (even a single Apache Pulsar installation is used).
+Tenant initialization has to be performed for each tenant. The tenant's data is isolated from other tenants at both the Kubernetes and Apache Pulsar levels (even when a single Apache Pulsar installation is used).
 
 The diagram below shows the multi-tenant StreamX installations with a shared Apache Pulsar:
 
@@ -131,7 +133,7 @@ For local development, we will prepare a `kind` cluster with `extraPortMappings`
 1. Create secret for Rest Ingrestion Auth:
    ```bash
    kubectl create namespace tenant-1 || true
-   kubectl apply -f examples/reference/secrets/tenant-1-rest-ingestion-jwt-keys.yaml
+   kubectl apply -f examples/tenant-1/secrets/rest-ingestion-jwt-keys.yaml
    ```
 
    <details>
@@ -140,10 +142,10 @@ For local development, we will prepare a `kind` cluster with `extraPortMappings`
 
    ```bash
    openssl genrsa -out rsaPrivateKey.pem 2048
-   openssl rsa -pubout -in rsaPrivateKey.pem -out publicKey.pub
-   openssl pkcs8 -topk8 -nocrypt -inform pem -in rsaPrivateKey.pem -outform pem -out privateKey.pem
+   openssl rsa -pubout -in rsaPrivateKey.pem -out key.pub
+   openssl pkcs8 -topk8 -nocrypt -inform pem -in rsaPrivateKey.pem -outform pem -out key.pem
    kubectl create namespace tenant-1 || true
-   kubectl -n tenant-1 create secret generic streamx-api-keys --from-file=./privateKey.pem --from-file=./publicKey.pub
+   kubectl -n tenant-1 create secret generic streamx-api-keys --from-file=./key.pem --from-file=./key.pub
    ```
    </p>
    </details>
@@ -176,25 +178,23 @@ For local development, we will prepare a `kind` cluster with `extraPortMappings`
    ```bash
     helm install streamx ./chart -n tenant-1 \
       --set "imagePullSecrets[0].name=streamx-gar-json-key" \
-      --set tenant=tenant-1 \
       --set messaging.pulsar.initTenant.enabled=true \
       --set rest_ingestion.enabled=false \
-      -f examples/reference/messaging.yaml
+      -f examples/tenant-1/messaging.yaml
     ```
     This command will give you `kubectl` command to check status of initialization job. Run it and wait for the job to complete.
 
    <details>
    <summary>Show how to initialise StreamX chart from public release</summary>
    <p>
-   > You still need to download `examples/reference/*.yaml` files from the repository.
+   > You still need to download `examples/tenant-1/*.yaml` files from the repository.
 
    ```bash
    helm install streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n tenant-1 \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
-     --set tenant=tenant-1 \
      --set messaging.pulsar.initTenant.enabled=true \
      --set rest_ingestion.enabled=false \
-     -f examples/reference/messaging.yaml
+     -f examples/tenant-1/messaging.yaml
    ```
    </p>
    </details>
@@ -203,26 +203,24 @@ For local development, we will prepare a `kind` cluster with `extraPortMappings`
    ```bash
    helm upgrade streamx ./chart -n tenant-1 \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
-     --set tenant=tenant-1 \
-     -f examples/reference/messaging.yaml \
-     -f examples/reference/ingestion.yaml \
-     -f examples/reference/processing.yaml \
-     -f examples/reference/delivery.yaml
+     -f examples/tenant-1/messaging.yaml \
+     -f examples/tenant-1/ingestion.yaml \
+     -f examples/tenant-1/processing.yaml \
+     -f examples/tenant-1/delivery.yaml
    ```
 
    <details>
    <summary>Show how to install StreamX chart from public release</summary>
    <p>
-   > You still need to download `examples/reference/*.yaml` files from the repository.
+   > You still need to download `examples/tenant-1/*.yaml` files from the repository.
 
    ```bash
    helm upgrade streamx streamx --repo https://streamx-dev.github.io/streamx-chart -n tenant-1 \
      --set "imagePullSecrets[0].name=streamx-gar-json-key" \
-     --set tenant=tenant-1 \
-     -f examples/reference/messaging.yaml \
-     -f examples/reference/ingestion.yaml \
-     -f examples/reference/processing.yaml \
-     -f examples/reference/delivery.yaml
+     -f examples/tenant-1/messaging.yaml \
+     -f examples/tenant-1/ingestion.yaml \
+     -f examples/tenant-1/processing.yaml \
+     -f examples/tenant-1/delivery.yaml
    ```
    </p>
    </details>
@@ -234,7 +232,7 @@ Check that all deployments are running:
 kubectl -n tenant-1 rollout status deployment -l app.kubernetes.io/instance=streamx
 ```
 
-Next, from the `examples/reference/e2e` run:
+Next, from the `examples/tenant-1/e2e` run:
 ```bash
 export STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1=$(kubectl -n tenant-1 run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
 ./mvnw verify

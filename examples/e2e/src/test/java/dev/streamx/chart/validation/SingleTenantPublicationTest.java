@@ -16,7 +16,6 @@
 package dev.streamx.chart.validation;
 
 
-import static dev.streamx.chart.validation.EnvironmentAssertions.assertJsonSchema;
 import static dev.streamx.chart.validation.EnvironmentAssertions.assertPageWithContent;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,7 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(StreamXEnvironmentExtension.class)
 @Tag("e2e")
-public class ReferenceFlowTest {
+public class SingleTenantPublicationTest {
 
   static final String REFERENCE_PAGE_CONTENT = "<h1>Unit tests for reference StreamX flow</h1>";
 
@@ -39,7 +38,7 @@ public class ReferenceFlowTest {
   @Order(1)
   void restIngestionShouldHavePagesSchemaConfigured(StreamXEnvironment environment)
       throws JsonProcessingException {
-    assertJsonSchema(environment.newIngestionSchemaRequest());
+    EnvironmentAssertions.assertPagesJsonSchema(environment.newIngestionSchemaRequest());
   }
 
   @Test

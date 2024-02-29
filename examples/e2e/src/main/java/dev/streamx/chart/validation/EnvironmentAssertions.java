@@ -65,7 +65,7 @@ public class EnvironmentAssertions {
     getResponse(request, isNotAuth());
   }
 
-  public static void assertJsonSchema(RequestSpecification request) throws JsonProcessingException {
+  public static void assertPagesJsonSchema(RequestSpecification request) throws JsonProcessingException {
     assertJsonSchema(request, PAGES_SCHEMA);
   }
 
