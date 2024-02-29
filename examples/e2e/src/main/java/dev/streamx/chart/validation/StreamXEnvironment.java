@@ -33,12 +33,26 @@ public class StreamXEnvironment {
   private static final Logger LOG = Logger.getLogger(StreamXEnvironment.class);
   private static final String PAGES_INBOX_CHANNEL = "pages";
   private static final String PUBLICATIONS_API_BASE_PATH = "/publications/v1";
-  public static final String REST_INGESTION_HOST = "http://streamx-api.127.0.0.1.nip.io";
 
+  private final String restIngestionHost;
+  private final String webDeliveryHost;
+  private final String authTokenEnv;
+
+  StreamXEnvironment() {
+    restIngestionHost = "http://tenant-1-api.127.0.0.1.nip.io";
+    webDeliveryHost = "http://tenant-1.127.0.0.1.nip.io";
+    authTokenEnv = "STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1";
+  }
+
+  public StreamXEnvironment(String restIngestionHost, String webDeliveryHost, String authTokenEnv) {
+    this.restIngestionHost = restIngestionHost;
+    this.webDeliveryHost = webDeliveryHost;
+    this.authTokenEnv = authTokenEnv;
+  }
 
   public Long publishPage(String key, String content) throws StreamxClientException {
     LOG.infof("Publishing page %s with content '%s'", key, content);
-    try (StreamxClient client = StreamxClient.create(REST_INGESTION_HOST, getAuthToken())) {
+    try (StreamxClient client = StreamxClient.create(restIngestionHost, getAuthToken())) {
       Publisher<Page> pagePublisher = client.newPublisher(PAGES_INBOX_CHANNEL, Page.class);
       Long eventTime = pagePublisher.publish(key,
           new Page(ByteBuffer.wrap(content.getBytes(StandardCharsets.UTF_8))));
@@ -55,19 +69,19 @@ public class StreamXEnvironment {
 
   public RequestSpecification newIngestionRequest(String basePath) {
     return given()
-        .baseUri(REST_INGESTION_HOST)
+        .baseUri(restIngestionHost)
         .basePath(basePath);
   }
 
   public RequestSpecification newDeliveryPageRequest(String pagePath) {
     return given()
-        .baseUri("http://streamx.127.0.0.1.nip.io")
+        .baseUri(webDeliveryHost)
         .basePath(pagePath)
         .contentType(ContentType.HTML);
   }
 
   protected String getAuthToken() {
-    return System.getenv("STREAMX_INGESTION_REST_AUTH_TOKEN");
+    return System.getenv(authTokenEnv);
   }
 
 }

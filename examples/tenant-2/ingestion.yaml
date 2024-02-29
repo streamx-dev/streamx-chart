@@ -12,28 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: 'Test: Verify StreamX Helm chart'
-
-on:
-  pull_request:
-  push:
-    branches:
-      - main
-
-jobs:
-  verify-chart:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - uses: azure/setup-helm@v3
-        with:
-          version: v3.13.2
-
-      - name: Run chart helm-unittest
-        run: |
-          cd chart
-          helm plugin install https://github.com/helm-unittest/helm-unittest.git
-          helm unittest -f 'tests/unit/*.yaml' .
+rest_ingestion:
+  allInboxesTopicPatter: "inboxes/.*"
+  auth:
+    keysSecretName: streamx-api-keys
+  ingress:
+    host: tenant-2-api.127.0.0.1.nip.io

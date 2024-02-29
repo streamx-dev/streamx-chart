@@ -16,7 +16,6 @@
 package dev.streamx.chart.validation;
 
 
-import static dev.streamx.chart.validation.EnvironmentAssertions.assertJsonSchema;
 import static dev.streamx.chart.validation.EnvironmentAssertions.assertPageWithContent;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,40 +23,22 @@ import dev.streamx.clients.ingestion.exceptions.StreamxClientException;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(StreamXEnvironmentExtension.class)
-public class ReferenceFlowTest {
+@Tag("e2e")
+public class SingleTenantPublicationTest {
 
   static final String REFERENCE_PAGE_CONTENT = "<h1>Unit tests for reference StreamX flow</h1>";
-  static final String PAGES_SCHEMA = """
-      {
-         "pages": {
-           "type":"record",
-           "name":"Page",
-           "namespace":"dev.streamx.reference.relay.model",
-           "fields":[
-             {
-               "name":"content",
-               "type":[
-                 "null",
-                 "bytes"
-               ],
-               "default":null
-             }
-           ]
-         }
-       }
-       """;
-
 
   @Test
   // FixMe order should not matter after schema autoupdate implemented in StreamX
   @Order(1)
   void restIngestionShouldHavePagesSchemaConfigured(StreamXEnvironment environment)
       throws JsonProcessingException {
-    assertJsonSchema(environment.newIngestionSchemaRequest(), PAGES_SCHEMA);
+    EnvironmentAssertions.assertPagesJsonSchema(environment.newIngestionSchemaRequest());
   }
 
   @Test
@@ -73,8 +54,7 @@ public class ReferenceFlowTest {
   }
 
   @Test
-  void makeSureAuthEndpointIsNotExposedPublicly(StreamXEnvironment environment)
-      throws StreamxClientException {
+  void makeSureAuthEndpointIsNotExposedPublicly(StreamXEnvironment environment) {
     environment.newIngestionRequest("/auth/token?upn=test")
         .post()
         .then()

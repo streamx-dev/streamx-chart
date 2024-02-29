@@ -12,7 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-messaging:
-  pulsar:
-    serviceUrl: pulsar://service.pulsar:6650
-    webServiceUrl: http://web-service.pulsar:8080
+processing:
+  reference-relay:
+    image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/streamx/reference-relay-processing-service:0.0.6-jvm
+    replicas: 2
+    incoming:
+      incoming-pages:
+        namespace: inboxes
+        topic: pages
+    outgoing:
+      outgoing-pages:
+        namespace: outboxes
+        topic: pages

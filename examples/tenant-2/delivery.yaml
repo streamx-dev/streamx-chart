@@ -12,14 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-rest_ingestion:
-  allInboxesTopicPatter: "inboxes/.*"
-  auth:
-    keysSecretName: streamx-api-keys
-    privateKeyFileName: jwt-key.pem
-    publicKeyFileName: jwt-key.pub
-  env: 
-  # - name: QUARKUS_LOG_CATEGORY__DEV_STREAMX__LEVEL
-  #   value: DEBUG
-  ingress:
-    host: streamx-api.127.0.0.1.nip.io
+delivery:
+  reference-web:
+    replicas: 2
+    incoming:
+      pages:
+        namespace: outboxes
+        topic: pages
+    outputs:
+      http:
+        service:
+          containerRef:
+            name: webserver
+          port: 80
+          targetPort: http
+        ingress:
+          host: tenant-2.127.0.0.1.nip.io
+    containers:
+      webserver:
+        image: europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/streamx/reference-web-delivery-service:0.0.6-jvm
+        ports:
+          - name: http
+            containerPort: 8080
