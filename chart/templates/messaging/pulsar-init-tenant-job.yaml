@@ -32,6 +32,7 @@ spec:
         - name: pulsar-init
           image: {{ (.initTenant).customImage | default (printf "ghcr.io/streamx-dev/streamx/pulsar-init:%s" $.Chart.AppVersion) }}
           env:
+            {{- include "streamx.uniqEnvs" (dict "baseEnvs" (.initTenant).env "extraEnvs" $.Values.global.env) | nindent 12 }}
             - name: STREAMX_TENANT
               value: {{ include "streamx.tenant" $ }}
             {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
@@ -43,5 +44,7 @@ spec:
           args:
           - >
             until [[ $(curl -s -o /dev/null -w "%{http_code}" {{ .webServiceUrl }}/admin/v2/clusters) == "200" ]]; do echo "waiting for pulsar api"; sleep 5; done;
+          env:
+            {{- include "streamx.uniqEnvs" (dict "baseEnvs" (.initTenant).env "extraEnvs" $.Values.global.env) | nindent 12 }}
 {{- end }}
 {{- end }}

@@ -14,14 +14,15 @@
 
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 
-suite: test services global env vars
+suite: test chart components global env vars
 tests:
   # @Test
-  - it: when global env is set, then it is present in each service's container env
+  - it: when global env is set, then it is present in each service's container and init job
     templates:
       - templates/rest-ingestion-service/rest-ingestion-deployment.yaml
       - templates/processing/processing-deployment.yaml
       - templates/delivery/delivery-deployment.yaml
+      - templates/messaging/pulsar-init-tenant-job.yaml
     set:
       global:
         env:
@@ -29,8 +30,6 @@ tests:
             value: global-env-value
       messaging:
         pulsar:
-          serviceUrl: "pulsar://pulsar-service:6650"
-          webServiceUrl: "http://pulsar-web-service:8080"
           initTenant:
             enabled: true
       processing:
@@ -119,6 +118,60 @@ tests:
             value: delivery-env-value
       - notContains:
           path: spec.template.spec.containers[0].env
+          content:
+            name: GLOBAL_ENV
+            value: global-env-value
+  # @Test
+  - it: when global env is set the it is set in init tenant init container
+    template: templates/messaging/pulsar-init-tenant-job.yaml
+    set:
+      global:
+        env:
+          - name: GLOBAL_ENV
+            value: global-env-value
+      messaging:
+        pulsar:
+          initTenant:
+            enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.initContainers[0].env
+          content:
+            name: GLOBAL_ENV
+            value: global-env-value
+  # @Test
+  - it: when global env is set the it can be overwritten by init tenant job
+    template: templates/messaging/pulsar-init-tenant-job.yaml
+    set:
+      global:
+        env:
+          - name: GLOBAL_ENV
+            value: global-env-value
+      messaging:
+        pulsar:
+          initTenant:
+            enabled: true
+            env:
+              - name: GLOBAL_ENV
+                value: init-tenant-env-value
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GLOBAL_ENV
+            value: init-tenant-env-value
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GLOBAL_ENV
+            value: global-env-value
+      - contains:
+          path: spec.template.spec.initContainers[0].env
+          content:
+            name: GLOBAL_ENV
+            value: init-tenant-env-value
+      - notContains:
+          path: spec.template.spec.initContainers[0].env
           content:
             name: GLOBAL_ENV
             value: global-env-value

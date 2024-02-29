@@ -18,6 +18,18 @@
 # -- overwrites tenant for this release installation, defaults to `.Release.Name`
 tenant:
 
+# global settings inherited by all chart components
+global:
+  # -- global environment variables for all containers, can be overridden by component specific env
+  env: []
+
+# -- imagePullSecrets used to authenticate to registry containing StreamX and custom services
+imagePullSecrets: []
+
+monitoring:
+  # -- enabling this flag will enable creating `monitoring.coreos.com` Custom Resources for all services
+  enabled: false
+
 # -- used to configure messaging system like Apache Pulsar, see examples for reference
 messaging: {}
   # -- Apache Pulsar Messaging
@@ -29,18 +41,7 @@ messaging: {}
   #   initTenant: # -- optional: Apache Pulsar tenant and namespaces initialisation for StreamX, this job waits for Apache Pulsar to be ready
   #     enabled: true # -- enable tenant initialisation, this will create a Job to initialise tenant
   #     customImage: # -- optional: custom image for tenant initialisation, by default `streamx-docker-releases/dev.streamx/pulsar-init` with the current chart's AppVersion will be used
-
-# global settings inherited by all services
-global:
-  # -- global environment variables for all services, can be overridden by service specific env
-  env: []
-
-# -- imagePullSecrets used to authenticate to registry containing StreamX and custom services
-imagePullSecrets: []
-
-monitoring:
-  # -- enabling this flag will enable creating `monitoring.coreos.com` Custom Resources for all services
-  enabled: false
+  #     env: [] # -- optional: additional environment variables for tenant initialisation
 
 ## StreamX REST Ingestion Service
 rest_ingestion:
