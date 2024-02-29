@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: 'Test: Verify StreamX Helm chart for single tenant installlation'
+name: 'Test: Verify StreamX Helm chart for single tenant installation'
 
 on:
   workflow_dispatch:
