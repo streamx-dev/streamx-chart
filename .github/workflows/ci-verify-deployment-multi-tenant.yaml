@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: 'Test: Verify StreamX Helm chart deployment'
+name: 'Test: Verify StreamX Helm chart for multi-tenant installlations'
 
 on:
   workflow_dispatch:
@@ -47,46 +47,46 @@ jobs:
       - name: Install prerequisites
         run:  .github/scripts/install-prerequisites.sh
 
-      - name: Create StreamX namespace and create ingestion service token secret
+      - name: Create namespace and ingestion service token secret for Tenants 1 and 2
         run: |
           kubectl create namespace tenant-1
-          kubectl apply -f examples/tenant-1/secrets/rest-ingestion-jwt-keys.yaml
+          kubectl -n tenant-1 apply -f examples/tenant-1/secrets/rest-ingestion-jwt-keys.yaml
+          kubectl create namespace tenant-2
+          kubectl -n tenant-2 apply -f examples/tenant-2/secrets/rest-ingestion-jwt-keys.yaml
 
-      - name: Configure Docker Registry with StreamX images
-        env:
-          REGISTRY_JSON_KEY: ${{ secrets.GCP_STREAMX_RELEASES_GAR_READ_KEY }}
-        run: |
-          kubectl -n tenant-1 create secret docker-registry streamx-gar-json-key \
-            --docker-server=europe-west1-docker.pkg.dev \
-            --docker-username=_json_key_base64 \
-            --docker-password="${REGISTRY_JSON_KEY}"
-
-      - name: Initialize Apache Pulsar for StreamX
+      - name: Initialize Apache Pulsar for Tenants 1 and 2
         run: |
           helm -n tenant-1 install streamx ./chart \
-            --set "imagePullSecrets[0].name=streamx-gar-json-key" \
             --set messaging.pulsar.initTenant.enabled=true \
             --set rest_ingestion.enabled=false \
             -f examples/tenant-1/messaging.yaml
+          helm -n tenant-2 install streamx ./chart \
+            --set messaging.pulsar.initTenant.enabled=true \
+            --set rest_ingestion.enabled=false \
+            -f examples/tenant-2/messaging.yaml
 
-      - name: Wait for initialization of Apache Pulsar completes
+      - name: Wait for initialization of Apache Pulsar completes for Tenants 1 and 2
         run: |
           kubectl -n tenant-1 wait --for=condition=complete job --selector app.kubernetes.io/component=pulsar-init-tenant --timeout=300s
+          kubectl -n tenant-2 wait --for=condition=complete job --selector app.kubernetes.io/component=pulsar-init-tenant --timeout=300s
 
-      - name: Install StreamX Mesh with reference flow
+      - name: Install StreamX Mesh with reference flow for Tenants 1 and 2
         run: |
           helm -n tenant-1 upgrade streamx ./chart \
-            --set "imagePullSecrets[0].name=streamx-gar-json-key" \
             -f examples/tenant-1/messaging.yaml \
             -f examples/tenant-1/ingestion.yaml \
             -f examples/tenant-1/processing.yaml \
             -f examples/tenant-1/delivery.yaml
+          helm -n tenant-2 upgrade streamx ./chart \
+            -f examples/tenant-2/messaging.yaml \
+            -f examples/tenant-2/ingestion.yaml \
+            -f examples/tenant-2/processing.yaml \
+            -f examples/tenant-2/delivery.yaml
 
-      - name: Wait for StreamX Mesh deployment completes
+      - name: Wait for StreamX Mesh deployments complete for Tenants 1 and 2
         run: |
-          kubectl -n tenant-1 rollout status deployment streamx-rest-ingestion
-          kubectl -n tenant-1 rollout status deployment streamx-processing-reference-relay
-          kubectl -n tenant-1 rollout status deployment streamx-delivery-reference-web
+          kubectl -n tenant-1 rollout status deployment -l app.kubernetes.io/instance=streamx
+          kubectl -n tenant-2 rollout status deployment -l app.kubernetes.io/instance=streamx
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
@@ -100,8 +100,9 @@ jobs:
           distribution: 'adopt'
           cache: 'maven'
 
-      - name: Verify reference flow with StreamX API Integration / E2E Tests
+      - name: Verify multi-tenant deployment
         run: |
           cd examples/e2e
           export STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1=$(kubectl -n tenant-1 run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
-          ./mvnw clean verify
+          export STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_2=$(kubectl -n tenant-2 run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://streamx-rest-ingestion/auth/token?upn=test')
+          ./mvnw clean verify -Pmulti-tenant
