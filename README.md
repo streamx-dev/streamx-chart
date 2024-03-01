@@ -113,7 +113,7 @@ When the `messaging.pulsar.initTenant.enabled` is set to `true`, the chart will 
 
 To customise tenant initialization, you can:
 - set `messaging.pulsar.initTenant.enabled` to `false` and initialize the tenant manually,
-- configure custom `pulsar-init` container image via `messaging.pulsar.initTenant.customImage` value.
+- configure custom `pulsar-init` container image via `messaging.pulsar.initTenant.image` value.
 
 ### Multi-tenant installation
 
