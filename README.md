@@ -1,5 +1,5 @@
 # StreamX Helm Chart
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.12-jvm](https://img.shields.io/badge/AppVersion-0.0.12--jvm-informational?style=flat-square)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 0.5.1](https://img.shields.io/badge/Version-0.5.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.12-jvm](https://img.shields.io/badge/AppVersion-0.0.12--jvm-informational?style=flat-square)
 
 This chart bootstraps StreamX on a Kubernetes cluster.
 
@@ -13,7 +13,7 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | delivery | object | `{}` | `Delivery Services` map |
-| global.env | list | `[]` | global environment variables for all services, can be overridden by service specific env |
+| global.env | list | `[]` | global environment variables for all containers, can be overridden by component specific env |
 | global.imagePullSecrets | list | `[]` | imagePullSecrets used to authenticate to registry containing StreamX and custom images |
 | messaging | object | `{}` | used to configure messaging system like Apache Pulsar, see examples for reference |
 | monitoring.enabled | bool | `false` | enabling this flag will enable creating `monitoring.coreos.com` Custom Resources for all services |

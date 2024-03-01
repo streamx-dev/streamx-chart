@@ -17,6 +17,6 @@ name: streamx
 description: This chart bootstraps StreamX on a Kubernetes cluster.
 
 type: application
-version: 0.5.0
+version: 0.5.1
 # Please note that the app version is defined also in the .licenserc.yaml file
 appVersion: 0.0.12-jvm

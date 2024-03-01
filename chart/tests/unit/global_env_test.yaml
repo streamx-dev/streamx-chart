@@ -17,7 +17,7 @@
 suite: test chart components global env vars
 tests:
   # @Test
-  - it: when global env is set, then it is present in each service's container and init job
+  - it: when global env is set, then it is present in each service's container and init job and is quoted
     templates:
       - templates/rest-ingestion-service/rest-ingestion-deployment.yaml
       - templates/processing/processing-deployment.yaml
@@ -28,6 +28,12 @@ tests:
         env:
           - name: GLOBAL_ENV
             value: global-env-value
+          - name: GLOBAL_INT_ENV
+            value: 5
+          - name: GLOBAL_BOOL_ENV
+            value: true
+          - name: GLOBAL_QUOTED_ENV
+            value: "1"
       messaging:
         pulsar:
           initTenant:
@@ -48,6 +54,21 @@ tests:
           content:
             name: GLOBAL_ENV
             value: global-env-value
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GLOBAL_INT_ENV
+            value: "5"
+      - contains: 
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GLOBAL_BOOL_ENV
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: GLOBAL_QUOTED_ENV
+            value: "1"
   # @Test
   - it: when global env is set the it can be overwritten by rest ingestion service
     template: templates/rest-ingestion-service/rest-ingestion-deployment.yaml
