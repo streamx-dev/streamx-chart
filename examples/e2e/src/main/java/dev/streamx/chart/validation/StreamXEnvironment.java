@@ -71,27 +71,36 @@ public class StreamXEnvironment {
     }
   }
 
+  public RequestSpecification newIngestionRequest(String basePath) {
+    return given()
+        .baseUri(restIngestionHost)
+        .basePath(basePath)
+        .log().body();
+  }
+
   public RequestSpecification newIngestionSchemaRequest() {
     return newIngestionRequest(PUBLICATIONS_API_BASE_PATH + "/schema")
         .header("Authorization", "Bearer " + getAuthToken())
         .contentType(ContentType.JSON);
   }
 
-  public RequestSpecification newIngestionRequest(String basePath) {
-    return given()
-        .baseUri(restIngestionHost)
-        .basePath(basePath);
-  }
-
   public RequestSpecification newDeliveryPageRequest(String pagePath) {
     return given()
         .baseUri(webDeliveryHost)
         .basePath(pagePath)
-        .contentType(ContentType.HTML);
+        .contentType(ContentType.HTML)
+        .log().body();
   }
 
   protected String getAuthToken() {
-    return System.getenv(authTokenEnv);
+    String authToken = System.getenv(authTokenEnv);
+    if (authToken != null) {
+      LOG.infof("Token %s last 20 chars: '...%s'", authTokenEnv, authToken.substring(authToken.length() - 20));
+    } else {
+      LOG.warnf("Token %s is null!", authTokenEnv);
+    }
+
+    return authToken;
   }
 
 }
