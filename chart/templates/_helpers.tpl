@@ -212,7 +212,7 @@ Usage:
 {{- end }}
 {{- $merged := mergeOverwrite $baseDict $overwriteDict -}}
 {{- range $key, $value := $merged }}
-- name: {{ $key }}
-  value: {{ $value }}
+- name: {{ $key | quote}}
+  value: {{ $value | quote }}
 {{- end }}
 {{- end }}
