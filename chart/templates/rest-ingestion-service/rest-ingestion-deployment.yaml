@@ -49,7 +49,7 @@ spec:
             - name: http
               containerPort: 8080
           env:
-            {{- include "streamx.uniqEnvs" (dict "baseEnvs" .Values.rest_ingestion.env "extraEnvs" $.Values.global.env) | nindent 12 }}
+            {{- include "streamx.mergeEnvs" (dict "baseEnvs" $.Values.global.env "overwriteEnvs" .Values.rest_ingestion.env) | nindent 12 }}
             - name: STREAMX_TENANT
               value: {{ include "streamx.tenant" $ }}
             {{- include "streamx.pulsarEnvs" $ | nindent 12 }}

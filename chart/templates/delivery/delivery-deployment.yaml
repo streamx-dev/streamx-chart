@@ -97,7 +97,7 @@ spec:
             {{- end }}
           {{- end }}
           env:
-            {{- include "streamx.uniqEnvs" (dict "baseEnvs" $container.env "extraEnvs" $.Values.global.env) | nindent 12 }}
+            {{- include "streamx.mergeEnvs" (dict "baseEnvs" $.Values.global.env "overwriteEnvs" $container.env) | nindent 12 }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:

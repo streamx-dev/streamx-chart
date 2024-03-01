@@ -194,23 +194,23 @@ startupProbe:
 {{- end }}
 
 {{/*
-Returns YAML list of environment variables with base environment variables and additional environment variables concatenated.
-The base envs entries have precedence over the additional entries (distinguished by the 'name').
+Returns YAML list of environment variables. It merges two lists of envs (name->value) giving precedence from overwrite to base, 
+effectively overwriting values in the base (distinguished by the 'name').
 Usage:
-{{ include "streamx.uniqEnvs" (dict "baseEnvs" <envs-list> "extraEnvs" <envs-list>) }}
+{{ include "streamx.mergeEnvs" (dict "baseEnvs" <envs-list> "overwriteEnvs" <envs-list>) }}
 */}}
-{{- define "streamx.uniqEnvs" -}}
+{{- define "streamx.mergeEnvs" -}}
+{{- $overwriteEnvs := .overwriteEnvs | default list }}
 {{- $baseEnvs := .baseEnvs | default list }}
-{{- $extraEnvs := .extraEnvs | default list }}
+{{- $overwriteDict := dict }}
+{{- range $overwriteEnvs }}
+{{- $_ := set $overwriteDict .name .value }}
+{{- end }}
 {{- $baseDict := dict }}
 {{- range $baseEnvs }}
 {{- $_ := set $baseDict .name .value }}
 {{- end }}
-{{- $extraDict := dict }}
-{{- range $extraEnvs }}
-{{- $_ := set $extraDict .name .value }}
-{{- end }}
-{{- $merged := mergeOverwrite $extraDict $baseDict -}}
+{{- $merged := mergeOverwrite $baseDict $overwriteDict -}}
 {{- range $key, $value := $merged }}
 - name: {{ $key }}
   value: {{ $value }}
