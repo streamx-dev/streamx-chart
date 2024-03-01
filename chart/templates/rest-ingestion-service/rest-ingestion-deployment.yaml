@@ -29,8 +29,8 @@ spec:
       labels:
         {{- include "streamx.component.labels" (dict "componentName" "rest-ingestion" "context" $) | nindent 8 }}
     spec:
-      {{- if .Values.imagePullSecrets }}
-      imagePullSecrets: {{- .Values.imagePullSecrets | toYaml | nindent 8 }}
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets: {{- .Values.global.imagePullSecrets | toYaml | nindent 8 }}
       {{- end }}
       {{- if .Values.rest_ingestion.nodeSelector }}
       nodeSelector: {{- .Values.rest_ingestion.nodeSelector | toYaml | nindent 8 }}

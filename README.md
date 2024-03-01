@@ -13,8 +13,8 @@ See the `templates/_helpers.tpl` helper functions to see the implementation deta
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | delivery | object | `{}` | `Delivery Services` map |
-| global.env | list | `[]` | global environment variables for all containers, can be overridden by component specific env |
-| imagePullSecrets | list | `[]` | imagePullSecrets used to authenticate to registry containing StreamX and custom services |
+| global.env | list | `[]` | global environment variables for all services, can be overridden by service specific env |
+| global.imagePullSecrets | list | `[]` | imagePullSecrets used to authenticate to registry containing StreamX and custom images |
 | messaging | object | `{}` | used to configure messaging system like Apache Pulsar, see examples for reference |
 | monitoring.enabled | bool | `false` | enabling this flag will enable creating `monitoring.coreos.com` Custom Resources for all services |
 | processing | object | `{}` | `Processing Services` map |
