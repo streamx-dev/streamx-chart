@@ -192,3 +192,27 @@ startupProbe:
 {{- end }}
 {{- end }}
 {{- end }}
+
+{{/*
+Returns YAML list of environment variables. It merges two lists of envs (name->value) giving precedence from overwrite to base, 
+effectively overwriting values in the base (distinguished by the 'name').
+Usage:
+{{ include "streamx.mergeEnvs" (dict "baseEnvs" <envs-list> "overwriteEnvs" <envs-list>) }}
+*/}}
+{{- define "streamx.mergeEnvs" -}}
+{{- $overwriteEnvs := .overwriteEnvs | default list }}
+{{- $baseEnvs := .baseEnvs | default list }}
+{{- $overwriteDict := dict }}
+{{- range $overwriteEnvs }}
+{{- $_ := set $overwriteDict .name .value }}
+{{- end }}
+{{- $baseDict := dict }}
+{{- range $baseEnvs }}
+{{- $_ := set $baseDict .name .value }}
+{{- end }}
+{{- $merged := mergeOverwrite $baseDict $overwriteDict -}}
+{{- range $key, $value := $merged }}
+- name: {{ $key }}
+  value: {{ $value }}
+{{- end }}
+{{- end }}

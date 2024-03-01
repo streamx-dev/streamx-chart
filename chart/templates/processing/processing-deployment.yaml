@@ -60,6 +60,7 @@ spec:
             {{- end }}
           {{- end }}
           env:
+            {{- include "streamx.mergeEnvs" (dict "baseEnvs" $.Values.global.env "overwriteEnvs" $processing.env) | nindent 12 }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -79,9 +80,6 @@ spec:
               value: {{ include "streamx.channelTopic" (dict "channel" $channel "context" $) }}
             - name: MP_MESSAGING_OUTGOING_{{ $key | upper }}_PRODUCERNAME
               value: "$(POD_NAME)-{{ $key }}"
-            {{- end }}
-            {{- if $processing.env }}
-{{ toYaml $processing.env | indent 12 }}
             {{- end }}
           resources:
           {{- if $processing.resources }}          
