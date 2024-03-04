@@ -35,12 +35,6 @@ spec:
       {{- if .Values.rest_ingestion.nodeSelector }}
       nodeSelector: {{- .Values.rest_ingestion.nodeSelector | toYaml | nindent 8 }}
       {{- end }}
-      {{- if (.Values.rest_ingestion.auth).keysSecretName }}
-      volumes:
-        - name: jwt-keys
-          secret:
-            secretName: {{ .Values.rest_ingestion.auth.keysSecretName }}
-      {{- end }}
       containers:
         - name: rest-ingestion
           image: {{ .Values.rest_ingestion.image | default (printf "ghcr.io/streamx-dev/streamx/rest-ingestion-service:%s" .Chart.AppVersion) }}
@@ -70,12 +64,20 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
           volumeMounts:
+            {{- if (.Values.rest_ingestion.auth).keysSecretName }}
             - name: jwt-keys
               mountPath: /etc/secrets/streamx
               readOnly: true
+            {{- end }}
         {{- if .Values.rest_ingestion.resources }}
           resources:
 {{ toYaml .Values.rest_ingestion.resources | indent 12 }}
         {{- end }}
         {{- include "streamx.quarkusProbesConfig" (dict "probes" .Values.rest_ingestion.probes "context" $) | indent 10 }}
+      volumes:
+      {{- if (.Values.rest_ingestion.auth).keysSecretName }}
+        - name: jwt-keys
+          secret:
+            secretName: {{ .Values.rest_ingestion.auth.keysSecretName }}
+      {{- end }}
 {{- end }}

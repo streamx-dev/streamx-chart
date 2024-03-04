@@ -81,3 +81,10 @@ tests:
           content:
             name: QUARKUS_HTTP_AUTH_PERMISSION_BEARER_POLICY
             value: permit
+  # @Test
+  - it: do not mount and create volume with keys files when auth secret is not configured
+    asserts:
+      - isNullOrEmpty:
+          path: spec.template.spec.volumes
+      - isNullOrEmpty:
+          path: spec.template.spec.containers[0].volumeMounts
