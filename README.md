@@ -252,7 +252,7 @@ export STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1=$(kubectl -n tenant-1 run jwt-
 Refresh the Ingestion Service schema by calling:
 ```bash
 curl -X 'GET' \
-  'http://streamx-api.127.0.0.1.nip.io/publications/v1/schema' \
+  'http://tenant-1-api.127.0.0.1.nip.io/publications/v1/schema' \
   -H "Authorization: Bearer ${STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1}" \
   -H 'accept: */*'
 ```
@@ -263,7 +263,7 @@ Run the command below to publish a new page:
 
 ```bash
 curl -X 'PUT' \
-  'http://streamx-api.127.0.0.1.nip.io/publications/v1/pages/test.html' \
+  'http://tenant-1-api.127.0.0.1.nip.io/publications/v1/pages/test.html' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -H "Authorization: Bearer ${STREAMX_INGESTION_REST_AUTH_TOKEN_TENANT_1}" \
@@ -272,7 +272,7 @@ curl -X 'PUT' \
 }'
 ```
 
-Open in the browser [streamx.127.0.0.1.nip.io/test.html](http://streamx.127.0.0.1.nip.io/test.html).
+Open in the browser [tenant-1.127.0.0.1.nip.io/test.html](http://tenant-1.127.0.0.1.nip.io/test.html).
 
 ### Testing
 
