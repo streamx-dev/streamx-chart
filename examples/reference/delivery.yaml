@@ -12,34 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Patterns to ignore when building packages.
-# This supports shell glob matching, relative path matching, and
-# negation (prefixed with !). Only one pattern per line.
-.DS_Store
-# Common VCS dirs
-.git/
-.gitignore
-.bzr/
-.bzrignore
-.hg/
-.hgignore
-.svn/
-# Common backup files
-*.swp
-*.bak
-*.tmp
-*.orig
-*~
-# Various IDEs
-.project
-.idea/
-*.tmproj
-.vscode/
-tmp/*
-
-# custom
-assets
-docs
-local
-tests
-*.gotmpl
+delivery:
+  reference-web:
+    replicas: 2
+    incoming:
+      pages:
+        namespace: outboxes
+        topic: pages
+    outputs:
+      http:
+        service:
+          containerRef:
+            name: webserver
+          port: 80
+          targetPort: http
+        ingress:
+          host: reference.127.0.0.1.nip.io
+    containers:
+      webserver:
+        image: ghcr.io/streamx-dev/streamx/reference-web-delivery-service:0.0.12-jvm
+        ports:
+          - name: http
+            containerPort: 8080

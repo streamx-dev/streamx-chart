@@ -12,34 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Patterns to ignore when building packages.
-# This supports shell glob matching, relative path matching, and
-# negation (prefixed with !). Only one pattern per line.
-.DS_Store
-# Common VCS dirs
-.git/
-.gitignore
-.bzr/
-.bzrignore
-.hg/
-.hgignore
-.svn/
-# Common backup files
-*.swp
-*.bak
-*.tmp
-*.orig
-*~
-# Various IDEs
-.project
-.idea/
-*.tmproj
-.vscode/
-tmp/*
+#!/bin/bash
 
-# custom
-assets
-docs
-local
-tests
-*.gotmpl
+set -x -e
+
+helm uninstall reference -n streamx
+kubectl delete namespace streamx

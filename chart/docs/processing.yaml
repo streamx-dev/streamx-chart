@@ -1,0 +1,55 @@
+# Copyright 2024 Dynamic Solutions Sp. z o.o. sp.k.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+processing:
+  _service-name_:
+    # -- number of replicas, defaults to 1
+    replicas: 2
+    # -- image repository and tag
+    image: <image-repository>:<image-tag>
+    # -- map of incoming channels
+    incoming:
+      # -- example incomming channel with defined namespace and topic
+      _incoming-channel-name_:
+        namespace: inboxes
+        topic: pages
+    # -- map of outgoing channels
+    outgoing:
+      # -- example outgoing channel with defined namespace and topic
+      _outgoing-channel-name_:
+        namespace: outboxes
+        topic: pages
+    # -- additional environment variables for the service
+    env: []
+    # -- overrides resources settings (default `requests`: 256Mi memory, 400m cpu)
+    resources: 
+      requests: 
+        memory: "256Mi"
+        cpu: "400m"
+    # -- nodeSelector settings (key -> value)
+    nodeSelector: {}
+    # -- overrides default podMonitor settings
+    podMonitor:
+      interval: 10s
+      scrapeTimeout: 10s
+      path: /q/metrics
+    probes: 
+      # -- disables probes, by default enabled
+      disabled: true
+      # -- overrides default livenessProbe settings see tests for reference
+      livenessOverride: {}
+      # -- overrides default readinessProbe settings see tests for reference
+      readinessOverride: {}
+      # -- overrides default startupProbe settings see tests for reference
+      startupOverride: {}

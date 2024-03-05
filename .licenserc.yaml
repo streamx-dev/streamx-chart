@@ -19,11 +19,11 @@ header:
 
   paths-ignore:
     - '**/*.md'
-    - '**/*.md.gotmpl'
+    - '**/*.gotmpl'
     - '.github/CODEOWNERS'
     - 'chart/tests/unit/__snapshot__/*.snap'
-    - 'examples/e2e/mvnw*'
-    - 'examples/e2e/.mvn/**/*'
+    - 'tests/e2e/mvnw*'
+    - 'tests/e2e/.mvn/**/*'
     - 'LICENSE'
     - 'NOTICE'
 

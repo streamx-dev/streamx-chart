@@ -14,5 +14,32 @@
 
 #!/usr/bin/env bash
 
-docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest
-mv chart/README.md .
+# workaround MacOS issue with sed
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  echo "MacOS detected"
+  sed() {
+    gsed "$@"
+  }
+fi
+
+# Parameters
+docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o parameters.md --values-file=values.yaml
+docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o messaging.md --values-file=docs/messaging.yaml
+docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o processing.md --values-file=docs/processing.yaml
+docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o delivery.md --values-file=docs/delivery.yaml
+
+echo "# StreamX Helm chart parameters\n" > docs/parameters.md
+echo "## Default\n" >> docs/parameters.md
+cat chart/parameters.md >> docs/parameters.md
+echo "\n\n## Messaging\n" >> docs/parameters.md
+cat chart/messaging.md >> docs/parameters.md
+echo "\n\n## Processing Services\n" >> docs/parameters.md
+cat chart/processing.md >> docs/parameters.md
+echo "\n\n## Delivery Services\n" >> docs/parameters.md
+cat chart/delivery.md >> docs/parameters.md
+rm chart/parameters.md chart/messaging.md chart/processing.md chart/delivery.md
+
+# Badges
+docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=badges.gotmpl -o badges.md
+sed -i "1s/.*/$(cat chart/badges.md | sed 's/\//\\\//g')/" README.md
+rm chart/badges.md

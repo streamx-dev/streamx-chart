@@ -13,7 +13,6 @@
 # limitations under the License.
 
 # Default values for StreamX
-# This is a YAML-formatted file.
 
 # -- overwrites tenant for this release installation, defaults to `.Release.Name`
 tenant:
@@ -29,7 +28,7 @@ monitoring:
   # -- enabling this flag will enable creating `monitoring.coreos.com` Custom Resources for all services
   enabled: false
 
-# -- used to configure messaging system like Apache Pulsar, see examples for reference
+# -- used to configure messaging system like Apache Pulsar, see the [Messaging](#messaging) section for reference
 messaging: {}
   # -- Apache Pulsar Messaging
   # pulsar:
@@ -69,7 +68,7 @@ rest_ingestion:
   # -- node labels for pod assignment
   nodeSelector: {}
 
-# -- `Processing Services` map
+# -- `Processing Services` map, see the [Processing Services](#processing-services) section for reference
 processing: {}
   # example-processing-service: # unique service name
   #   replicas: 2 # to override default (1) service replicas
@@ -101,7 +100,7 @@ processing: {}
   #     readinessOverride: # overrides default readinessProbe settings see tests for reference
   #     startupOverride: # overrides default startupProbe settings see tests for reference
 
-# -- `Delivery Services` map
+# -- `Delivery Services` map, see the [Delivery Services](#delivery-services) section for reference
 delivery: {}
   # example-delivery-service: # unique service name
   #   replicas: 2 # to override default (1) service replicas

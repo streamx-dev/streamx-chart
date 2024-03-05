@@ -12,34 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Patterns to ignore when building packages.
-# This supports shell glob matching, relative path matching, and
-# negation (prefixed with !). Only one pattern per line.
-.DS_Store
-# Common VCS dirs
-.git/
-.gitignore
-.bzr/
-.bzrignore
-.hg/
-.hgignore
-.svn/
-# Common backup files
-*.swp
-*.bak
-*.tmp
-*.orig
-*~
-# Various IDEs
-.project
-.idea/
-*.tmproj
-.vscode/
-tmp/*
-
-# custom
-assets
-docs
-local
-tests
-*.gotmpl
+processing:
+  reference-relay:
+    image: ghcr.io/streamx-dev/streamx/reference-relay-processing-service:0.0.12-jvm
+    replicas: 1
+    incoming:
+      incoming-pages:
+        namespace: inboxes
+        topic: pages
+    outgoing:
+      outgoing-pages:
+        namespace: outboxes
+        topic: pages
