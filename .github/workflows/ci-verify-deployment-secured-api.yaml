@@ -66,4 +66,5 @@ jobs:
         run: |
           cd tests/e2e
           export STREAMX_INGESTION_REST_AUTH_TOKEN=$(kubectl -n secured run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://secured-streamx-rest-ingestion/auth/token?upn=test')
+          export STREAMX_INGESTION_REST_AUTH_TOKEN_INVALID="this-is-an-invalid-token-and-should-not-work"
           ./mvnw verify -P secured

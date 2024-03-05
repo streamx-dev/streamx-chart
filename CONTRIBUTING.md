@@ -1,7 +1,7 @@
 # Contributing
 
 ## Local setup for development
-For local development, we will prepare a `kind` cluster with `extraPortMappings` and install StreamX from the chart with a single tenant (`tenant-1`).
+For local development, we will prepare a `kind` cluster with `extraPortMappings` and install reference StreamX Service Mesh from the chart.
 
 Start with cloning the repository and navigating to the `streamx-chart` directory.
 
