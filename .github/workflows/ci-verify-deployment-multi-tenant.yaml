@@ -64,5 +64,5 @@ jobs:
 
       - name: Verify multi-tenant deployment
         run: |
-          cd examples/e2e
+          cd tests/e2e
           ./mvnw verify -P multi-tenant

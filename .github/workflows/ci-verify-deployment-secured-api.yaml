@@ -64,6 +64,6 @@ jobs:
 
       - name: Verify secured deployment
         run: |
-          cd examples/e2e
+          cd tests/e2e
           export STREAMX_INGESTION_REST_AUTH_TOKEN=$(kubectl -n secured run jwt-token-provider --rm --restart=Never -it -q --image=curlimages/curl -- curl -X 'POST' 'http://secured-streamx-rest-ingestion/auth/token?upn=test')
           ./mvnw verify -P secured

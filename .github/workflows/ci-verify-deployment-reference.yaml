@@ -64,6 +64,6 @@ jobs:
 
       - name: Verify reference deployment
         run: |
-          cd examples/e2e
+          cd tests/e2e
           ./mvnw verify -P reference
 
