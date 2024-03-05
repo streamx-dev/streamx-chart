@@ -13,22 +13,22 @@
 # limitations under the License.
 
 delivery:
-  <service-name>:
+  _service-name_:
     # -- number of replicas, defaults to 1
     replicas: 1
     # -- map of incoming channels
     incoming:
       # -- example incomming channel with defined namespace and topic
-      <incoming-channel-name>:
+      _incoming-channel-name_:
         namespace: outboxes
         topic: pages
     # -- map of delivery outputs
     outputs:
-      <output-name>:
+      _output-name_:
         service:
           containerRef:
             # -- corresponds to container name in `containers` section
-            name: <container-name>
+            name: _container-name_
           # -- port on which Kubernetes service is listening for traffic for this Delivery Service
           port: 80
           # -- name of the port in the container
@@ -44,7 +44,7 @@ delivery:
             # -- optional, set to enable TLS, secret must be created in the same namespace
             secretName: tls-secret
     containers:
-      <container-name>:
+      _container-name_:
         # -- image repository and tag
         image: <image-repository>:<image-tag>
         # -- ports exposed by the container

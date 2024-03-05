@@ -13,7 +13,7 @@
 # limitations under the License.
 
 processing:
-  <service-name>:
+  _service-name_:
     # -- number of replicas, defaults to 1
     replicas: 2
     # -- image repository and tag
@@ -21,13 +21,13 @@ processing:
     # -- map of incoming channels
     incoming:
       # -- example incomming channel with defined namespace and topic
-      <incoming-channel-name>:
+      _incoming-channel-name_:
         namespace: inboxes
         topic: pages
     # -- map of outgoing channels
     outgoing:
       # -- example outgoing channel with defined namespace and topic
-      <outgoing-channel-name>:
+      _outgoing-channel-name_:
         namespace: outboxes
         topic: pages
     # -- additional environment variables for the service
