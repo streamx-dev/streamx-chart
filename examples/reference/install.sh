@@ -19,7 +19,7 @@ set -x -e
 # 1. Create namespace
 kubectl create namespace streamx
 
-# 2. Prepare Apache puslar for StreamX installation (run it only for the first time installation)
+# 2. Prepare Apache Pulsar for StreamX installation (run it only for the first time installation)
 helm install reference ./chart -n streamx \
   --set messaging.pulsar.initTenant.enabled=true \
   --set rest_ingestion.enabled=false \

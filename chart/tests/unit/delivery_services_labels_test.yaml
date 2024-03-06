@@ -33,14 +33,13 @@ tests:
       - templates/delivery/delivery-deployment.yaml
     asserts:
       - isSubset:
-          path: spec.template.metadata
+          path: spec.template.metadata.labels
           content:
-            labels:
-              app.kubernetes.io/component: delivery-webserver
-              app.kubernetes.io/instance: unit-tests
-              app.kubernetes.io/managed-by: Helm
-              app.kubernetes.io/name: streamx
-              helm.sh/chart: streamx-unit.test.version
+            app.kubernetes.io/component: delivery-webserver
+            app.kubernetes.io/instance: unit-tests
+            app.kubernetes.io/managed-by: Helm
+            app.kubernetes.io/name: streamx
+            helm.sh/chart: streamx-unit.test.version
       - contains:
           path: spec.template.spec.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution[0].labelSelector.matchExpressions
           content:

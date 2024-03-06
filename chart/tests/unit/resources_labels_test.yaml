@@ -14,8 +14,12 @@
 
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 
-suite: test resources names
+suite: test resources labels
+templates:
+  # test all resources created by the chart
+  - templates/[a-z/\-]+/**[a-z/\-]+.yaml
 set:
+  tenant: unit-test-tenant
   monitoring:
     enabled: true
   messaging:
@@ -44,23 +48,22 @@ set:
       containers:
         test:
           image: test/delivery-image
-templates:
-  # test all resources created by the chart
-  - templates/[a-z/\-]+/**[a-z/\-]+.yaml
 tests:
   # @Test
-  - it: deployment name should contain chart name and release name when release name is different than chart name
-    release:
-      name: unit-tests
+  - it: resources should have part-of label that prints the tenant name
     asserts:
-      - matchRegex:
-          path: metadata.name
-          pattern: unit-tests-streamx-.*$
+      - isSubset:
+          path: metadata.labels
+          content:
+            app.kubernetes.io/part-of: unit-test-tenant
   # @Test
-  - it: deployment name should contain release name when release name is the same as chart name
-    release:
-      name: streamx
+  - it: deployment pod templates should have part-of label that prints the tenant name
+    templates:
+      - templates/rest-ingestion-service/rest-ingestion-deployment.yaml
+      - templates/processing/processing-deployment.yaml
+      - templates/delivery/delivery-deployment.yaml
     asserts:
-      - matchRegex:
-          path: metadata.name
-          pattern: streamx-.*$
+      - isSubset:
+          path: spec.template.metadata.labels
+          content:
+            app.kubernetes.io/part-of: unit-test-tenant

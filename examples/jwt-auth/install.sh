@@ -20,7 +20,7 @@ set -x -e
 kubectl create namespace secured
 kubectl apply -f examples/jwt-auth/secrets/rest-ingestion-jwt-keys.yaml
 
-# 2. Prepare Apache puslar for StreamX installation
+# 2. Prepare Apache Pulsar for StreamX installation
 helm install secured ./chart -n secured \
   --set messaging.pulsar.initTenant.enabled=true \
   --set rest_ingestion.enabled=false \

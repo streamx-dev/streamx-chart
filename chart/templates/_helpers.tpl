@@ -73,6 +73,7 @@ Usage:
 helm.sh/chart: {{ include "streamx.chart" .context }}
 {{ include "streamx.component.selectorLabels" (dict "componentName" .componentName "context" .context) }}
 app.kubernetes.io/managed-by: {{ .context.Release.Service }}
+app.kubernetes.io/part-of: {{ include "streamx.tenant" .context }}
 {{- end }}
 
 {{/*
