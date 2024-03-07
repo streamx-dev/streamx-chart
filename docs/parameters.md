@@ -37,10 +37,10 @@
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | processing._service-name_.env | list | `[]` | additional environment variables for the service |
-| processing._service-name_.image | string | `"_image-repository_:_image-tag_"` | image repository and tag |
+| processing._service-name_.image | string | `"<image-repository>:<image-tag>"` | image repository and tag |
 | processing._service-name_.incoming | object | `{"_incoming-channel-name_":{"namespace":"inboxes","topic":"pages"}}` | map of incoming channels |
 | processing._service-name_.incoming._incoming-channel-name_ | object | `{"namespace":"inboxes","topic":"pages"}` | example incomming channel with defined namespace and topic |
-| processing._service-name_.nodeSelector | object | `{}` | nodeSelector settings (key -_ value) |
+| processing._service-name_.nodeSelector | object | `{}` | nodeSelector settings (key -> value) |
 | processing._service-name_.outgoing | object | `{"_outgoing-channel-name_":{"namespace":"outboxes","topic":"pages"}}` | map of outgoing channels |
 | processing._service-name_.outgoing._outgoing-channel-name_ | object | `{"namespace":"outboxes","topic":"pages"}` | example outgoing channel with defined namespace and topic |
 | processing._service-name_.podMonitor | object | `{"interval":"10s","path":"/q/metrics","scrapeTimeout":"10s"}` | overrides default podMonitor settings |
