@@ -20,7 +20,7 @@ set -x -e
 kubectl create namespace tenant-1
 kubectl create namespace tenant-2
 
-# 2. Prepare Apache puslar for StreamX installation
+# 2. Prepare Apache Pulsar for StreamX installation
 helm install tenant-1 ./chart -n tenant-1 \
   --set messaging.pulsar.initTenant.enabled=true \
   --set rest_ingestion.enabled=false \
