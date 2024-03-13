@@ -34,7 +34,7 @@ limitations under the License. -->
   <repositories>
     <repository>
       <id>streamx-maven-releases</id>
-      <url>artifactregistry://europe-west1-maven.pkg.dev/streamx-releases/streamx-maven-releases</url>
+      <url>artifactregistry://europe-west1-maven.pkg.dev/streamx-releases/streamx-maven-public-releases</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -58,7 +58,7 @@ limitations under the License. -->
     <dependency>
       <groupId>dev.streamx</groupId>
       <artifactId>ingestion-client</artifactId>
-      <version>0.0.6</version>
+      <version>0.0.13</version>
     </dependency>
 
     <dependency>

@@ -30,7 +30,7 @@ delivery:
           host: reference.127.0.0.1.nip.io
     containers:
       webserver:
-        image: ghcr.io/streamx-dev/streamx/reference-web-delivery-service:0.0.12-jvm
+        image: ghcr.io/streamx-dev/streamx/reference-web-delivery-service:0.0.13-jvm
         ports:
           - name: http
             containerPort: 8080

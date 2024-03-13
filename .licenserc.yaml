@@ -37,8 +37,8 @@ header:
 dependency:
   licenses:
     - name: ghcr.io/streamx-dev/streamx/rest-ingestion-service
-      version: 0.0.12-jvm
+      version: 0.0.13-jvm
       license: 'All rights reserved'
     - name: ghcr.io/streamx-dev/streamx/pulsar-init
-      version: 0.0.12-jvm
+      version: 0.0.13-jvm
       license: 'All rights reserved'
