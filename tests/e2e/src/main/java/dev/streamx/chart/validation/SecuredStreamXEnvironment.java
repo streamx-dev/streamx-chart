@@ -18,11 +18,12 @@ package dev.streamx.chart.validation;
 import dev.streamx.clients.ingestion.StreamxClient;
 import dev.streamx.clients.ingestion.exceptions.StreamxClientException;
 import io.restassured.specification.RequestSpecification;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SecuredStreamXEnvironment extends StreamXEnvironment {
 
-  private static final Logger LOG = Logger.getLogger(SecuredStreamXEnvironment.class);
+  private static final Logger LOG = LoggerFactory.getLogger(SecuredStreamXEnvironment.class);
   private final String authTokenEnv;
 
   public SecuredStreamXEnvironment(String restIngestionHost, String webDeliveryHost,
@@ -46,9 +47,9 @@ public class SecuredStreamXEnvironment extends StreamXEnvironment {
   private String getAuthToken() {
     String authToken = System.getenv(authTokenEnv);
     if (authToken != null) {
-      LOG.infof("Token %s last 20 chars: '...%s'", authTokenEnv, authToken.substring(authToken.length() - 20));
+      LOG.info("Token {} last 20 chars: '...{}'", authTokenEnv, authToken.substring(authToken.length() - 20));
     } else {
-      LOG.warnf("Token %s is null!", authTokenEnv);
+      LOG.warn("Token {} is null!", authTokenEnv);
     }
 
     return authToken;
