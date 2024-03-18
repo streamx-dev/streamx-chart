@@ -50,41 +50,6 @@ tests:
       - hasDocuments:
           count: 0
   # @Test
-  - it: when tenant is not set then .Release.name is used as tenant in init job
-    release:
-      name: my-release
-    set:
-      messaging:
-        pulsar: 
-          serviceUrl: pulsar://service.pulsar:6650
-          webServiceUrl: http://web-service.pulsar:8080
-          initTenant:
-            enabled: true
-    template: templates/messaging/pulsar-init-tenant-job.yaml
-    asserts:
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: STREAMX_TENANT
-            value: my-release
-  # @Test
-  - it: when tenant is set then it is used as tenant in init job
-    set:
-      tenant: test-tenant
-      messaging:
-        pulsar:
-          serviceUrl: pulsar://service.pulsar:6650
-          webServiceUrl: http://web-service.pulsar:8080
-          initTenant:
-            enabled: true
-    template: templates/messaging/pulsar-init-tenant-job.yaml
-    asserts:
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: STREAMX_TENANT
-            value: test-tenant
-  # @Test
   - it: by default init tenant job is created with `pulsar-init` image and `appVersion` tag
     chart: 
       appVersion: unit.test.version

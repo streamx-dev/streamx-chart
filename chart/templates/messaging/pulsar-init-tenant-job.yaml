@@ -33,8 +33,6 @@ spec:
           image: {{ (.initTenant).image | default (printf "ghcr.io/streamx-dev/streamx/pulsar-init:%s" $.Chart.AppVersion) }}
           env:
             {{- include "streamx.mergeEnvs" (dict "baseEnvs" $.Values.global.env "overwriteEnvs" (.initTenant).env) | nindent 12 }}
-            - name: STREAMX_TENANT
-              value: {{ include "streamx.tenant" $ }}
             {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
       restartPolicy: OnFailure
       initContainers:
