@@ -100,3 +100,55 @@ tests:
       - equal:
           path: spec.template.spec.containers[0].image
           value: ghcr.io/streamx-dev/streamx/pulsar-init:unit.test.version
+  # @Test
+  - it: by default init tenant job will configure 3 partitions for inboxes, relays and outboxes
+    set:
+      messaging:
+        pulsar:
+          initTenant:
+            enabled: true
+    template: templates/messaging/pulsar-init-tenant-job.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STREAMX_INBOXES_PARTITIONS
+            value: "3"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STREAMX_RELAYS_PARTITIONS
+            value: "3"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STREAMX_OUTBOXES_PARTITIONS
+            value: "3"
+  # @Test
+  - it: when partitions are set then init tenant job will configure them
+    set:
+      messaging:
+        pulsar:
+          initTenant:
+            enabled: true
+            partitions:
+              inboxes: 6
+              relays: 6
+              outboxes: 6
+    template: templates/messaging/pulsar-init-tenant-job.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STREAMX_INBOXES_PARTITIONS
+            value: "6"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STREAMX_RELAYS_PARTITIONS
+            value: "6"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STREAMX_OUTBOXES_PARTITIONS
+            value: "6"

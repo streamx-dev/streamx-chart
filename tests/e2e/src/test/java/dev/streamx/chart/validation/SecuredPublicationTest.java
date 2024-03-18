@@ -23,7 +23,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.streamx.clients.ingestion.exceptions.StreamxClientException;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,15 +34,12 @@ public class SecuredPublicationTest {
   static final String SECURED_PAGE_CONTENT = "<h1>Unit tests for secured StreamX flow</h1>";
 
   @Test
-  // FixMe order should not matter after schema autoupdate implemented in StreamX
-  @Order(1)
   void restIngestionShouldHavePagesSchemaConfigured(SecuredStreamXEnvironment environment)
       throws JsonProcessingException {
     EnvironmentAssertions.assertPagesJsonSchema(environment.newIngestionSchemaRequest());
   }
 
   @Test
-  @Order(2)
   void publishedPageShouldBeAvailableOnWebDeliveryService(SecuredStreamXEnvironment environment)
       throws StreamxClientException {
     String key = "test-" + UUID.randomUUID() + ".html";

@@ -45,7 +45,7 @@ to verify StreamX e2e tests for a reference installation. See the corresponding 
 <summary>See how to validate reference flow manually with cURL</summary>
 <p>
 
-Refresh the Ingestion Service schema by calling:
+Browse available schemas in Ingestion Service by calling:
 ```bash
 curl -X 'GET' \
   'http://reference-api.127.0.0.1.nip.io/publications/v1/schema' \

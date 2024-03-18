@@ -35,6 +35,12 @@ spec:
             {{- include "streamx.mergeEnvs" (dict "baseEnvs" $.Values.global.env "overwriteEnvs" (.initTenant).env) | nindent 12 }}
             - name: STREAMX_TENANT
               value: {{ include "streamx.tenant" $ }}
+            - name: STREAMX_INBOXES_PARTITIONS
+              value: {{ (.initTenant.partitions).inboxes | default "3" | quote }}
+            - name: STREAMX_RELAYS_PARTITIONS
+              value: {{ (.initTenant.partitions).relays | default "3" | quote }}
+            - name: STREAMX_OUTBOXES_PARTITIONS
+              value: {{ (.initTenant.partitions).outboxes | default "3" | quote }}
             {{- include "streamx.pulsarEnvs" $ | nindent 12 }}
       restartPolicy: OnFailure
       initContainers:

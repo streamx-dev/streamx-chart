@@ -22,7 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.streamx.clients.ingestion.exceptions.StreamxClientException;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,16 +33,40 @@ public class ReferencePublicationTest {
 
   static final String REFERENCE_PAGE_CONTENT = "<h1>Unit tests for reference StreamX flow</h1>";
 
+  private static final String STRICT_SCHEMA = """
+    {
+       "pages": {
+         "type":"record",
+         "name":"Page",
+         "namespace":"dev.streamx.reference.relay.model",
+         "fields":[
+           {
+             "name":"content",
+             "type":[
+               "null",
+               "bytes"
+             ],
+             "default":null
+           }
+         ]
+       }
+     }
+     """;
+
   @Test
-  // FixMe order should not matter after schema autoupdate implemented in StreamX
-  @Order(1)
   void restIngestionShouldHavePagesSchemaConfigured(StreamXEnvironment environment)
       throws JsonProcessingException {
     EnvironmentAssertions.assertPagesJsonSchema(environment.newIngestionSchemaRequest());
   }
 
   @Test
-  @Order(2)
+  @Disabled("Enable after fixing DXP-695")
+  void restIngestionShouldHaveStrictValue(StreamXEnvironment environment)
+      throws JsonProcessingException {
+    EnvironmentAssertions.assertStrictJsonSchema(environment.newIngestionSchemaRequest(), STRICT_SCHEMA);
+  }
+
+  @Test
   void publishedPageShouldBeAvailableOnWebDeliveryService(StreamXEnvironment environment)
       throws StreamxClientException {
     String key = "test-" + UUID.randomUUID() + ".html";
