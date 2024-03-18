@@ -17,23 +17,23 @@
 set -x -e
 
 # 1. Create namespace
-kubectl create namespace streamx
+kubectl create namespace reference
 
 # 2. Prepare Apache Pulsar for StreamX installation (run it only for the first time installation)
-helm install reference ./chart -n streamx \
+helm install reference ./chart -n reference \
   --set messaging.pulsar.initTenant.enabled=true \
   --set rest_ingestion.enabled=false \
   -f examples/reference/messaging.yaml
 
 # 3. Wait until the job completes
-kubectl -n streamx wait --for=condition=complete job --selector app.kubernetes.io/component=pulsar-init-tenant --timeout=300s
+kubectl -n reference wait --for=condition=complete job --selector app.kubernetes.io/component=pulsar-init-tenant --timeout=300s
 
 # 4. Install reference StreamX Mesh
-helm upgrade reference ./chart -n streamx \
+helm upgrade reference ./chart -n reference \
   -f examples/reference/messaging.yaml \
   -f examples/reference/ingestion.yaml \
   -f examples/reference/processing.yaml \
   -f examples/reference/delivery.yaml
 
 # 5. Check that all deployments are running
-kubectl -n streamx rollout status deployment -l app.kubernetes.io/instance=reference
+kubectl -n reference rollout status deployment -l app.kubernetes.io/instance=reference

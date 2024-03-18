@@ -26,10 +26,11 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StreamXEnvironment {
-  private static final Logger LOG = Logger.getLogger(StreamXEnvironment.class);
+  private static final Logger LOG = LoggerFactory.getLogger(StreamXEnvironment.class);
   private static final String PAGES_INBOX_CHANNEL = "pages";
   private static final String PUBLICATIONS_API_BASE_PATH = "/publications/v1";
   private static final String REST_INGESTION_LOCALHOST = "http://%s-api.127.0.0.1.nip.io";
@@ -51,7 +52,7 @@ public class StreamXEnvironment {
   }
 
   public Long publishPage(String key, String content) throws StreamxClientException {
-    LOG.infof("Publishing page %s with content '%s'", key, content);
+    LOG.info("Publishing page {} with content '{}'", key, content);
     try (StreamxClient client = getClient()) {
       Publisher<Page> pagePublisher = client.newPublisher(PAGES_INBOX_CHANNEL, Page.class);
       Long eventTime = pagePublisher.publish(key,
@@ -62,7 +63,7 @@ public class StreamXEnvironment {
   }
 
   public Long unpublishPage(String key) throws StreamxClientException {
-    LOG.infof("Unpublishing page %s", key);
+    LOG.info("Unpublishing page {}", key);
     try (StreamxClient client = getClient()) {
       Publisher<Page> pagePublisher = client.newPublisher(PAGES_INBOX_CHANNEL, Page.class);
       Long eventTime = pagePublisher.unpublish(key);

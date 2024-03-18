@@ -13,6 +13,7 @@
 # limitations under the License.
 
 rest_ingestion:
+  replicas: 2
   allInboxesTopicPatter: "inboxes/.*"
   ingress:
     host: reference-api.127.0.0.1.nip.io

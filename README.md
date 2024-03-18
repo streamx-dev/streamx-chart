@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 0.6.0](https://img.shields.io/badge/Version-0.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.12-jvm](https://img.shields.io/badge/AppVersion-0.0.12--jvm-informational?style=flat-square) 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Version: 0.7.0](https://img.shields.io/badge/Version-0.7.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.14-jvm](https://img.shields.io/badge/AppVersion-0.0.14--jvm-informational?style=flat-square) 
 
 # StreamX Helm Chart
 
@@ -13,6 +13,7 @@ Before installing StreamX, ensure to perform the following operations.
 - Create a [Pulsar cluster](https://pulsar.apache.org/docs/en/kubernetes-helm/) in the Kubernetes cluster.
 - Install [Helm v3](https://helm.sh/docs/intro/install/).
 - Optionally, install [NginX Ingress controller](https://kubernetes.github.io/ingress-nginx/deploy/) to expose StreamX services.
+- Clone this repository and navigate to the `streamx-chart` directory to use the example configuration files.
 
 ### Prepare Apache Pulsar for StreamX installation
 > NOTE: Run this command only during the first-time installation.
@@ -30,7 +31,7 @@ This command will give you `kubectl` command to check status of initialization j
 ### Install reference StreamX Mesh with Helm chart
 
 ```bash
-helm upgrade reference streamx --repo https://streamx-dev.github.io/streamx-chart -n streamx \
+helm upgrade reference streamx --repo https://streamx-dev.github.io/streamx-chart -n reference \
   -f examples/reference/messaging.yaml \
   -f examples/reference/ingestion.yaml \
   -f examples/reference/processing.yaml \
@@ -41,7 +42,7 @@ helm upgrade reference streamx --repo https://streamx-dev.github.io/streamx-char
 Check that all StreamX Services deployments are running:
 
 ```bash
-kubectl -n streamx rollout status deployment -l app.kubernetes.io/instance=reference
+kubectl -n reference rollout status deployment -l app.kubernetes.io/instance=reference
 ```
 
 The output should be similar to:
@@ -55,11 +56,11 @@ deployment "reference-streamx-rest-ingestion" successfully rolled out
 
 1. Uninstall StreamX Mesh with Helm chart:
    ```bash
-   helm uninstall reference -n streamx
+   helm uninstall reference -n reference
    ```
 2. Delete the namespace:
    ```bash
-   kubectl delete namespace streamx
+   kubectl delete namespace reference
    ```
 
 ## Examples

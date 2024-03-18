@@ -14,7 +14,7 @@
 
 processing:
   reference-relay:
-    image: ghcr.io/streamx-dev/streamx/reference-relay-processing-service:0.0.12-jvm
+    image: ghcr.io/streamx-dev/streamx/reference-relay-processing-service:0.0.14-jvm
     replicas: 2
     incoming:
       incoming-pages:
