@@ -68,22 +68,13 @@ GEN_DOCS_DIR="gen-docs"
 TEMP_DOCS_ROOT="chart/$GEN_DOCS_DIR"
 mkdir -p $TEMP_DOCS_ROOT
 
-# Parameters
-docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o $GEN_DOCS_DIR/global.md --values-file=values.yaml
+# Generate Parameters partials
+docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o $GEN_DOCS_DIR/default.md --values-file=values.yaml
 docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o $GEN_DOCS_DIR/messaging.md --values-file=docs/messaging.yaml
 docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o $GEN_DOCS_DIR/processing.md --values-file=docs/processing.yaml
 docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o $GEN_DOCS_DIR/delivery.md --values-file=docs/delivery.yaml
 
-echo "### Default\n" > $TEMP_DOCS_ROOT/parameters.md
-cat $TEMP_DOCS_ROOT/global.md >> $TEMP_DOCS_ROOT/parameters.md
-echo "\n\n### Messaging\n" >> $TEMP_DOCS_ROOT/parameters.md
-cat $TEMP_DOCS_ROOT/messaging.md >> $TEMP_DOCS_ROOT/parameters.md
-echo "\n\n### Processing Services\n" >> $TEMP_DOCS_ROOT/parameters.md
-cat $TEMP_DOCS_ROOT/processing.md >> $TEMP_DOCS_ROOT/parameters.md
-echo "\n\n### Delivery Services\n" >> $TEMP_DOCS_ROOT/parameters.md
-cat $TEMP_DOCS_ROOT/delivery.md >> $TEMP_DOCS_ROOT/parameters.md
-
-# Badges
+# Generate Badges partial
 docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=badges.gotmpl -o $GEN_DOCS_DIR/badges.md
 
 # Create README.md from template

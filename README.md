@@ -71,9 +71,9 @@ Each of the examples has its `install.sh` script to install StreamX Mesh from th
 Read more about the local setup for development in the [CONTRIBUTING.md](./CONTRIBUTING.md) documentation.
 
 ## Parameters
-<!-- start: parameters.md -->
-### Default
 
+### Default
+<!-- start: default.md -->
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | delivery | object | `{}` | `Delivery Services` map, see the [Delivery Services](#delivery-services) section for reference |
@@ -93,9 +93,10 @@ Read more about the local setup for development in the [CONTRIBUTING.md](./CONTR
 | rest_ingestion.replicas | int | `1` | number of replicas |
 | rest_ingestion.resources | object | `{}` | resources for the container |
 | tenant | string | `nil` | overwrites tenant for this release installation, defaults to `.Release.Name` |
+<!-- end: default.md -->
 
 ### Messaging
-
+<!-- start: messaging.md -->
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | messaging.pulsar.initTenant.enabled | bool | `false` | enable Apache Pulsar tenant and namespaces initialisation for StreamX, this will create a Job that waits for Apache Pulsar to be ready |
@@ -103,9 +104,10 @@ Read more about the local setup for development in the [CONTRIBUTING.md](./CONTR
 | messaging.pulsar.initTenant.image | string | `nil` | optional: custom image for tenant initialisation, by default `streamx-docker-releases/dev.streamx/pulsar-init` with the current chart's AppVersion will be used |
 | messaging.pulsar.serviceUrl | string | `"pulsar://pulsar-service:6650"` | mandatory: Apache Pulsar Broker Service URL |
 | messaging.pulsar.webServiceUrl | string | `"http://pulsar-web-service:8080"` | mandatory: Apache Pulsar REST API URL |
+<!-- end: messaging.md -->
 
 ### Processing Services
-
+<!-- start: processing.md -->
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | processing._service-name_.env | list | `[]` | additional environment variables for the service |
@@ -122,9 +124,10 @@ Read more about the local setup for development in the [CONTRIBUTING.md](./CONTR
 | processing._service-name_.probes.startupOverride | object | `{}` | overrides default startupProbe settings see tests for reference |
 | processing._service-name_.replicas | int | `2` | number of replicas, defaults to 1 |
 | processing._service-name_.resources | object | `{"requests":{"cpu":"400m","memory":"256Mi"}}` | overrides resources settings (default `requests`: 256Mi memory, 400m cpu) |
+<!-- end: processing.md -->
 
 ### Delivery Services
-
+<!-- start: delivery.md -->
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | delivery._service-name_.affinity.podAntiAffinity.enabled | bool | `true` | enables pod anti-affinity, defaults to `true` |
@@ -157,7 +160,7 @@ Read more about the local setup for development in the [CONTRIBUTING.md](./CONTR
 | delivery._service-name_.outputs._output-name_.service.targetPort | string | `"http"` | name of the port in the container |
 | delivery._service-name_.pdb.minAvailable | int | `1` | min availabiliyty setting for the Delivery Service PodDisruptionBudget which is set to number of replicas by default |
 | delivery._service-name_.replicas | int | `1` | number of replicas, defaults to 1 |
-<!-- end: parameters.md -->
+<!-- end: delivery.md -->
 
 ## Advanced concepts
 Learn more about advanced StreamX chart concepts like _Services Mesh_, _multi-tenancy_, _JWT authentication_, and more in the [concepts](./docs/concepts.md) documentation.
