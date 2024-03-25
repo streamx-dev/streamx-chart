@@ -73,6 +73,8 @@ Read more about the local setup for development in the [CONTRIBUTING.md](./CONTR
 ## Parameters
 
 ### Default
+The table below documents the default configuration values on the global level for the StreamX Helm Chart.
+
 <!-- start: default.md -->
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
@@ -82,33 +84,51 @@ Read more about the local setup for development in the [CONTRIBUTING.md](./CONTR
 | messaging | object | `{}` | used to configure messaging system like Apache Pulsar, see the [Messaging](#messaging) section for reference |
 | monitoring.enabled | bool | `false` | enabling this flag will enable creating `monitoring.coreos.com` Custom Resources for all services |
 | processing | object | `{}` | `Processing Services` map, see the [Processing Services](#processing-services) section for reference |
-| rest_ingestion.allInboxesTopicPatter | string | `"inboxes/.*"` | all-inboxes topic pattern in format: `namespace/topic-regex` |
-| rest_ingestion.enabled | bool | `true` | enables REST Ingestion Service |
-| rest_ingestion.env | list | `[]` | additional environment variables |
-| rest_ingestion.image | string | `nil` | image repository and tag, defaults to `europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/rest-ingestion-service:{{ .Chart.AppVersion }}` |
-| rest_ingestion.ingress | object | `{}` | ingress settings, set `host` to enable ingress |
-| rest_ingestion.monitoring | object | `{}` | pod monitoring configuration |
-| rest_ingestion.nodeSelector | object | `{}` | node labels for pod assignment |
-| rest_ingestion.probes | object | `{}` | probes settings, see tests for reference |
-| rest_ingestion.replicas | int | `1` | number of replicas |
-| rest_ingestion.resources | object | `{}` | resources for the container |
+| rest_ingestion | object | `{}` | `Rest Ingestion Service` configuration, see the [REST Ingestion Service](#rest-ingestion-services) section for reference |
 | tenant | string | `nil` | overwrites tenant for this release installation, defaults to `.Release.Name` |
 <!-- end: default.md -->
 
 ### Messaging
+The table below documents Messaging configuration options.
+
 <!-- start: messaging.md -->
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | messaging.pulsar.initTenant.enabled | bool | `false` | enable Apache Pulsar tenant and namespaces initialisation for StreamX, this will create a Job that waits for Apache Pulsar to be ready |
 | messaging.pulsar.initTenant.env | list | `[]` | optional: additional environment variables for tenant initialisation |
-| messaging.pulsar.initTenant.image | string | `nil` | optional: custom image for tenant initialisation, by default `streamx-docker-releases/dev.streamx/pulsar-init` with the current chart's AppVersion will be used |
-| messaging.pulsar.serviceUrl | string | `"pulsar://pulsar-service:6650"` | mandatory: Apache Pulsar Broker Service URL |
-| messaging.pulsar.webServiceUrl | string | `"http://pulsar-web-service:8080"` | mandatory: Apache Pulsar REST API URL |
+| messaging.pulsar.initTenant.image | string | `"ghcr.io/streamx-dev/streamx/pulsar-init:<appVersion>"` | custom image and tag for tenant initialisation, the default image tag corresponds the current chart's AppVersion |
+| messaging.pulsar.serviceUrl | string | `nil` | mandatory: Apache Pulsar Broker Service URL, e.g. `"pulsar://pulsar-service:6650"` |
+| messaging.pulsar.webServiceUrl | string | `nil` | mandatory: Apache Pulsar REST API URL, e.g. `"http://pulsar-web-service:8080"` |
 <!-- end: messaging.md -->
 
-### Processing Services
-<!-- start: processing.md -->
+### REST Ingestion Service
+The table below documents REST Ingestion Service configuration options.
+
+<!-- start: ingestion.md -->
 | Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| rest_ingestion.allInboxesTopicPatter | string | `"inboxes/.*"` | all-inboxes topic pattern in format: `namespace/topic-regex` |
+| rest_ingestion.enabled | bool | `true` | enables REST Ingestion Service |
+| rest_ingestion.env | list | `[]` | additional environment variables |
+| rest_ingestion.image | string | `"ghcr.io/streamx-dev/streamx/rest-ingestion-service:<appVersion>"` | custom image and tag for tenant initialisation, the default image tag corresponds the current chart's AppVersion |
+| rest_ingestion.imagePullPolicy | string | `nil` | image pull policy |
+| rest_ingestion.ingress.annotations | object | `{}` | additional ingress annotations |
+| rest_ingestion.ingress.host | string | `nil` | host for the ingress, set the value to enable ingress, empty by default |
+| rest_ingestion.ingress.ingressClassName | string | `"nginx"` | ingress class name |
+| rest_ingestion.ingress.tls.secretName | string | `nil` | secret name for the TLS certificate, set the value to enable TLS |
+| rest_ingestion.monitoring | object | `{}` | pod monitoring configuration |
+| rest_ingestion.nodeSelector | object | `{}` | node labels for pod assignment |
+| rest_ingestion.probes | object | `{}` | probes settings, see tests for reference |
+| rest_ingestion.replicas | int | `1` | number of replicas |
+| rest_ingestion.resources | object | `{}` | resources for the container |
+<!-- end: ingestion.md -->
+
+### Processing Services
+The table below shows an example configuration of a Processing Service named _service-name_.
+Under the `processing` key, you can define multiple Processing Services with different configurations. Each processing service consists of a single container. Refer to the `Example` column for the configuration example. Any **default** values are mentioned in the `Description` column.
+
+<!-- start: processing.md -->
+| Key | Type | Example | Description |
 |-----|------|---------|-------------|
 | processing._service-name_.env | list | `[]` | additional environment variables for the service |
 | processing._service-name_.image | string | `"<image-repository>:<image-tag>"` | image repository and tag |
@@ -117,7 +137,9 @@ Read more about the local setup for development in the [CONTRIBUTING.md](./CONTR
 | processing._service-name_.nodeSelector | object | `{}` | nodeSelector settings (key -> value) |
 | processing._service-name_.outgoing | object | `{"_outgoing-channel-name_":{"namespace":"outboxes","topic":"pages"}}` | map of outgoing channels |
 | processing._service-name_.outgoing._outgoing-channel-name_ | object | `{"namespace":"outboxes","topic":"pages"}` | example outgoing channel with defined namespace and topic |
-| processing._service-name_.podMonitor | object | `{"interval":"10s","path":"/q/metrics","scrapeTimeout":"10s"}` | overrides default podMonitor settings |
+| processing._service-name_.podMonitor.interval | string | `"10s"` | interval for the podMonitor, defaults to `10s` |
+| processing._service-name_.podMonitor.path | string | `"/q/metrics"` | path for the monitoring endpoint, defaults to `/q//metrics` |
+| processing._service-name_.podMonitor.scrapeTimeout | string | `"10s"` | scrapeTimeout for the podMonitor, defaults to `10s` |
 | processing._service-name_.probes.disabled | bool | `true` | disables probes, by default enabled |
 | processing._service-name_.probes.livenessOverride | object | `{}` | overrides default livenessProbe settings see tests for reference |
 | processing._service-name_.probes.readinessOverride | object | `{}` | overrides default readinessProbe settings see tests for reference |
@@ -127,10 +149,14 @@ Read more about the local setup for development in the [CONTRIBUTING.md](./CONTR
 <!-- end: processing.md -->
 
 ### Delivery Services
+The table below shows an example configuration of a Delivery Service named _service-name_.
+Under the `delivery` key, you can define multiple Delivery Services with different configurations. 
+Each Delivery Service can consist of multiple containers. Refer to the `Example` column for the configuration example. Any **default** values are mentioned in the `Description` column.
+
 <!-- start: delivery.md -->
-| Key | Type | Default | Description |
+| Key | Type | Example | Description |
 |-----|------|---------|-------------|
-| delivery._service-name_.affinity.podAntiAffinity.enabled | bool | `true` | enables pod anti-affinity, defaults to `true` |
+| delivery._service-name_.affinity.podAntiAffinity.enabled | bool | `false` | enables pod anti-affinity, disabled by default |
 | delivery._service-name_.containers._container-name_.configs | list | `[{"configMapName":"generated-site-nginx-config","mountPath":"/etc/nginx/conf.d"}]` | configMap mounted as volume under mountPath, used e.g. to mount nginx configuration |
 | delivery._service-name_.containers._container-name_.data.metadataMountPath | string | `"/application/store/metadata"` | metadata volume mount path |
 | delivery._service-name_.containers._container-name_.data.repositoryMountPath | string | `"/application/store/resources"` | repository volume mount path |
@@ -150,6 +176,7 @@ Read more about the local setup for development in the [CONTRIBUTING.md](./CONTR
 | delivery._service-name_.data.repositorySize | string | `"1Gi"` | defines size of the repository volume |
 | delivery._service-name_.incoming | object | `{"_incoming-channel-name_":{"namespace":"outboxes","topic":"pages"}}` | map of incoming channels |
 | delivery._service-name_.incoming._incoming-channel-name_ | object | `{"namespace":"outboxes","topic":"pages"}` | example incomming channel with defined namespace and topic |
+| delivery._service-name_.nodeSelector | object | `{}` | nodeSelector settings (key -> value) |
 | delivery._service-name_.outputs | object | `{"_output-name_":{"ingress":{"annotations":{},"host":"my-domain.com","path":"/my-path","tls":{"secretName":"tls-secret"}},"service":{"containerRef":{"name":"_container-name_"},"port":80,"targetPort":"http"}}}` | map of delivery outputs |
 | delivery._service-name_.outputs._output-name_.ingress.annotations | object | `{}` | additional annotations for ingress |
 | delivery._service-name_.outputs._output-name_.ingress.host | string | `"my-domain.com"` | optional, set `host` to enable ingress |
@@ -158,7 +185,7 @@ Read more about the local setup for development in the [CONTRIBUTING.md](./CONTR
 | delivery._service-name_.outputs._output-name_.service.containerRef.name | string | `"_container-name_"` | corresponds to container name in `containers` section |
 | delivery._service-name_.outputs._output-name_.service.port | int | `80` | port on which Kubernetes service is listening for traffic for this Delivery Service |
 | delivery._service-name_.outputs._output-name_.service.targetPort | string | `"http"` | name of the port in the container |
-| delivery._service-name_.pdb.minAvailable | int | `1` | min availabiliyty setting for the Delivery Service PodDisruptionBudget which is set to number of replicas by default |
+| delivery._service-name_.pdb.minAvailable | number | `1` | min availabiliyty setting for the Delivery Service PodDisruptionBudget which is set to number of replicas by default |
 | delivery._service-name_.replicas | int | `1` | number of replicas, defaults to 1 |
 <!-- end: delivery.md -->
 

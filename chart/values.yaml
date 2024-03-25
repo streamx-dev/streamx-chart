@@ -30,131 +30,19 @@ monitoring:
 
 # -- used to configure messaging system like Apache Pulsar, see the [Messaging](#messaging) section for reference
 messaging: {}
-  # -- Apache Pulsar Messaging
-  # pulsar:
-  #   # -- mandatory: Apache Pulsar Broker Service URL
-  #   serviceUrl: "pulsar://pulsar-service:6650"
-  #   # -- mandatory: Apache Pulsar REST API URL
-  #   webServiceUrl: "http://pulsar-web-service:8080"
-  #   initTenant: # -- optional: Apache Pulsar tenant and namespaces initialisation for StreamX, this job waits for Apache Pulsar to be ready
-  #     enabled: true # -- enable tenant initialisation, this will create a Job to initialise tenant
-  #     image: # -- optional: custom image for tenant initialisation, by default `streamx-docker-releases/dev.streamx/pulsar-init` with the current chart's AppVersion will be used
-  #     env: [] # -- optional: additional environment variables for tenant initialisation
 
-## StreamX REST Ingestion Service
+# -- `Rest Ingestion Service` configuration, see the [REST Ingestion Service](#rest-ingestion-services) section for reference
 rest_ingestion:
-  # -- enables REST Ingestion Service
+  # @ignored in generated docs
   enabled: true
-  # -- number of replicas
+  # @ignored in generated docs
   replicas: 1
-  # -- image repository and tag, defaults to `europe-west1-docker.pkg.dev/streamx-releases/streamx-docker-releases/dev.streamx/rest-ingestion-service:{{ .Chart.AppVersion }}`
-  image:
-  # -- all-inboxes topic pattern in format: `namespace/topic-regex`
+  # @ignored in generated docs
   allInboxesTopicPatter: "inboxes/.*"
-  # -- additional environment variables
-  env: []
-  # -- pod monitoring configuration
-  monitoring: {}
-  # -- probes settings, see tests for reference
-  probes: {}
-  # -- ingress settings, set `host` to enable ingress
-  ingress: {}
-    # annotations: {}
-    # host: define host to expose service
-    # tls:
-    #   secretName: tls-secret
-  # -- resources for the container
-  resources: {}
-  # -- node labels for pod assignment
-  nodeSelector: {}
+
 
 # -- `Processing Services` map, see the [Processing Services](#processing-services) section for reference
 processing: {}
-  # example-processing-service: # unique service name
-  #   replicas: 2 # to override default (1) service replicas
-  #   image: <image-repository>:<image-tag>
-  #   incoming: # map of incoming channels
-  #     incoming-pages:
-  #       namespace: inboxes
-  #       topic: pages
-  #   outgoing: # map of outgoing channels
-  #     outgoing-pages:
-  #       namespace: outboxes
-  #       topic: pages
-  #   env:
-  #     - name: NAME
-  #       value: VALUE
-  #   resources: # overrides default resources
-  #     requests:
-  #       memory: 256Mi
-  #       cpu: 400m
-  #   nodeSelector:
-  #     <nodeSelectorKey>: <nodeSelectorValue>
-  #   podMonitor: # overrides default podMonitor settings
-  #     interval: 10s
-  #     scrapeTimeout: 10s
-  #     path: /q/metrics
-  #   probes: 
-  #     disabled: true # by default enabled
-  #     livenessOverride: # overrides default livenessProbe settings see tests for reference
-  #     readinessOverride: # overrides default readinessProbe settings see tests for reference
-  #     startupOverride: # overrides default startupProbe settings see tests for reference
 
 # -- `Delivery Services` map, see the [Delivery Services](#delivery-services) section for reference
 delivery: {}
-  # example-delivery-service: # unique service name
-  #   replicas: 2 # to override default (1) service replicas
-  #   incoming: # map of incoming channels
-  #     pages:
-  #       namespace: outboxes
-  #       topic: pages
-  #   outputs:
-  #     http: # unique output name for the service
-  #       service:
-  #         containerRef:
-  #           name: client # corresponds to container name in `containers` section
-  #         port: 80
-  #         targetPort: http
-  #       ingress: # optional, set `host` to enable ingress
-  #         host: my-domain.com
-  #         path: /my-path # optional, defaults to "/"
-  #         annotations: {}
-  #         tls:
-  #          secretName: tls-secret # set to enable TLS
-  #   containers:
-  #     client:
-  #       image: <image-repository>:<image-tag>
-  #       ports:
-  #         - name: http
-  #           containerPort: 8080
-  #       env:
-  #       - name: JAVA_OPTS
-  #         value: "-Xms512m -Xmx1024m"
-  #       data:
-  #         metadataMountPath: /application/store/metadata
-  #         repositoryMountPath: /application/store/resources
-  #       configs: # configMap mounted as volume under mountPath
-  #         - mountPath: /etc/nginx/conf.d
-  #           configMapName: generated-site-nginx-config
-  #       monitoring:
-  #         path: /q/metrics # mandatory to enable monitoring
-  #         port: 8080 # optional, defaults to 8080
-  #         interval: 10s # optional, defaults to 10s
-  #         scrapeTimeout: 10s # optional, defaults to 10s
-  #       resources:
-  #         requests:
-  #           memory: 50Mi
-  #           cpu: 50m
-  #       probes: 
-  #         disabled: true # by default enabled
-  #         livenessOverride: # overrides default livenessProbe settings see tests for reference
-  #         readinessOverride: # overrides default readinessProbe settings see tests for reference
-  #         startupOverride: # overrides default startupProbe settings see tests for reference
-  #   data:  # optional
-  #     repositorySize: 1Gi
-  #     metadataSize: 1Gi
-  #   affinity:
-  #     podAntiAffinity:
-  #       enabled: true
-  #   pdb:
-  #     minAvailable:

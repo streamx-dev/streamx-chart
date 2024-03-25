@@ -39,10 +39,12 @@ processing:
         cpu: "400m"
     # -- nodeSelector settings (key -> value)
     nodeSelector: {}
-    # -- overrides default podMonitor settings
     podMonitor:
+      # -- (string) interval for the podMonitor, defaults to `10s`
       interval: 10s
+      # -- (string) scrapeTimeout for the podMonitor, defaults to `10s`
       scrapeTimeout: 10s
+      # -- (string) path for the monitoring endpoint, defaults to `/q//metrics`
       path: /q/metrics
     probes: 
       # -- disables probes, by default enabled

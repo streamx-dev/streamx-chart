@@ -71,8 +71,13 @@ mkdir -p $TEMP_DOCS_ROOT
 # Generate Parameters partials
 docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o $GEN_DOCS_DIR/default.md --values-file=values.yaml
 docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o $GEN_DOCS_DIR/messaging.md --values-file=docs/messaging.yaml
+docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o $GEN_DOCS_DIR/ingestion.md --values-file=docs/ingestion.yaml
 docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o $GEN_DOCS_DIR/processing.md --values-file=docs/processing.yaml
 docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o $GEN_DOCS_DIR/delivery.md --values-file=docs/delivery.yaml
+
+# For processing and delivery, replace the default columnt with example
+sed -i 's/Default/Example/g' $TEMP_DOCS_ROOT/processing.md
+sed -i 's/Default/Example/g' $TEMP_DOCS_ROOT/delivery.md
 
 # Generate Badges partial
 docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=badges.gotmpl -o $GEN_DOCS_DIR/badges.md
