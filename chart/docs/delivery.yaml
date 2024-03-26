@@ -54,9 +54,7 @@ delivery:
         # -- additional environment variables
         env: []
         data:
-          # -- metadata volume mount path
-          metadataMountPath: /application/store/metadata
-          # -- repository volume mount path
+          # -- repository volume mount path, it is intended to enable sharing data between containers within Delivery Service pod
           repositoryMountPath: /application/store/resources
         # -- configMap mounted as volume under mountPath, used e.g. to mount nginx configuration
         configs:

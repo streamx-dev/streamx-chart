@@ -57,8 +57,7 @@
 |-----|------|---------|-------------|
 | delivery._service-name_.affinity.podAntiAffinity.enabled | bool | `true` | enables pod anti-affinity, defaults to `true` |
 | delivery._service-name_.containers._container-name_.configs | list | `[{"configMapName":"generated-site-nginx-config","mountPath":"/etc/nginx/conf.d"}]` | configMap mounted as volume under mountPath, used e.g. to mount nginx configuration |
-| delivery._service-name_.containers._container-name_.data.metadataMountPath | string | `"/application/store/metadata"` | metadata volume mount path |
-| delivery._service-name_.containers._container-name_.data.repositoryMountPath | string | `"/application/store/resources"` | repository volume mount path |
+| delivery._service-name_.containers._container-name_.data.repositoryMountPath | string | `"/application/store/resources"` | repository volume mount path, when defined an emptyDir volume is created on the deployment level and it will be mounted to the container under this path |
 | delivery._service-name_.containers._container-name_.env | list | `[]` | additional environment variables |
 | delivery._service-name_.containers._container-name_.image | string | `"<image-repository>:<image-tag>"` | image repository and tag |
 | delivery._service-name_.containers._container-name_.monitoring.interval | string | `"10s"` | optional, defaults to `10s` |

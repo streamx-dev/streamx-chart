@@ -50,34 +50,9 @@ tests:
               data:
                 repositoryMountPath: /repository/path
     asserts:
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content: {name: REPOSITORY_RESOURCE_ROOT_DIRECTORY, value: /repository/path}
       - equal:
           path: spec.template.spec.containers[0].volumeMounts[0].name
           value: repository
       - equal:
           path: spec.template.spec.containers[0].volumeMounts[0].mountPath
           value: /repository/path
-  # @Test
-  - it: when delivery service container configures metadata mount path then repoistory volume is mounted and env configured
-    template: templates/delivery/delivery-deployment.yaml
-    set:
-      delivery:
-        service1:
-          containers:
-            test-container:
-              image:
-                repository: test/repository
-              data:
-                metadataMountPath: /metadata/path
-    asserts:
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content: {name: REPOSITORY_METADATA_ROOT_DIRECTORY, value: /metadata/path}
-      - equal:
-          path: spec.template.spec.containers[0].volumeMounts[0].name
-          value: metadata
-      - equal:
-          path: spec.template.spec.containers[0].volumeMounts[0].mountPath
-          value: /metadata/path

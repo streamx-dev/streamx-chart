@@ -56,11 +56,11 @@ The important concept of each delivery service is its `output` object. A single 
 ![Delivery service outputs](./assets/delivery-service-outputs.png)
 
 #### Data
-Delivery service defines `emptyDir` volume for `repository` data by default
+Delivery service defines `emptyDir` volume for `repository` data by default. The repository is used to share data between delivery service pod containers (e.g. between messaging client and http proxy server).
 
 ![Delivery service data](./assets/delivery-service-data.png)
 
-Each delivery service container can mount these volumes to its filesystem under configured mount paths (see container's `data.repositoryMountPath`).
+Each delivery service container can mount `repository` volume to its filesystem under the configured mount path (see container's `data.repositoryMountPath`) with read/write permissions.
 
 The size of the volumes can be configured via `data.repositorySize` value on the Delivery Service level.
 
