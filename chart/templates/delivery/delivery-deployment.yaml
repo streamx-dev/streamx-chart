@@ -114,25 +114,11 @@ spec:
             - name: MP_MESSAGING_INCOMING_{{ $key | upper }}_SUBSCRIPTIONNAME
               value: "$(POD_NAME)-{{ $containerName }}-{{ $key }}"
             {{- end }}
-            {{- with $container.data }}
-            {{- if .repositoryMountPath }}
-            - name: REPOSITORY_RESOURCE_ROOT_DIRECTORY
-              value: {{ .repositoryMountPath }}
-            {{- end }}
-            {{- if .metadataMountPath }}
-            - name: REPOSITORY_METADATA_ROOT_DIRECTORY # FixMe: to be checked if this is needed in StreamX
-              value: {{ .metadataMountPath }}
-            {{- end }}
-            {{- end }}
           volumeMounts:
             {{- with $container.data }}
             {{- if .repositoryMountPath }}
             - name: repository
               mountPath: {{ .repositoryMountPath }}
-            {{- end }}
-            {{- if .metadataMountPath }}
-            - name: metadata
-              mountPath: {{ .metadataMountPath }}
             {{- end }}
             {{- end }}
             {{- range $idx, $mount:= $container.configs }}
