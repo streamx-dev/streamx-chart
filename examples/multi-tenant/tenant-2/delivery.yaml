@@ -27,6 +27,7 @@ delivery:
           port: 80
           targetPort: http
         ingress:
+          enabled: true
           host: tenant-2.127.0.0.1.nip.io
     containers:
       webserver:

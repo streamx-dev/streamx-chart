@@ -44,7 +44,7 @@ set:
             port: 80
             targetPort: http
           ingress:
-            host: unit.test.host
+            enabled: true
       containers:
         test:
           image: test/delivery-image
