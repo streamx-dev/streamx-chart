@@ -158,8 +158,7 @@ Each Delivery Service can consist of multiple containers. Refer to the `Example`
 |-----|------|---------|-------------|
 | delivery._service-name_.affinity.podAntiAffinity.enabled | bool | `false` | enables pod anti-affinity, disabled by default |
 | delivery._service-name_.containers._container-name_.configs | list | `[{"configMapName":"generated-site-nginx-config","mountPath":"/etc/nginx/conf.d"}]` | configMap mounted as volume under mountPath, used e.g. to mount nginx configuration |
-| delivery._service-name_.containers._container-name_.data.metadataMountPath | string | `"/application/store/metadata"` | metadata volume mount path |
-| delivery._service-name_.containers._container-name_.data.repositoryMountPath | string | `"/application/store/resources"` | repository volume mount path |
+| delivery._service-name_.containers._container-name_.data.repositoryMountPath | string | `"/application/store/resources"` | repository volume mount path, it is intended to enable sharing data between containers within Delivery Service pod |
 | delivery._service-name_.containers._container-name_.env | list | `[]` | additional environment variables |
 | delivery._service-name_.containers._container-name_.image | string | `"<image-repository>:<image-tag>"` | image repository and tag |
 | delivery._service-name_.containers._container-name_.monitoring.interval | string | `"10s"` | optional, defaults to `10s` |
