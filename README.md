@@ -113,9 +113,10 @@ The table below documents REST Ingestion Service configuration options.
 | rest_ingestion.image | string | `"ghcr.io/streamx-dev/streamx/rest-ingestion-service:<appVersion>"` | custom image and tag for tenant initialisation, the default image tag corresponds the current chart's AppVersion |
 | rest_ingestion.imagePullPolicy | string | `nil` | image pull policy |
 | rest_ingestion.ingress.annotations | object | `{}` | additional ingress annotations |
-| rest_ingestion.ingress.host | string | `nil` | host for the ingress, set the value to enable ingress, empty by default |
+| rest_ingestion.ingress.enabled | bool | `false` | enables ingress |
+| rest_ingestion.ingress.host | string | `nil` | host for the ingress and TLS certificate |
 | rest_ingestion.ingress.ingressClassName | string | `"nginx"` | ingress class name |
-| rest_ingestion.ingress.tls.secretName | string | `nil` | secret name for the TLS certificate, set the value to enable TLS |
+| rest_ingestion.ingress.tls.secretName | string | `nil` | secret name for the TLS certificate, set the value and `host` to enable TLS |
 | rest_ingestion.monitoring | object | `{}` | pod monitoring configuration |
 | rest_ingestion.nodeSelector | object | `{}` | node labels for pod assignment |
 | rest_ingestion.probes | object | `{}` | probes settings, see tests for reference |

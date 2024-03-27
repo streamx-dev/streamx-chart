@@ -19,32 +19,30 @@ templates:
   - templates/rest-ingestion-service/rest-ingestion-ingress.yaml
 tests:
   # @Test
-  - it: when ingress host not set then ingress should not be created
+  - it: when ingress is not enabled then ingress should not be created
     asserts:
       - hasDocuments:
           count: 0
   # @Test
-  - it: when ingress host is set then ingress should be created and allow only "/publications" path
+  - it: when ingress enabled then ingress should be created and allow only "/publications" path
     set:
       rest_ingestion:
         ingress:
-          host: unit.test.host
+          enabled: true
     asserts:
       - hasDocuments:
           count: 1
       - isKind: 
           of: Ingress
       - matchRegex:
-          path: spec.rules[0].host
-          pattern: unit.test.host
-      - matchRegex:
           path: spec.rules[0].http.paths[0].path
           pattern: /publications
   # @Test
-  - it: when ingress tls secret is set then ingress should be created with tls settings
+  - it: when ingress enabled and tls secret is set then ingress should be created with tls settings
     set:
       rest_ingestion:
         ingress:
+          enabled: true
           host: unit.test.host
           tls:
             secretName: tls-secret-test
@@ -67,7 +65,7 @@ tests:
     set:
       rest_ingestion:
         ingress:
-          host: unit.test.host
+          enabled: true
     asserts:
       - hasDocuments:
           count: 1

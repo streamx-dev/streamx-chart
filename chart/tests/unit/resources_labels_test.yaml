@@ -28,7 +28,7 @@ set:
         enabled: true
   rest_ingestion:
     ingress:
-      host: unit.test.host
+      enabled: true
     monitoring:
       path: /metrics
   processing:

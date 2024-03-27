@@ -17,4 +17,5 @@ rest_ingestion:
   auth:
     keysSecretName: streamx-api-keys
   ingress:
+    enabled: true
     host: secured-api.127.0.0.1.nip.io
