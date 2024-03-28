@@ -14,14 +14,14 @@
 
 messaging:
   pulsar:
-    # -- mandatory: Apache Pulsar Broker Service URL
-    serviceUrl: "pulsar://pulsar-service:6650"
-    # -- mandatory: Apache Pulsar REST API URL
-    webServiceUrl: "http://pulsar-web-service:8080"
-    initTenant: 
+    # -- mandatory: Apache Pulsar Broker Service URL, e.g. `"pulsar://pulsar-service:6650"`
+    serviceUrl:
+    # -- mandatory: Apache Pulsar REST API URL, e.g. `"http://pulsar-web-service:8080"`
+    webServiceUrl:
+    initTenant:
       # -- enable Apache Pulsar tenant and namespaces initialisation for StreamX, this will create a Job that waits for Apache Pulsar to be ready
       enabled: false
-      # -- optional: custom image for tenant initialisation, by default `streamx-docker-releases/dev.streamx/pulsar-init` with the current chart's AppVersion will be used
-      image: 
+      # -- custom image and tag for tenant initialisation, the default image tag corresponds the current chart's AppVersion
+      image: ghcr.io/streamx-dev/streamx/pulsar-init:<appVersion>
       # -- optional: additional environment variables for tenant initialisation
       env: []

@@ -61,7 +61,7 @@ delivery:
           - mountPath: /etc/nginx/conf.d
             configMapName: generated-site-nginx-config
         monitoring:
-          # -- path for the monitoring endpoint, must be set to enable monitoring for the container
+          # -- (string) path for the monitoring endpoint, must be set to enable monitoring for the container
           path: /q/metrics
           # -- optional, defaults to `8080`
           port: 8080
@@ -87,8 +87,10 @@ delivery:
       metadataSize: 1Gi
     affinity:
       podAntiAffinity:
-        # -- enables pod anti-affinity, defaults to `true`
-        enabled: true
+        # -- enables pod anti-affinity, disabled by default
+        enabled: false
     pdb:
-      # -- min availabiliyty setting for the Delivery Service PodDisruptionBudget which is set to number of replicas by default
+      # -- (number) min availabiliyty setting for the Delivery Service PodDisruptionBudget which is set to number of replicas by default
       minAvailable: 1
+    # -- nodeSelector settings (key -> value)
+    nodeSelector: {}
