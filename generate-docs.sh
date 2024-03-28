@@ -75,7 +75,7 @@ docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-doc
 docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o $GEN_DOCS_DIR/processing.md --values-file=docs/processing.yaml
 docker run --rm --volume "$(pwd)/chart:/helm-docs" -u $(id -u) jnorwood/helm-docs:latest -t=parameters.gotmpl -o $GEN_DOCS_DIR/delivery.md --values-file=docs/delivery.yaml
 
-# For processing and delivery, replace the default columnt with example
+# For processing and delivery, replace the default column with example
 sed -i 's/Default/Example/g' $TEMP_DOCS_ROOT/processing.md
 sed -i 's/Default/Example/g' $TEMP_DOCS_ROOT/delivery.md
 
