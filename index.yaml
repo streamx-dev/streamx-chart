@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   streamx:
   - apiVersion: v2
+    appVersion: 0.0.14-jvm
+    created: "2024-03-28T12:43:42.691252306Z"
+    description: This chart bootstraps StreamX on a Kubernetes cluster.
+    digest: 53c65d0a354dcd2653e14da637ff04672b20e74cccf2859e8a08a664aa3e3234
+    name: streamx
+    type: application
+    urls:
+    - https://github.com/streamx-dev/streamx-chart/releases/download/streamx-0.7.0/streamx-0.7.0.tgz
+    version: 0.7.0
+  - apiVersion: v2
     appVersion: 0.0.12-jvm
     created: "2024-03-11T08:47:17.618259537Z"
     description: This chart bootstraps StreamX on a Kubernetes cluster.
@@ -121,4 +131,4 @@ entries:
     urls:
     - https://github.com/streamx-dev/streamx-chart/releases/download/streamx-0.0.1/streamx-0.0.1.tgz
     version: 0.0.1
-generated: "2024-03-11T08:47:17.618310993Z"
+generated: "2024-03-28T12:43:42.691348847Z"
