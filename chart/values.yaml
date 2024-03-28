@@ -39,7 +39,9 @@ rest_ingestion:
   replicas: 1
   # @ignored in generated docs
   allInboxesTopicPatter: "inboxes/.*"
-
+  # @ignored in generated docs
+  ingress:
+    enabled: false
 
 # -- `Processing Services` map, see the [Processing Services](#processing-services) section for reference
 processing: {}

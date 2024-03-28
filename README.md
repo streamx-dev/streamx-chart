@@ -116,9 +116,10 @@ The table below documents REST Ingestion Service configuration options.
 | rest_ingestion.image | string | `"ghcr.io/streamx-dev/streamx/rest-ingestion-service:<appVersion>"` | custom image and tag for tenant initialisation, the default image tag corresponds the current chart's AppVersion |
 | rest_ingestion.imagePullPolicy | string | `nil` | image pull policy |
 | rest_ingestion.ingress.annotations | object | `{}` | additional ingress annotations |
-| rest_ingestion.ingress.host | string | `nil` | host for the ingress, set the value to enable ingress, empty by default |
+| rest_ingestion.ingress.enabled | bool | `false` | enables ingress |
+| rest_ingestion.ingress.host | string | `nil` | host for the ingress and TLS certificate |
 | rest_ingestion.ingress.ingressClassName | string | `"nginx"` | ingress class name |
-| rest_ingestion.ingress.tls.secretName | string | `nil` | secret name for the TLS certificate, set the value to enable TLS |
+| rest_ingestion.ingress.tls.secretName | string | `nil` | secret name for the TLS certificate, set the value and `host` to enable TLS, secret must be created in the same namespace as the Ingestion Service |
 | rest_ingestion.monitoring | object | `{}` | pod monitoring configuration |
 | rest_ingestion.nodeSelector | object | `{}` | node labels for pod assignment |
 | rest_ingestion.probes | object | `{}` | probes settings, see tests for reference |
@@ -179,11 +180,12 @@ Each Delivery Service can consist of multiple containers. Refer to the `Example`
 | delivery._service-name_.incoming | object | `{"_incoming-channel-name_":{"namespace":"outboxes","topic":"pages"}}` | map of incoming channels |
 | delivery._service-name_.incoming._incoming-channel-name_ | object | `{"namespace":"outboxes","topic":"pages"}` | example incomming channel with defined namespace and topic |
 | delivery._service-name_.nodeSelector | object | `{}` | nodeSelector settings (key -> value) |
-| delivery._service-name_.outputs | object | `{"_output-name_":{"ingress":{"annotations":{},"host":"my-domain.com","path":"/my-path","tls":{"secretName":"tls-secret"}},"service":{"containerRef":{"name":"_container-name_"},"port":80,"targetPort":"http"}}}` | map of delivery outputs |
 | delivery._service-name_.outputs._output-name_.ingress.annotations | object | `{}` | additional annotations for ingress |
-| delivery._service-name_.outputs._output-name_.ingress.host | string | `"my-domain.com"` | optional, set `host` to enable ingress |
+| delivery._service-name_.outputs._output-name_.ingress.enabled | bool | `false` | enables ingress, disabled by default |
+| delivery._service-name_.outputs._output-name_.ingress.host | string | `"my-domain.com"` | host for the ingress and TLS certificate |
+| delivery._service-name_.outputs._output-name_.ingress.ingressClassName | string | `"nginx"` | ingress class name, defaults to `nginx` |
 | delivery._service-name_.outputs._output-name_.ingress.path | string | `"/my-path"` | optional, defaults to "/" |
-| delivery._service-name_.outputs._output-name_.ingress.tls.secretName | string | `"tls-secret"` | optional, set to enable TLS, secret must be created in the same namespace |
+| delivery._service-name_.outputs._output-name_.ingress.tls.secretName | string | `"tls-secret"` | secret name for the TLS certificate, set the value and `host` to enable TLS, secret must be created in the same namespace as the Delivery Service |
 | delivery._service-name_.outputs._output-name_.service.containerRef.name | string | `"_container-name_"` | corresponds to container name in `containers` section |
 | delivery._service-name_.outputs._output-name_.service.port | int | `80` | port on which Kubernetes service is listening for traffic for this Delivery Service |
 | delivery._service-name_.outputs._output-name_.service.targetPort | string | `"http"` | name of the port in the container |

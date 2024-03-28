@@ -15,4 +15,5 @@
 rest_ingestion:
   allInboxesTopicPatter: "inboxes/.*"
   ingress:
+    enabled: true
     host: tenant-1-api.127.0.0.1.nip.io

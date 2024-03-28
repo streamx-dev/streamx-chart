@@ -31,12 +31,14 @@ rest_ingestion:
   # -- image pull policy
   imagePullPolicy:
   ingress:
+    # -- enables ingress
+    enabled: false
     # -- additional ingress annotations
     annotations: {}
-    # -- (string) host for the ingress, set the value to enable ingress, empty by default
+    # -- (string) host for the ingress and TLS certificate
     host: 
     tls:
-      # -- (string) secret name for the TLS certificate, set the value to enable TLS
+      # -- (string) secret name for the TLS certificate, set the value and `host` to enable TLS, secret must be created in the same namespace as the Ingestion Service
       secretName:
     # -- ingress class name
     ingressClassName: nginx

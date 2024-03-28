@@ -22,7 +22,6 @@ delivery:
       _incoming-channel-name_:
         namespace: outboxes
         topic: pages
-    # -- map of delivery outputs
     outputs:
       _output-name_:
         service:
@@ -34,15 +33,19 @@ delivery:
           # -- name of the port in the container
           targetPort: http
         ingress:
-          # -- optional, set `host` to enable ingress
+          # -- enables ingress, disabled by default
+          enabled: false
+          # -- host for the ingress and TLS certificate
           host: my-domain.com
           # -- optional, defaults to "/"
           path: /my-path
           # -- additional annotations for ingress
           annotations: {}
           tls:
-            # -- optional, set to enable TLS, secret must be created in the same namespace
+            # -- secret name for the TLS certificate, set the value and `host` to enable TLS, secret must be created in the same namespace as the Delivery Service
             secretName: tls-secret
+          # -- ingress class name, defaults to `nginx`
+          ingressClassName: nginx
     containers:
       _container-name_:
         # -- image repository and tag

@@ -26,9 +26,11 @@ Deploy StreamX Mesh when the initialization completes successfully.
 {{- end }}
 {{- end }}
 
-{{- with (.Values.rest_ingestion).ingress }}
+{{- with .Values.rest_ingestion.ingress }}
+{{- if .enabled }}
 Ingestion services:
 - http{{ if (.tls).secretName }}s{{ end }}://{{ .host }}
+{{- end }}
 {{- end }}
 
 {{- if gt (len .Values.delivery) 0 }}

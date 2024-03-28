@@ -14,6 +14,7 @@
 
 {{- if .Values.rest_ingestion.enabled }}
 {{ with .Values.rest_ingestion.ingress  }}
+{{- if .enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -29,11 +30,16 @@ spec:
   {{- if (.tls).secretName }}
   tls:
     - hosts:
-        - {{ .host }}
+        {{- if .host }}
+        - {{ .host | quote }}
+        {{- end }}
       secretName: {{ .tls.secretName }}
   {{- end }}
   rules:
-  - host: {{ .host | quote }}
+  - 
+    {{- if .host }}
+    host: {{ .host | quote }}
+    {{- end }}
     http:
       paths:
       - pathType: Prefix
@@ -43,5 +49,6 @@ spec:
             name: {{ include "streamx.component.fullname" (dict "componentName" "rest-ingestion" "context" $) }}
             port:
               number: 80
+{{- end }}
 {{- end }}
 {{- end }}

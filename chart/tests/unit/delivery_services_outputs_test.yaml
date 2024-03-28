@@ -84,7 +84,7 @@ tests:
           path: spec.ports[1].targetPort
           value: https
   # @Test
-  - it: when a single output defined and ingress host configured a single ingress is created with default path
+  - it: when a single output defined and ingress enabled a single ingress is created with default path
     template: templates/delivery/delivery-ingress.yaml
     set:
       delivery:
@@ -95,7 +95,7 @@ tests:
                 port: 80
                 targetPort: http
               ingress:
-                host: unit.test.host
+                enabled: true
     asserts:
       - isKind: 
           of: Ingress
@@ -104,9 +104,6 @@ tests:
       - matchRegex:
           path: .metadata.name
           pattern: -delivery-service1-output1$
-      - equal:
-          path: spec.rules[0].host
-          value: unit.test.host
       - equal:
           path: spec.rules[0].http.paths[0].path
           value: /
@@ -117,7 +114,7 @@ tests:
           path: spec.rules[0].http.paths[0].backend.service.port.number
           value: 80
   # @Test
-  - it: when multiple outputs defined with ingress hosts then multiple ingresses are created
+  - it: when multiple outputs defined with ingresses enabled then multiple ingresses are created
     template: templates/delivery/delivery-ingress.yaml
     set:
       delivery:
@@ -128,12 +125,14 @@ tests:
                 port: 80
                 targetPort: http
               ingress:
+                enabled: true
                 host: unit.test.host1
             output2:
               service:
                 port: 443
                 targetPort: https
               ingress:
+                enabled: true
                 host: unit.test.host2
     asserts:
       - isKind: 
@@ -147,7 +146,7 @@ tests:
           path: spec.rules
           count: 1
   # @Test
-  - it: when multiple outputs defined ingress is created only when host defined
+  - it: when multiple outputs defined ingress is created only when enabled
     template: templates/delivery/delivery-ingress.yaml
     set:
       delivery:
@@ -158,7 +157,7 @@ tests:
                 port: 80
                 targetPort: http
               ingress:
-                host: unit.test.host1
+                enabled: true
             output2:
               service:
                 port: 443
@@ -169,7 +168,7 @@ tests:
       - hasDocuments:
           count: 1
   # @Test
-  - it: when ingress tls secret is set then ingress should be created with tls settings
+  - it: when ingress enabled and tls secret is set then ingress should be created with tls settings
     template: templates/delivery/delivery-ingress.yaml
     set:
       delivery:
@@ -180,6 +179,7 @@ tests:
                 port: 80
                 targetPort: http
               ingress:
+                enabled: true
                 host: unit.test.host
                 tls:
                   secretName: tls-secret-test
