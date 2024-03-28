@@ -22,7 +22,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.streamx.clients.ingestion.exceptions.StreamxClientException;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,8 +35,6 @@ public class MultiTenantPublicationTest {
   private final StreamXEnvironment tenant2 = StreamXEnvironment.newLocalEnvironment("tenant-2");
 
   @Test
-  // FixMe order should not matter after schema autoupdate implemented in StreamX
-  @Order(1)
   void restIngestionShouldHavePagesSchemaConfigured()
       throws JsonProcessingException {
     EnvironmentAssertions.assertPagesJsonSchema(tenant1.newIngestionSchemaRequest());
@@ -45,7 +42,6 @@ public class MultiTenantPublicationTest {
   }
 
   @Test
-  @Order(2)
   @DisplayName("Check page published on first tenant is not visible on second tenant")
   public void checkTenantsPublicationSeparation()
       throws StreamxClientException {

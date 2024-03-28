@@ -97,6 +97,9 @@ The table below documents Messaging configuration options.
 | messaging.pulsar.initTenant.enabled | bool | `false` | enable Apache Pulsar tenant and namespaces initialisation for StreamX, this will create a Job that waits for Apache Pulsar to be ready |
 | messaging.pulsar.initTenant.env | list | `[]` | optional: additional environment variables for tenant initialisation |
 | messaging.pulsar.initTenant.image | string | `"ghcr.io/streamx-dev/streamx/pulsar-init:<appVersion>"` | custom image and tag for tenant initialisation, the default image tag corresponds the current chart's AppVersion |
+| messaging.pulsar.initTenant.partitions.inboxes | int | `3` | optional: number of partitions for inboxes topics, defaults to `3` |
+| messaging.pulsar.initTenant.partitions.outboxes | int | `3` | optional: number of partitions for outboxes topics, defaults to `3` |
+| messaging.pulsar.initTenant.partitions.relays | int | `3` | optional: number of partitions for relays topics, defaults to `3` |
 | messaging.pulsar.serviceUrl | string | `nil` | mandatory: Apache Pulsar Broker Service URL, e.g. `"pulsar://pulsar-service:6650"` |
 | messaging.pulsar.webServiceUrl | string | `nil` | mandatory: Apache Pulsar REST API URL, e.g. `"http://pulsar-web-service:8080"` |
 <!-- end: messaging.md -->

@@ -23,5 +23,12 @@ messaging:
       enabled: false
       # -- custom image and tag for tenant initialisation, the default image tag corresponds the current chart's AppVersion
       image: ghcr.io/streamx-dev/streamx/pulsar-init:<appVersion>
+      partitions:
+        # -- optional: number of partitions for inboxes topics, defaults to `3`
+        inboxes: 3
+        # -- optional: number of partitions for relays topics, defaults to `3`
+        relays: 3
+        # -- optional: number of partitions for outboxes topics, defaults to `3`
+        outboxes: 3
       # -- optional: additional environment variables for tenant initialisation
       env: []

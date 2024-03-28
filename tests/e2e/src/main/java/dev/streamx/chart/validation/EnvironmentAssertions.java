@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -30,22 +31,20 @@ import org.awaitility.Awaitility;
 public class EnvironmentAssertions {
 
   private static final String PAGES_SCHEMA = """
-    {
-       "pages": {
-         "type":"record",
-         "name":"Page",
-         "namespace":"dev.streamx.reference.relay.model",
-         "fields":[
-           {
-             "name":"content",
-             "type":[
-               "null",
-               "bytes"
-             ],
-             "default":null
-           }
-         ]
-       }
+     {
+       "type":"record",
+       "name":"Page",
+       "namespace":"dev.streamx.reference.relay.model",
+       "fields":[
+         {
+           "name":"content",
+           "type":[
+             "null",
+             "bytes"
+           ],
+           "default":null
+         }
+       ]
      }
      """;
 
@@ -66,10 +65,24 @@ public class EnvironmentAssertions {
   }
 
   public static void assertPagesJsonSchema(RequestSpecification request) throws JsonProcessingException {
-    assertJsonSchema(request, PAGES_SCHEMA);
+    assertJsonSchema(request, "pages", PAGES_SCHEMA);
   }
 
-  public static void assertJsonSchema(RequestSpecification request, String expectedSchema)
+  public static void assertJsonSchema(RequestSpecification request, String schemaName, String expectedSchema)
+      throws JsonProcessingException {
+    Response response = getResponse(request, isOk());
+
+    String schema = response.then()
+        .extract().body().asString();
+
+    assertNotNull(schema);
+    ObjectMapper mapper = new ObjectMapper();
+    JsonNode schemaResponse = mapper.readTree(schema).get(schemaName);
+    assertNotNull(schemaResponse);
+    assertEquals(mapper.readTree(expectedSchema), schemaResponse);
+  }
+
+  public static void assertStrictJsonSchema(RequestSpecification request, String expectedSchema)
       throws JsonProcessingException {
     Response response = getResponse(request, isOk());
 
